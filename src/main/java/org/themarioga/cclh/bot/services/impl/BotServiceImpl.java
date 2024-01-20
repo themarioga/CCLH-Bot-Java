@@ -1,10 +1,15 @@
 package org.themarioga.cclh.bot.services.impl;
 
+import com.pengrad.telegrambot.Callback;
+import com.pengrad.telegrambot.Cancellable;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.DeleteWebhook;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.response.BaseResponse;
+import com.pengrad.telegrambot.response.SendResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,12 +20,13 @@ import org.themarioga.cclh.bot.model.CommandHandler;
 import org.themarioga.cclh.bot.util.BotUtils;
 import org.themarioga.cclh.bot.services.intf.BotService;
 
+import java.io.IOException;
 import java.util.Map;
 
 @Service
 public class BotServiceImpl implements BotService {
 
-    private static Logger logger = LoggerFactory.getLogger(BotServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(BotServiceImpl.class);
 
     @Value("${cclh.bot.token}")
     private String token;
@@ -36,7 +42,7 @@ public class BotServiceImpl implements BotService {
 
     @Override
     public void registerCallbacks(Map<String, CommandHandler> commands) {
-        logger.debug("Registrando callbacks...");
+        logger.trace("Registrando callbacks...");
 
         Assert.isNull(bot, "El bot de telegram no debe estar iniciado");
 
@@ -52,12 +58,20 @@ public class BotServiceImpl implements BotService {
                                 update.message().text(),
                                 BotUtils.getUserInfo(update.message().from()));
 
-                        sendTextResponse(update.message().chat().id(), ResponseErrorI18n.COMMAND_DOES_NOT_EXISTS);
+                        sendMessageAsync(new SendMessage(update.message().chat().id(), ResponseErrorI18n.COMMAND_DOES_NOT_EXISTS), new Callback<SendMessage, SendResponse>() {
+                            @Override
+                            public void onResponse(SendMessage request, SendResponse response) {
+                                logger.trace("Error enviado correctamente");
+                            }
+
+                            @Override
+                            public void onFailure(SendMessage request, IOException e) {
+                                logger.error("No se ha podido enviar el mensaje.", e);
+                            }
+                        });
                     }
-                } else if (update.inlineQuery() != null) {
-
                 } else if (update.callbackQuery() != null) {
-
+                    logger.debug("EY");
                 }
 
                 lastUpdateId = update.updateId();
@@ -69,7 +83,7 @@ public class BotServiceImpl implements BotService {
 
     @Override
     public void startBot() {
-        logger.debug("Initializing telegram bot...");
+        logger.trace("Initializing telegram bot...");
 
         Assert.notNull(updatesListener, "No se puede iniciar el bot sin listener");
 
@@ -91,12 +105,34 @@ public class BotServiceImpl implements BotService {
     }
 
     @Override
-    public void sendTextResponse(Long chatId, String text) {
-        logger.debug("Enviando el texto de respuesta {} al chat {}", text, chatId);
+    public <T extends BaseRequest<T, R>, R extends BaseResponse> Cancellable sendMessage(T request) {
+        logger.trace("Enviando mensaje");
 
-        Assert.notNull(bot, "El bot de telegram no está iniciado");
+        return bot.execute(request, new Callback<T, R>() {
+            @Override
+            public void onResponse(T request, R response) {
+                logger.trace("Mensaje enviado correctamente");
+            }
 
-        bot.execute(new SendMessage(chatId, text));
+            @Override
+            public void onFailure(T request, IOException e) {
+                logger.error("Error al enviar mensaje", e);
+            }
+        });
+    }
+
+    @Override
+    public <T extends BaseRequest<T, R>, R extends BaseResponse> R sendMessageSync(BaseRequest<T, R> request) {
+        logger.trace("Enviando mensaje sincrono");
+
+        return bot.execute(request);
+    }
+
+    @Override
+    public <T extends BaseRequest<T, R>, R extends BaseResponse> Cancellable sendMessageAsync(T request, Callback<T, R> callback) {
+        logger.trace("Enviando mensaje asincrono");
+
+        return bot.execute(request, callback);
     }
 
 }

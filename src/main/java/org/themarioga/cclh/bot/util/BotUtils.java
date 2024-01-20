@@ -5,10 +5,15 @@ import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.SetWebhook;
 import com.pengrad.telegrambot.response.BaseResponse;
 import org.springframework.util.StringUtils;
+import org.themarioga.cclh.commons.exceptions.ApplicationException;
 
 import java.io.File;
 
 public class BotUtils {
+
+    private BotUtils() {
+        throw new UnsupportedOperationException();
+    }
 
     public static void registerWebhook(TelegramBot bot, String url, String certPath) {
         SetWebhook request = new SetWebhook()
@@ -16,7 +21,7 @@ public class BotUtils {
                 .certificate(new File(certPath)); // or file
         BaseResponse response = bot.execute(request);
 
-        if (!response.isOk()) throw new RuntimeException("Cannot register webhook");
+        if (!response.isOk()) throw new ApplicationException("Cannot register webhook");
     }
 
     public static String getUserInfo(User user) {
@@ -31,8 +36,8 @@ public class BotUtils {
     public static String getUsername(User user) {
         String output = "";
         if (StringUtils.hasText(user.firstName())) output += user.firstName();
-        if (StringUtils.hasText(user.lastName())) output += user.lastName();
-        if (StringUtils.hasText(user.username())) output += "(" + user.username() + ")";
+        if (StringUtils.hasText(user.lastName())) output += " " + user.lastName();
+        if (StringUtils.hasText(user.username())) output += " (@" + user.username() + ")";
         return output;
     }
 

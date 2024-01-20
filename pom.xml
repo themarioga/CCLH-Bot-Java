@@ -39,6 +39,12 @@
             <artifactId>java-telegram-bot-api</artifactId>
             <version>6.9.1</version>
         </dependency>
+
+        <!-- BBDD -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
