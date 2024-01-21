@@ -6,10 +6,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.themarioga.cclh.bot.dao.intf.TelegramGameDao;
-import org.themarioga.cclh.bot.dto.TgGameDTO;
 import org.themarioga.cclh.bot.model.TelegramGame;
 import org.themarioga.cclh.bot.services.intf.CCLHService;
 import org.themarioga.cclh.commons.enums.ErrorEnum;
+import org.themarioga.cclh.commons.enums.GameTypeEnum;
 import org.themarioga.cclh.commons.exceptions.ApplicationException;
 import org.themarioga.cclh.commons.exceptions.game.GameAlreadyExistsException;
 import org.themarioga.cclh.commons.exceptions.user.UserAlreadyExistsException;
@@ -70,23 +70,45 @@ public class CCLHServiceImpl implements CCLHService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
-    public TgGameDTO deleteGame(long roomId) {
-        TelegramGame telegramGame = telegramGameDao.getByRoom(roomService.getById(roomId));
-        TgGameDTO dto = new TgGameDTO(telegramGame);
-        telegramGameDao.delete(telegramGame);
-        gameService.delete(roomId);
-        return dto;
+    public TelegramGame deleteGame(TelegramGame tgGame) {
+        telegramGameDao.delete(tgGame);
+        gameService.delete(tgGame.getGame());
+
+        return tgGame;
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
-    public TgGameDTO deleteGameByUserId(long creatorId) {
-        TelegramGame telegramGame = telegramGameDao.getByCreator(userService.getById(creatorId));
-        TgGameDTO dto = new TgGameDTO(telegramGame);
-        telegramGameDao.delete(telegramGame);
-        gameService.deleteByCreatorId(creatorId);
-        return dto;
+    public TelegramGame setType(TelegramGame tgGame, GameTypeEnum type) {
+        gameService.setType(tgGame.getGame(), type);
+        return tgGame;
+    }
+
+    @Override
+    public TelegramGame setNumberOfCardsToWin(TelegramGame tgGame, int numberOfCardsToWin) {
+        gameService.setNumberOfCardsToWin(tgGame.getGame(), numberOfCardsToWin);
+        return tgGame;
+    }
+
+    @Override
+    public TelegramGame setMaxNumberOfPlayers(TelegramGame tgGame, int maxNumberOfPlayers) {
+        gameService.setMaxNumberOfPlayers(tgGame.getGame(), maxNumberOfPlayers);
+        return tgGame;
+    }
+
+    @Override
+    public TelegramGame setDictionary(TelegramGame tgGame, long dictionaryId) {
+        gameService.setDictionary(tgGame.getGame(), dictionaryId);
+        return tgGame;
+    }
+
+    @Override
+    public TelegramGame getGame(long roomId) {
+        return telegramGameDao.getByRoom(roomService.getById(roomId));
+    }
+
+    @Override
+    public TelegramGame getGameByCreatorId(long creatorId) {
+        return telegramGameDao.getByCreator(userService.getById(creatorId));
     }
 
 }

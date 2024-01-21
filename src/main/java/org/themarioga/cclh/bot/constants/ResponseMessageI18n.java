@@ -13,12 +13,21 @@ public class ResponseMessageI18n {
 		Siempre que necesites ayuda puedes escribir /help
 		¡Gracias por unirte!""";
 	public static final String GAME_CREATING = "Un momentito, estoy creando la partida...";
+	public static final String GAME_CREATED_GROUP_EMPTY = """
+		¡Ya he creado la partida!
+		El modo de juego es {0}.
+		El diccionario de cartas seleccionado es {1}.
+		El número de puntos para ganar es {2}.
+		El número máximo de jugadores es {3}.
+		""";
 	public static final String GAME_CREATED_GROUP = """
 		¡Ya he creado la partida!
 		El modo de juego es {0}.
 		El diccionario de cartas seleccionado es {1}.
 		El número de puntos para ganar es {2}.
 		El número máximo de jugadores es {3}.
+		
+		El número actual de jugadores que se han unido es {4}.
 		""";
 	public static final String GAME_CREATED_PRIVATE = "He creado la partida en el grupo, puedes configurarla allí";
 	public static final String HELP = "Esta es la ayuda";

@@ -1,7 +1,7 @@
 package org.themarioga.cclh.bot.services.intf;
 
-import org.themarioga.cclh.bot.dto.TgGameDTO;
 import org.themarioga.cclh.bot.model.TelegramGame;
+import org.themarioga.cclh.commons.enums.GameTypeEnum;
 
 public interface CCLHService {
 
@@ -9,7 +9,17 @@ public interface CCLHService {
 
     TelegramGame createGame(long roomId, String roomName, long creatorId, int groupMessageId, int privateMessageId);
 
-    TgGameDTO deleteGame(long roomId);
+    TelegramGame deleteGame(TelegramGame game);
 
-    TgGameDTO deleteGameByUserId(long creatorId);
+    TelegramGame setType(TelegramGame game, GameTypeEnum type);
+
+    TelegramGame setNumberOfCardsToWin(TelegramGame game, int numberOfCardsToWin);
+
+    TelegramGame setMaxNumberOfPlayers(TelegramGame game, int maxNumberOfPlayers);
+
+    TelegramGame setDictionary(TelegramGame game, long dictionaryId);
+
+    TelegramGame getGame(long roomId);
+
+    TelegramGame getGameByCreatorId(long creatorId);
 }

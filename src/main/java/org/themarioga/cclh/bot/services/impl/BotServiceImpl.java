@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.themarioga.cclh.bot.constants.ResponseErrorI18n;
+import org.themarioga.cclh.bot.model.CallbackQueryHandler;
 import org.themarioga.cclh.bot.model.CommandHandler;
 import org.themarioga.cclh.bot.util.BotUtils;
 import org.themarioga.cclh.bot.services.intf.BotService;
@@ -41,7 +42,7 @@ public class BotServiceImpl implements BotService {
     private UpdatesListener updatesListener;
 
     @Override
-    public void registerCallbacks(Map<String, CommandHandler> commands) {
+    public void registerCallbacks(Map<String, CommandHandler> commands, Map<String, CallbackQueryHandler> callbackQueries) {
         logger.trace("Registrando callbacks...");
 
         Assert.isNull(bot, "El bot de telegram no debe estar iniciado");
@@ -71,7 +72,28 @@ public class BotServiceImpl implements BotService {
                         });
                     }
                 } else if (update.callbackQuery() != null) {
-                    logger.debug("EY");
+                   String[] query = update.callbackQuery().data().split("__");
+                    CallbackQueryHandler callbackQueryHandler = callbackQueries.get(update.callbackQuery().data());
+                    if (callbackQueryHandler != null) {
+                        callbackQueryHandler.callback(update.callbackQuery(), query.length > 1 ? query[1] : null);
+                    } else {
+                        logger.error("Querie desconocida {} enviado por {}",
+                                update.message().text(),
+                                BotUtils.getUserInfo(update.message().from()));
+
+                        sendMessageAsync(new SendMessage(update.callbackQuery().message().chat().id(),
+                                ResponseErrorI18n.COMMAND_DOES_NOT_EXISTS), new Callback<SendMessage, SendResponse>() {
+                            @Override
+                            public void onResponse(SendMessage request, SendResponse response) {
+                                logger.trace("Error enviado correctamente");
+                            }
+
+                            @Override
+                            public void onFailure(SendMessage request, IOException e) {
+                                logger.error("No se ha podido enviar el mensaje.", e);
+                            }
+                        });
+                    }
                 }
 
                 lastUpdateId = update.updateId();

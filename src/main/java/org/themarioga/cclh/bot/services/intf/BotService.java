@@ -4,13 +4,14 @@ import com.pengrad.telegrambot.Callback;
 import com.pengrad.telegrambot.Cancellable;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.response.BaseResponse;
+import org.themarioga.cclh.bot.model.CallbackQueryHandler;
 import org.themarioga.cclh.bot.model.CommandHandler;
 
 import java.util.Map;
 
 public interface BotService {
 
-    void registerCallbacks(Map<String, CommandHandler> commands);
+    void registerCallbacks(Map<String, CommandHandler> commands, Map<String, CallbackQueryHandler> callbackQueries);
 
     void startBot();
 
