@@ -16,14 +16,14 @@ public class ResponseMessageI18n {
 	public static final String GAME_CREATED_GROUP_EMPTY = """
 		¡Ya he creado la partida!
 		El modo de juego es {0}.
-		El diccionario de cartas seleccionado es {1}.
+		El mazo de cartas seleccionado es {1}.
 		El número de puntos para ganar es {2}.
 		El número máximo de jugadores es {3}.
 		""";
 	public static final String GAME_CREATED_GROUP = """
 		¡Ya he creado la partida!
 		El modo de juego es {0}.
-		El diccionario de cartas seleccionado es {1}.
+		El mazo de cartas seleccionado es {1}.
 		El número de puntos para ganar es {2}.
 		El número máximo de jugadores es {3}.
 		

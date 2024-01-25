@@ -12,7 +12,7 @@ public interface CCLHService {
 
     TelegramGame createGame(long roomId, String roomName, long creatorId, int groupMessageId, int privateMessageId);
 
-    TelegramGame deleteGame(long creatorId);
+    TelegramGame deleteGame(TelegramGame telegramGame);
 
     TelegramGame setType(TelegramGame game, GameTypeEnum type);
 

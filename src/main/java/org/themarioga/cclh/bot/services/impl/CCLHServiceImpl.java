@@ -76,9 +76,7 @@ public class CCLHServiceImpl implements CCLHService {
 
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
-    public TelegramGame deleteGame(long creatorId) {
-        TelegramGame tgGame = getGameByCreatorId(creatorId);
-
+    public TelegramGame deleteGame(TelegramGame tgGame) {
         if (tgGame != null) {
             telegramGameDao.delete(tgGame);
             gameService.delete(tgGame.getGame());

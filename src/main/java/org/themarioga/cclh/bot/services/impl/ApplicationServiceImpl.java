@@ -138,8 +138,10 @@ public class ApplicationServiceImpl implements ApplicationService {
                 return;
             }
 
-            TelegramGame telegramGame = cclhService.deleteGame(message.from().id());
+            TelegramGame telegramGame = cclhService.getGameByCreatorId(message.from().id());
             if (telegramGame != null) {
+                cclhService.deleteGame(telegramGame);
+
                 botService.sendMessage(new EditMessageText(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
                         ResponseMessageI18n.GAME_DELETED));
                 botService.sendMessage(new EditMessageText(telegramGame.getGame().getCreator().getId(), telegramGame.getPrivateMessageId(),
@@ -218,7 +220,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
                 botService.sendMessage(
                         new EditMessageText(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
-                                getCreatedGameMessage(telegramGame) + "\n Selecciona el diccionario:")
+                                getCreatedGameMessage(telegramGame) + "\n Selecciona el mazo:")
                                 .replyMarkup(groupInlineKeyboard));
             } else {
                 botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()).text(ResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE));
@@ -337,17 +339,39 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
         });
 
-        callbackQueryHandlerMap.put("game_join", (callbackQuery, data) -> {
+        callbackQueryHandlerMap.put("game_delete_group", (callbackQuery, data) -> {
             TelegramGame telegramGame = cclhService.getGame(callbackQuery.message().chat().id());
 
-            logger.info("ToDo"); // ToDo
-        });
+            if (callbackQuery.from().id().equals(telegramGame.getGame().getCreator().getId())) {
+                cclhService.deleteGame(telegramGame);
 
-        callbackQueryHandlerMap.put("game_delete_group", (callbackQuery, data) -> {
-            logger.info("ToDo"); // ToDo
+                botService.sendMessage(new EditMessageText(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
+                        ResponseMessageI18n.GAME_DELETED));
+                botService.sendMessage(new EditMessageText(telegramGame.getGame().getCreator().getId(), telegramGame.getPrivateMessageId(),
+                        ResponseMessageI18n.GAME_DELETED));
+            } else {
+                botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()).text(ResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE));
+            }
         });
 
         callbackQueryHandlerMap.put("game_delete_private", (callbackQuery, data) -> {
+            TelegramGame telegramGame = cclhService.getGameByCreatorId(callbackQuery.from().id());
+
+            if (callbackQuery.from().id().equals(telegramGame.getGame().getCreator().getId())) {
+                cclhService.deleteGame(telegramGame);
+
+                botService.sendMessage(new EditMessageText(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
+                        ResponseMessageI18n.GAME_DELETED));
+                botService.sendMessage(new EditMessageText(telegramGame.getGame().getCreator().getId(), telegramGame.getPrivateMessageId(),
+                        ResponseMessageI18n.GAME_DELETED));
+            } else {
+                botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()).text(ResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE));
+            }
+        });
+
+        callbackQueryHandlerMap.put("game_join", (callbackQuery, data) -> {
+            TelegramGame telegramGame = cclhService.getGame(callbackQuery.message().chat().id());
+
             logger.info("ToDo"); // ToDo
         });
 
