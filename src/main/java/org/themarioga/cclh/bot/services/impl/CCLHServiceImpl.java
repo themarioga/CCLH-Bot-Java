@@ -76,41 +76,33 @@ public class CCLHServiceImpl implements CCLHService {
 
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
-    public TelegramGame deleteGame(TelegramGame tgGame) {
-        if (tgGame != null) {
-            telegramGameDao.delete(tgGame);
-            gameService.delete(tgGame.getGame());
-
-            return tgGame;
-        } else return null;
+    public void deleteGame(TelegramGame tgGame) {
+        telegramGameDao.delete(tgGame);
+        gameService.delete(tgGame.getGame());
     }
 
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
-    public TelegramGame setType(TelegramGame tgGame, GameTypeEnum type) {
+    public void setType(TelegramGame tgGame, GameTypeEnum type) {
         tgGame.setGame(gameService.setType(tgGame.getGame(), type));
-        return tgGame;
     }
 
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
-    public TelegramGame setNumberOfCardsToWin(TelegramGame tgGame, int numberOfCardsToWin) {
+    public void setNumberOfCardsToWin(TelegramGame tgGame, int numberOfCardsToWin) {
         tgGame.setGame(gameService.setNumberOfCardsToWin(tgGame.getGame(), numberOfCardsToWin));
-        return tgGame;
     }
 
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
-    public TelegramGame setMaxNumberOfPlayers(TelegramGame tgGame, int maxNumberOfPlayers) {
+    public void setMaxNumberOfPlayers(TelegramGame tgGame, int maxNumberOfPlayers) {
         tgGame.setGame(gameService.setMaxNumberOfPlayers(tgGame.getGame(), maxNumberOfPlayers));
-        return tgGame;
     }
 
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
-    public TelegramGame setDeck(TelegramGame tgGame, long deckId) {
+    public void setDeck(TelegramGame tgGame, long deckId) {
         tgGame.setGame(gameService.setDeck(tgGame.getGame(), deckId));
-        return tgGame;
     }
 
     @Override

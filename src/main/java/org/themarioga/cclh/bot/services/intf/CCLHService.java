@@ -12,15 +12,15 @@ public interface CCLHService {
 
     TelegramGame createGame(long roomId, String roomName, long creatorId, int groupMessageId, int privateMessageId);
 
-    TelegramGame deleteGame(TelegramGame telegramGame);
+    void deleteGame(TelegramGame telegramGame);
 
-    TelegramGame setType(TelegramGame game, GameTypeEnum type);
+    void setType(TelegramGame game, GameTypeEnum type);
 
-    TelegramGame setNumberOfCardsToWin(TelegramGame game, int numberOfCardsToWin);
+    void setNumberOfCardsToWin(TelegramGame game, int numberOfCardsToWin);
 
-    TelegramGame setMaxNumberOfPlayers(TelegramGame game, int maxNumberOfPlayers);
+    void setMaxNumberOfPlayers(TelegramGame game, int maxNumberOfPlayers);
 
-    TelegramGame setDeck(TelegramGame game, long deckId);
+    void setDeck(TelegramGame game, long deckId);
 
     TelegramGame getGame(long roomId);
 

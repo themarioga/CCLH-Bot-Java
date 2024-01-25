@@ -53,6 +53,13 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -83,6 +90,11 @@
             <properties>
                 <spring.profiles.active>dev</spring.profiles.active>
                 <tests.skip>true</tests.skip>
+
+                <log.level.bot>debug</log.level.bot>
+                <log.level.sql>debug</log.level.sql>
+                <log.level.jpa>warn</log.level.jpa>
+                <log.level.root>warn</log.level.root>
             </properties>
         </profile>
 
@@ -91,6 +103,11 @@
             <properties>
                 <spring.profiles.active>pro</spring.profiles.active>
                 <tests.skip>true</tests.skip>
+
+                <log.level.bot>info</log.level.bot>
+                <log.level.sql>warn</log.level.sql>
+                <log.level.jpa>warn</log.level.jpa>
+                <log.level.root>warn</log.level.root>
             </properties>
         </profile>
     </profiles>
