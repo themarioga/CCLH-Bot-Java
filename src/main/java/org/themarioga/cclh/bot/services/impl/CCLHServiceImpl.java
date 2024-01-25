@@ -13,10 +13,11 @@ import org.themarioga.cclh.commons.enums.GameTypeEnum;
 import org.themarioga.cclh.commons.exceptions.ApplicationException;
 import org.themarioga.cclh.commons.exceptions.game.GameAlreadyExistsException;
 import org.themarioga.cclh.commons.exceptions.user.UserAlreadyExistsException;
+import org.themarioga.cclh.commons.models.Deck;
 import org.themarioga.cclh.commons.models.Game;
-import org.themarioga.cclh.commons.services.intf.GameService;
-import org.themarioga.cclh.commons.services.intf.RoomService;
-import org.themarioga.cclh.commons.services.intf.UserService;
+import org.themarioga.cclh.commons.services.intf.*;
+
+import java.util.List;
 
 @Service
 public class CCLHServiceImpl implements CCLHService {
@@ -25,14 +26,18 @@ public class CCLHServiceImpl implements CCLHService {
 
     private final UserService userService;
     private final RoomService roomService;
+    private final DeckService deckService;
     private final GameService gameService;
+    private final ConfigurationService configurationService;
     private final TelegramGameDao telegramGameDao;
 
     @Autowired
-    public CCLHServiceImpl(UserService userService, RoomService roomService, GameService gameService, TelegramGameDao telegramGameDao) {
+    public CCLHServiceImpl(UserService userService, RoomService roomService, DeckService deckService, GameService gameService, ConfigurationService configurationService, TelegramGameDao telegramGameDao) {
         this.userService = userService;
         this.roomService = roomService;
+        this.deckService = deckService;
         this.gameService = gameService;
+        this.configurationService = configurationService;
         this.telegramGameDao = telegramGameDao;
     }
 
@@ -70,45 +75,73 @@ public class CCLHServiceImpl implements CCLHService {
     }
 
     @Override
-    public TelegramGame deleteGame(TelegramGame tgGame) {
-        telegramGameDao.delete(tgGame);
-        gameService.delete(tgGame.getGame());
+    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    public TelegramGame deleteGame(long creatorId) {
+        TelegramGame tgGame = getGameByCreatorId(creatorId);
 
-        return tgGame;
+        if (tgGame != null) {
+            telegramGameDao.delete(tgGame);
+            gameService.delete(tgGame.getGame());
+
+            return tgGame;
+        } else return null;
     }
 
     @Override
+    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public TelegramGame setType(TelegramGame tgGame, GameTypeEnum type) {
-        gameService.setType(tgGame.getGame(), type);
+        tgGame.setGame(gameService.setType(tgGame.getGame(), type));
         return tgGame;
     }
 
     @Override
+    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public TelegramGame setNumberOfCardsToWin(TelegramGame tgGame, int numberOfCardsToWin) {
-        gameService.setNumberOfCardsToWin(tgGame.getGame(), numberOfCardsToWin);
+        tgGame.setGame(gameService.setNumberOfCardsToWin(tgGame.getGame(), numberOfCardsToWin));
         return tgGame;
     }
 
     @Override
+    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public TelegramGame setMaxNumberOfPlayers(TelegramGame tgGame, int maxNumberOfPlayers) {
-        gameService.setMaxNumberOfPlayers(tgGame.getGame(), maxNumberOfPlayers);
+        tgGame.setGame(gameService.setMaxNumberOfPlayers(tgGame.getGame(), maxNumberOfPlayers));
         return tgGame;
     }
 
     @Override
-    public TelegramGame setDictionary(TelegramGame tgGame, long dictionaryId) {
-        gameService.setDictionary(tgGame.getGame(), dictionaryId);
+    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    public TelegramGame setDeck(TelegramGame tgGame, long deckId) {
+        tgGame.setGame(gameService.setDeck(tgGame.getGame(), deckId));
         return tgGame;
     }
 
     @Override
+    @Transactional(value = Transactional.TxType.SUPPORTS)
     public TelegramGame getGame(long roomId) {
         return telegramGameDao.getByRoom(roomService.getById(roomId));
     }
 
     @Override
+    @Transactional(value = Transactional.TxType.SUPPORTS)
     public TelegramGame getGameByCreatorId(long creatorId) {
         return telegramGameDao.getByCreator(userService.getById(creatorId));
+    }
+
+    @Override
+    public List<Deck> getDeckPaginated(long creatorId, int firstResult, int maxResults) {
+        return deckService.getDeckPaginated(userService.getById(creatorId), firstResult, maxResults);
+    }
+
+    @Override
+    @Transactional(value = Transactional.TxType.SUPPORTS)
+    public long getDeckCount(long creatorId) {
+        return deckService.getDeckCount(userService.getById(creatorId));
+    }
+
+    @Override
+    @Transactional(value = Transactional.TxType.SUPPORTS)
+    public int getDecksPerPage() {
+        return Integer.parseInt(configurationService.getConfiguration("game_dictionaries_per_page"));
     }
 
 }

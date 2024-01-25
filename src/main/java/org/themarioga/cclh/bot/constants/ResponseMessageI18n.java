@@ -30,6 +30,7 @@ public class ResponseMessageI18n {
 		El número actual de jugadores que se han unido es {4}.
 		""";
 	public static final String GAME_CREATED_PRIVATE = "He creado la partida en el grupo, puedes configurarla allí";
+	public static final String GAME_DELETED = "Se ha borrado la partida.";
 	public static final String HELP = "Esta es la ayuda";
 
 	public static String getGameTypeName(GameTypeEnum gameTypeEnum) {
