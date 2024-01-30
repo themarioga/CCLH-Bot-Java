@@ -1,12 +1,12 @@
-package org.themarioga.cclh.bot.services.intf;
+package org.themarioga.cclh.bot.app.intf;
 
 import com.pengrad.telegrambot.Callback;
 import com.pengrad.telegrambot.Cancellable;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.response.BaseResponse;
-import org.themarioga.cclh.bot.model.CallbackQueryHandler;
-import org.themarioga.cclh.bot.model.CommandHandler;
+import org.themarioga.cclh.bot.util.CallbackQueryHandler;
+import org.themarioga.cclh.bot.util.CommandHandler;
 
 import java.util.List;
 import java.util.Map;

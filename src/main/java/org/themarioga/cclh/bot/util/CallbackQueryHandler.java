@@ -1,4 +1,4 @@
-package org.themarioga.cclh.bot.model;
+package org.themarioga.cclh.bot.util;
 
 import com.pengrad.telegrambot.model.CallbackQuery;
 

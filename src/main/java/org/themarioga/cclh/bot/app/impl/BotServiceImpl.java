@@ -1,4 +1,4 @@
-package org.themarioga.cclh.bot.services.impl;
+package org.themarioga.cclh.bot.app.impl;
 
 import com.pengrad.telegrambot.Callback;
 import com.pengrad.telegrambot.Cancellable;
@@ -17,10 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.themarioga.cclh.bot.constants.ResponseErrorI18n;
-import org.themarioga.cclh.bot.model.CallbackQueryHandler;
-import org.themarioga.cclh.bot.model.CommandHandler;
+import org.themarioga.cclh.bot.util.CallbackQueryHandler;
+import org.themarioga.cclh.bot.util.CommandHandler;
 import org.themarioga.cclh.bot.util.BotUtils;
-import org.themarioga.cclh.bot.services.intf.BotService;
+import org.themarioga.cclh.bot.app.intf.BotService;
 import org.themarioga.cclh.commons.exceptions.ApplicationException;
 
 import java.io.IOException;
@@ -75,7 +75,7 @@ public class BotServiceImpl implements BotService {
 
         int lastUpdateId = UpdatesListener.CONFIRMED_UPDATES_ALL;
         for (Update update : updates) {
-            if (update.message() != null && update.message().text().startsWith("/")) {
+            if (update.message() != null && update.message().text() != null && update.message().text().startsWith("/")) {
                 CommandHandler commandHandler = commands.get(update.message().text().split("@")[0]);
                 if (commandHandler != null) {
                     commandHandler.callback(update.message());

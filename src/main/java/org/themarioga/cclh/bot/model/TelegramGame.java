@@ -1,12 +1,13 @@
 package org.themarioga.cclh.bot.model;
 
 import jakarta.persistence.*;
-import org.themarioga.cclh.commons.models.Base;
 import org.themarioga.cclh.commons.models.Game;
+
+import java.io.Serializable;
 
 @Entity
 @jakarta.persistence.Table(name = "t_telegram_game", uniqueConstraints = {@UniqueConstraint(columnNames = {"game_id"})})
-public class TelegramGame extends Base {
+public class TelegramGame implements Serializable {
 
 	@Id
 	@ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)

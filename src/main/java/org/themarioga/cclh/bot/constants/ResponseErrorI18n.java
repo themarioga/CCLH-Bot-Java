@@ -16,4 +16,6 @@ public class ResponseErrorI18n {
     public static final String GAME_ONLY_CREATOR_CAN_CONFIGURE = "Solo el creador de la partida puede configurarla.";
     public static final String GAME_NO_GAMES = "No tienes ninguna partida activa.";
 
+    public static final String PLAYER_ALREADY_JOINED = "Ya estas participando en esta partida.";
+
 }
