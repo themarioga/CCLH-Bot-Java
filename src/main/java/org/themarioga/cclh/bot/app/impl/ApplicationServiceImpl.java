@@ -30,6 +30,7 @@ import org.themarioga.cclh.bot.util.BotUtils;
 import org.themarioga.cclh.commons.enums.GameTypeEnum;
 import org.themarioga.cclh.commons.exceptions.ApplicationException;
 import org.themarioga.cclh.commons.exceptions.game.GameAlreadyExistsException;
+import org.themarioga.cclh.commons.exceptions.game.GameAlreadyFilledException;
 import org.themarioga.cclh.commons.exceptions.player.PlayerAlreadyExistsException;
 import org.themarioga.cclh.commons.exceptions.user.UserAlreadyExistsException;
 import org.themarioga.cclh.commons.models.Deck;
@@ -47,9 +48,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private final BotService botService;
     private final CCLHService cclhService;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Autowired
     ApplicationService applicationService;
@@ -385,9 +383,14 @@ public class ApplicationServiceImpl implements ApplicationService {
             TelegramGame telegramGame = cclhService.getGame(callbackQuery.message().chat().id());
 
             if (callbackQuery.from().id().equals(telegramGame.getGame().getCreator().getId())) {
-                cclhService.setMaxNumberOfPlayers(telegramGame, Integer.parseInt(data));
+                try {
+                    cclhService.setMaxNumberOfPlayers(telegramGame, Integer.parseInt(data));
 
-                sendConfigMenu(telegramGame);
+                    sendConfigMenu(telegramGame);
+                } catch (GameAlreadyFilledException e) {
+                    botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id())
+                            .text(ResponseErrorI18n.GAME_ALREADY_FILLED));
+                }
             } else {
                 botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id())
                         .text(ResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE));
@@ -473,15 +476,36 @@ public class ApplicationServiceImpl implements ApplicationService {
                 }
             }));
 
+        callbackQueryHandlerMap.put("game_start", (callbackQuery, data) -> {
+            TelegramGame telegramGame = cclhService.getGame(callbackQuery.message().chat().id());
+
+            if (callbackQuery.from().id().equals(telegramGame.getGame().getCreator().getId())) {
+                // ToDo: start game
+            } else {
+                botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id())
+                        .text(ResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE));
+            }
+        });
+
         return callbackQueryHandlerMap;
     }
 
     private void sendMainMenu(TelegramGame telegramGame) {
-        InlineKeyboardMarkup groupInlineKeyboard = new InlineKeyboardMarkup(
-                new InlineKeyboardButton[]{ new InlineKeyboardButton("Unirse a la partida").callbackData("game_join") },
-                new InlineKeyboardButton[]{ new InlineKeyboardButton("Configurar la partida").callbackData("game_configure") },
-                new InlineKeyboardButton[]{ new InlineKeyboardButton("Borrar juego").callbackData("game_delete_group") }
-        );
+        InlineKeyboardMarkup groupInlineKeyboard;
+        if (telegramGame.getGame().getPlayers().size() >= cclhService.getMinNumberOfPlayers()) {
+            groupInlineKeyboard = new InlineKeyboardMarkup(
+                    new InlineKeyboardButton[]{ new InlineKeyboardButton("Unirse a la partida").callbackData("game_join") },
+                    new InlineKeyboardButton[]{ new InlineKeyboardButton("Configurar la partida").callbackData("game_configure") },
+                    new InlineKeyboardButton[]{ new InlineKeyboardButton("Borrar juego").callbackData("game_delete_group") }
+            );
+        } else {
+            groupInlineKeyboard = new InlineKeyboardMarkup(
+                    new InlineKeyboardButton[]{ new InlineKeyboardButton("Unirse a la partida").callbackData("game_join") },
+                    new InlineKeyboardButton[]{ new InlineKeyboardButton("Configurar la partida").callbackData("game_configure") },
+                    new InlineKeyboardButton[]{ new InlineKeyboardButton("Iniciar la partida").callbackData("game_start") },
+                    new InlineKeyboardButton[]{ new InlineKeyboardButton("Borrar juego").callbackData("game_delete_group") }
+            );
+        }
         botService.sendMessage(new EditMessageText(telegramGame.getGame().getRoom().getId(),
                 telegramGame.getGroupMessageId(), getCreatedGameMessage(telegramGame))
                 .replyMarkup(groupInlineKeyboard));

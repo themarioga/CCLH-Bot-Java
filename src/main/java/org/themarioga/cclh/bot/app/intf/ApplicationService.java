@@ -12,6 +12,6 @@ public interface ApplicationService {
 
 	void createGame(Message message, SendResponse groupResponse, SendResponse privateResponse, SendResponse playerResponse);
 
-	@Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
 	void joinGame(CallbackQuery callbackQuery, SendResponse playerResponse);
+
 }

@@ -1,8 +1,10 @@
 package org.themarioga.cclh.bot.app.intf;
 
+import jakarta.transaction.Transactional;
 import org.themarioga.cclh.bot.model.TelegramGame;
 import org.themarioga.cclh.bot.model.TelegramPlayer;
 import org.themarioga.cclh.commons.enums.GameTypeEnum;
+import org.themarioga.cclh.commons.exceptions.ApplicationException;
 import org.themarioga.cclh.commons.models.Deck;
 
 import java.util.List;
@@ -34,4 +36,7 @@ public interface CCLHService {
 	long getDeckCount(long creatorId);
 
     int getDecksPerPage();
+
+	int getMinNumberOfPlayers();
+
 }

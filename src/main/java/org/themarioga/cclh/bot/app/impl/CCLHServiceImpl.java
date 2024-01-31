@@ -128,4 +128,10 @@ public class CCLHServiceImpl implements CCLHService {
         return Integer.parseInt(configurationService.getConfiguration("game_dictionaries_per_page"));
     }
 
+    @Override
+    @Transactional(value = Transactional.TxType.SUPPORTS, rollbackOn = ApplicationException.class)
+    public int getMinNumberOfPlayers() {
+        return Integer.parseInt(configurationService.getConfiguration("game_min_number_of_players"));
+    }
+
 }
