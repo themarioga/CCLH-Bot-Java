@@ -8,10 +8,7 @@ public class ResponseMessageI18n {
 		throw new UnsupportedOperationException();
 	}
 
-	public static final String WELCOME = """
-		¡Bienvenido! Acabo de añadirte a mi base de datos.
-		Siempre que necesites ayuda puedes escribir /help
-		¡Gracias por unirte!""";
+	// Game constants
 	public static final String GAME_CREATING = "Un momentito, estoy creando la partida...";
 	public static final String GAME_CREATED_GROUP = """
 		¡Ya he creado la partida!
@@ -23,10 +20,30 @@ public class ResponseMessageI18n {
 		El número actual de jugadores que se han unido es {4}.
 		""";
 	public static final String GAME_CREATED_PRIVATE = "He creado la partida en el grupo, puedes configurarla allí";
+	public static final String GAME_SELECT_CARD = """
+			La carta negra de esta ronda es:
+			
+			{0}
+			
+			Ahora los jugadores seleccionarán las cartas blancas.
+			""";
 	public static final String GAME_DELETED = "Se ha borrado la partida.";
 
+	// Player constants
+	public static final String PLAYER_WELCOME = """
+		¡Bienvenido! Acabo de añadirte a mi base de datos.
+		Siempre que necesites ayuda puedes escribir /help
+		¡Gracias por unirte!""";
 	public static final String PLAYER_CREATING = "Un momentito, estoy intentando unirte a la partida...";
 	public static final String PLAYER_CREATED = "Te has unido a la partida.";
+	public static final String PLAYER_SELECT_CARD = """
+			La carta negra de esta ronda es:
+			
+			{0}
+			
+			Ahora debes votar una carta blanca de las siguientes:
+			""";
+
 	public static final String HELP = "Esta es la ayuda";
 
 	public static String getGameTypeName(GameTypeEnum gameTypeEnum) {

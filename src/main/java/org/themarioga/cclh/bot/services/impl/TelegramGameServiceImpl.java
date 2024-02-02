@@ -88,6 +88,14 @@ public class TelegramGameServiceImpl implements TelegramGameService {
 	}
 
 	@Override
+	@Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+	public void startGame(TelegramGame tgGame) {
+		gameService.startGame(tgGame.getGame());
+
+		gameService.startRound(tgGame.getGame());
+	}
+
+	@Override
 	@Transactional(value = Transactional.TxType.SUPPORTS)
 	public TelegramGame getGame(long roomId) {
 		return telegramGameDao.getByRoom(roomService.getById(roomId));

@@ -1,8 +1,6 @@
 package org.themarioga.cclh.bot.app.impl;
 
 import jakarta.transaction.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.themarioga.cclh.bot.model.TelegramGame;
@@ -19,8 +17,6 @@ import java.util.List;
 
 @Service
 public class CCLHServiceImpl implements CCLHService {
-
-    private static final Logger logger = LoggerFactory.getLogger(CCLHServiceImpl.class);
 
     private final UserService userService;
     private final DeckService deckService;
@@ -91,12 +87,16 @@ public class CCLHServiceImpl implements CCLHService {
 
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
-    public TelegramPlayer joinGame(TelegramGame tgGame, long userId, int messageId) {
+    public void joinGame(TelegramGame tgGame, long userId, int messageId) {
         TelegramPlayer telegramPlayer = telegramPlayerService.createPlayer(tgGame, userId, messageId);
 
         telegramGameService.joinGame(tgGame, telegramPlayer);
+    }
 
-        return telegramPlayer;
+    @Override
+    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    public void startGame(TelegramGame tgGame) {
+        telegramGameService.startGame(tgGame);
     }
 
     @Override
@@ -109,6 +109,12 @@ public class CCLHServiceImpl implements CCLHService {
     @Transactional(value = Transactional.TxType.SUPPORTS)
     public TelegramGame getGameByCreatorId(long creatorId) {
         return telegramGameService.getGameByCreatorId(creatorId);
+    }
+
+    @Override
+    @Transactional(value = Transactional.TxType.SUPPORTS)
+    public List<TelegramPlayer> getPlayers(TelegramGame game) {
+        return telegramPlayerService.getPlayers(game);
     }
 
     @Override

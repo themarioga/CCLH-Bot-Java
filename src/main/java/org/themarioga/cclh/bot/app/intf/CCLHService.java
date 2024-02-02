@@ -1,10 +1,8 @@
 package org.themarioga.cclh.bot.app.intf;
 
-import jakarta.transaction.Transactional;
 import org.themarioga.cclh.bot.model.TelegramGame;
 import org.themarioga.cclh.bot.model.TelegramPlayer;
 import org.themarioga.cclh.commons.enums.GameTypeEnum;
-import org.themarioga.cclh.commons.exceptions.ApplicationException;
 import org.themarioga.cclh.commons.models.Deck;
 
 import java.util.List;
@@ -25,11 +23,15 @@ public interface CCLHService {
 
     void setDeck(TelegramGame game, long deckId);
 
-    TelegramPlayer joinGame(TelegramGame game, long userId, int messageId);
+    void joinGame(TelegramGame game, long userId, int messageId);
+
+    void startGame(TelegramGame tgGame);
 
     TelegramGame getGame(long roomId);
 
     TelegramGame getGameByCreatorId(long creatorId);
+
+    List<TelegramPlayer> getPlayers(TelegramGame game);
 
     List<Deck> getDeckPaginated(long creatorId, int firstResult, int maxResults);
 

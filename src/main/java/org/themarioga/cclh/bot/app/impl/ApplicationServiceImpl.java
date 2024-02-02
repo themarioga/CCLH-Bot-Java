@@ -10,8 +10,6 @@ import com.pengrad.telegrambot.request.AnswerCallbackQuery;
 import com.pengrad.telegrambot.request.EditMessageText;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +25,7 @@ import org.themarioga.cclh.bot.model.TelegramGame;
 import org.themarioga.cclh.bot.app.intf.BotService;
 import org.themarioga.cclh.bot.app.intf.CCLHService;
 import org.themarioga.cclh.bot.util.BotUtils;
+import org.themarioga.cclh.commons.enums.GameStatusEnum;
 import org.themarioga.cclh.commons.enums.GameTypeEnum;
 import org.themarioga.cclh.commons.exceptions.ApplicationException;
 import org.themarioga.cclh.commons.exceptions.game.GameAlreadyExistsException;
@@ -34,6 +33,7 @@ import org.themarioga.cclh.commons.exceptions.game.GameAlreadyFilledException;
 import org.themarioga.cclh.commons.exceptions.player.PlayerAlreadyExistsException;
 import org.themarioga.cclh.commons.exceptions.user.UserAlreadyExistsException;
 import org.themarioga.cclh.commons.models.Deck;
+import org.themarioga.cclh.commons.models.PlayerHandCard;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -88,14 +88,14 @@ public class ApplicationServiceImpl implements ApplicationService {
     public void joinGame(CallbackQuery callbackQuery, SendResponse playerResponse) {
         TelegramGame telegramGame = cclhService.getGame(callbackQuery.message().chat().id());
 
-        TelegramPlayer telegramPlayer = cclhService.joinGame(telegramGame, callbackQuery.from().id(),
+        cclhService.joinGame(telegramGame, callbackQuery.from().id(),
                 playerResponse.message().messageId());
 
         InlineKeyboardMarkup privateInlineKeyboard = new InlineKeyboardMarkup(
                 new InlineKeyboardButton("Dejar la partida").callbackData("game_leave")
         );
-        botService.sendMessage(new EditMessageText(telegramPlayer.getPlayer().getUser().getId(),
-                telegramPlayer.getMessageId(), ResponseMessageI18n.PLAYER_CREATED)
+        botService.sendMessage(new EditMessageText(callbackQuery.from().id(),
+                playerResponse.message().messageId(), ResponseMessageI18n.PLAYER_CREATED)
                 .replyMarkup(privateInlineKeyboard));
 
         sendMainMenu(telegramGame);
@@ -115,7 +115,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             try {
                 cclhService.registerUser(message.from().id(), BotUtils.getUsername(message.from()));
 
-                botService.sendMessage(new SendMessage(message.chat().id(), ResponseMessageI18n.WELCOME));
+                botService.sendMessage(new SendMessage(message.chat().id(), ResponseMessageI18n.PLAYER_WELCOME));
             } catch (UserAlreadyExistsException e) {
                 logger.error("El usuario {} ({}) esta intentando registrarse de nuevo.", message.from().id(),
                         BotUtils.getUsername(message.from()));
@@ -480,7 +480,30 @@ public class ApplicationServiceImpl implements ApplicationService {
             TelegramGame telegramGame = cclhService.getGame(callbackQuery.message().chat().id());
 
             if (callbackQuery.from().id().equals(telegramGame.getGame().getCreator().getId())) {
-                // ToDo: start game
+                cclhService.startGame(telegramGame);
+
+                InlineKeyboardMarkup groupInlineKeyboard = new InlineKeyboardMarkup(
+                        new InlineKeyboardButton("Borrar juego").callbackData("game_delete_private"));
+
+                botService.sendMessage(new EditMessageText(telegramGame.getGame().getRoom().getId(),
+                        telegramGame.getGroupMessageId(),
+                        formatMessage(ResponseMessageI18n.GAME_SELECT_CARD,
+                                telegramGame.getGame().getTable().getCurrentBlackCard().getText()))
+                        .replyMarkup(groupInlineKeyboard));
+
+                List<TelegramPlayer> players = cclhService.getPlayers(telegramGame);
+                for (TelegramPlayer player : players) {
+                    InlineKeyboardMarkup playerInlineKeyboard = new InlineKeyboardMarkup();
+                    for (PlayerHandCard card : player.getPlayer().getHand()) {
+                        playerInlineKeyboard.addRow(new InlineKeyboardButton(card.getCard().getText()).callbackData("play_card_" + card.getCard().getId()));
+                    }
+
+                    botService.sendMessage(new EditMessageText(player.getPlayer().getUser().getId(),
+                            player.getMessageId(),
+                            formatMessage(ResponseMessageI18n.PLAYER_SELECT_CARD,
+                                    telegramGame.getGame().getTable().getCurrentBlackCard().getText()))
+                            .replyMarkup(playerInlineKeyboard));
+                }
             } else {
                 botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id())
                         .text(ResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE));
@@ -491,21 +514,23 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     private void sendMainMenu(TelegramGame telegramGame) {
-        InlineKeyboardMarkup groupInlineKeyboard;
-        if (telegramGame.getGame().getPlayers().size() >= cclhService.getMinNumberOfPlayers()) {
-            groupInlineKeyboard = new InlineKeyboardMarkup(
-                    new InlineKeyboardButton[]{ new InlineKeyboardButton("Unirse a la partida").callbackData("game_join") },
-                    new InlineKeyboardButton[]{ new InlineKeyboardButton("Configurar la partida").callbackData("game_configure") },
-                    new InlineKeyboardButton[]{ new InlineKeyboardButton("Borrar juego").callbackData("game_delete_group") }
-            );
-        } else {
-            groupInlineKeyboard = new InlineKeyboardMarkup(
-                    new InlineKeyboardButton[]{ new InlineKeyboardButton("Unirse a la partida").callbackData("game_join") },
-                    new InlineKeyboardButton[]{ new InlineKeyboardButton("Configurar la partida").callbackData("game_configure") },
-                    new InlineKeyboardButton[]{ new InlineKeyboardButton("Iniciar la partida").callbackData("game_start") },
-                    new InlineKeyboardButton[]{ new InlineKeyboardButton("Borrar juego").callbackData("game_delete_group") }
-            );
+        InlineKeyboardMarkup groupInlineKeyboard = new InlineKeyboardMarkup();
+
+        if (telegramGame.getGame().getStatus().equals(GameStatusEnum.CREATED)) {
+            if (telegramGame.getGame().getPlayers().size() < telegramGame.getGame().getMaxNumberOfPlayers()) {
+                groupInlineKeyboard.addRow(new InlineKeyboardButton("Unirse a la partida").callbackData("game_join"));
+            }
+
+            groupInlineKeyboard.addRow(new InlineKeyboardButton("Configurar la partida").callbackData("game_configure"));
+
+            if (telegramGame.getGame().getPlayers().size() >= cclhService.getMinNumberOfPlayers()) {
+                groupInlineKeyboard.addRow(new InlineKeyboardButton("Iniciar la partida").callbackData("game_start"));
+            }
+
         }
+
+        groupInlineKeyboard.addRow(new InlineKeyboardButton("Borrar juego").callbackData("game_delete_group"));
+
         botService.sendMessage(new EditMessageText(telegramGame.getGame().getRoom().getId(),
                 telegramGame.getGroupMessageId(), getCreatedGameMessage(telegramGame))
                 .replyMarkup(groupInlineKeyboard));
@@ -531,6 +556,10 @@ public class ApplicationServiceImpl implements ApplicationService {
                 new EditMessageText(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
                         getCreatedGameMessage(telegramGame))
                     .replyMarkup(groupInlineKeyboard));
+    }
+
+    private String formatMessage(String text, Object... vars) {
+        return MessageFormat.format(text, vars);
     }
 
     private String getCreatedGameMessage(TelegramGame telegramGame) {

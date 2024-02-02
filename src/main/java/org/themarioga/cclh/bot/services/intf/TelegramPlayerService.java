@@ -10,4 +10,7 @@ public interface TelegramPlayerService {
 	TelegramPlayer createPlayer(TelegramGame telegramGame, long userId, int messageId);
 
 	List<TelegramPlayer> deletePlayers(TelegramGame tgGame);
+
+	List<TelegramPlayer> getPlayers(TelegramGame tgGame);
+
 }

@@ -47,4 +47,10 @@ public class TelegramPlayerServiceImpl implements TelegramPlayerService {
 		return telegramPlayerList;
 	}
 
+	@Override
+	@Transactional(value = Transactional.TxType.SUPPORTS)
+	public List<TelegramPlayer> getPlayers(TelegramGame tgGame) {
+		return telegramPlayerDao.getByGame(tgGame.getGame());
+	}
+
 }
