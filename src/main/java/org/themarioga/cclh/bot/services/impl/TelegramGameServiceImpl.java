@@ -60,6 +60,14 @@ public class TelegramGameServiceImpl implements TelegramGameService {
 
 	@Override
 	@Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+	public void setBlackCardMessage(TelegramGame tgGame, int blackCardMessageId) {
+		tgGame.setBlackCardMessageId(blackCardMessageId);
+
+		telegramGameDao.update(tgGame);
+	}
+
+	@Override
+	@Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
 	public void setType(TelegramGame tgGame, GameTypeEnum type) {
 		tgGame.setGame(gameService.setType(tgGame.getGame(), type));
 	}

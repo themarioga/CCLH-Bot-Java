@@ -63,6 +63,12 @@ public class CCLHServiceImpl implements CCLHService {
 
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    public void setBlackCardMessage(TelegramGame tgGame, int blackCardMessageId) {
+        telegramGameService.setBlackCardMessage(tgGame, blackCardMessageId);
+    }
+
+    @Override
+    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void setType(TelegramGame tgGame, GameTypeEnum type) {
         telegramGameService.setType(tgGame, type);
     }

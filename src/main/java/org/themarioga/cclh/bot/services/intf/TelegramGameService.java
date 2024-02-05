@@ -10,6 +10,8 @@ public interface TelegramGameService {
 
 	void deleteGame(TelegramGame telegramGame);
 
+	void setBlackCardMessage(TelegramGame tgGame, int blackCardMessageId);
+
 	void setType(TelegramGame game, GameTypeEnum type);
 
 	void setNumberOfCardsToWin(TelegramGame game, int numberOfCardsToWin);

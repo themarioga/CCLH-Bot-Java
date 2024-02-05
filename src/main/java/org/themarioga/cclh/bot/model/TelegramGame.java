@@ -17,6 +17,8 @@ public class TelegramGame implements Serializable {
 	private Integer groupMessageId;
 	@Column(name = "private_message_id", nullable = false)
 	private Integer privateMessageId;
+	@Column(name = "blackcard_message_id")
+	private Integer blackCardMessageId;
 
 	public Integer getGroupMessageId() {
 		return groupMessageId;
@@ -34,6 +36,14 @@ public class TelegramGame implements Serializable {
 		this.privateMessageId = privateMessageId;
 	}
 
+	public Integer getBlackCardMessageId() {
+		return blackCardMessageId;
+	}
+
+	public void setBlackCardMessageId(Integer blackCardMessageId) {
+		this.blackCardMessageId = blackCardMessageId;
+	}
+
 	public Game getGame() {
 		return game;
 	}
@@ -48,6 +58,7 @@ public class TelegramGame implements Serializable {
 				"id=" + game.getId() +
 				", groupMessageId=" + groupMessageId +
 				", privateMessageId=" + privateMessageId +
+				", blackCardMessageId=" + blackCardMessageId +
 				'}';
 	}
 }
