@@ -1,10 +1,8 @@
 package org.themarioga.cclh.bot.services.intf;
 
-import jakarta.transaction.Transactional;
 import org.themarioga.cclh.bot.model.TelegramGame;
 import org.themarioga.cclh.bot.model.TelegramPlayer;
 import org.themarioga.cclh.commons.enums.GameTypeEnum;
-import org.themarioga.cclh.commons.exceptions.ApplicationException;
 
 public interface TelegramGameService {
 
@@ -22,8 +20,11 @@ public interface TelegramGameService {
 
 	void joinGame(TelegramGame game, TelegramPlayer player);
 
-	@Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
 	void startGame(TelegramGame tgGame);
+
+	void voteForDeletion(TelegramGame tgGame, long userId);
+
+	void playCard(TelegramGame tgGame, long userId, long cardId);
 
 	TelegramGame getGame(long roomId);
 

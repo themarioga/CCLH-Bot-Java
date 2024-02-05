@@ -11,6 +11,7 @@ import org.themarioga.cclh.bot.model.TelegramPlayer;
 import org.themarioga.cclh.bot.services.intf.TelegramGameService;
 import org.themarioga.cclh.commons.enums.ErrorEnum;
 import org.themarioga.cclh.commons.enums.GameTypeEnum;
+import org.themarioga.cclh.commons.enums.TableStatusEnum;
 import org.themarioga.cclh.commons.exceptions.ApplicationException;
 import org.themarioga.cclh.commons.models.Game;
 import org.themarioga.cclh.commons.services.intf.GameService;
@@ -92,7 +93,23 @@ public class TelegramGameServiceImpl implements TelegramGameService {
 	public void startGame(TelegramGame tgGame) {
 		gameService.startGame(tgGame.getGame());
 
-		gameService.startRound(tgGame.getGame());
+		if (tgGame.getGame().getTable().getStatus().equals(TableStatusEnum.STARTING)) {
+			gameService.startRound(tgGame.getGame());
+		} else {
+			logger.error("La partida no se ha iniciado correctamente");
+		}
+	}
+
+	@Override
+	@Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+	public void voteForDeletion(TelegramGame tgGame, long userId) {
+		gameService.voteForDeletion(tgGame.getGame(), userId);
+	}
+
+	@Override
+	@Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+	public void playCard(TelegramGame tgGame, long userId, long cardId) {
+		gameService.playCard(tgGame.getGame(), userId, cardId);
 	}
 
 	@Override

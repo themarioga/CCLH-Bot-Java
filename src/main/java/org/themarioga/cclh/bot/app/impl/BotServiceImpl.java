@@ -5,6 +5,7 @@ import com.pengrad.telegrambot.Cancellable;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.AnswerCallbackQuery;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.DeleteWebhook;
 import com.pengrad.telegrambot.request.SendMessage;
@@ -106,18 +107,8 @@ public class BotServiceImpl implements BotService {
                             update.callbackQuery().data(),
                             BotUtils.getUserInfo(update.callbackQuery().message().from()));
 
-                    sendMessageAsync(new SendMessage(update.callbackQuery().message().chat().id(),
-                            ResponseErrorI18n.COMMAND_DOES_NOT_EXISTS), new Callback<SendMessage, SendResponse>() {
-                        @Override
-                        public void onResponse(SendMessage request, SendResponse response) {
-                            logger.trace("Error enviado correctamente");
-                        }
-
-                        @Override
-                        public void onFailure(SendMessage request, IOException e) {
-                            logger.error("No se ha podido enviar el mensaje.", e);
-                        }
-                    });
+                    sendMessage(new AnswerCallbackQuery(update.callbackQuery().id())
+                            .text(ResponseErrorI18n.COMMAND_DOES_NOT_EXISTS));
                 }
             }
 

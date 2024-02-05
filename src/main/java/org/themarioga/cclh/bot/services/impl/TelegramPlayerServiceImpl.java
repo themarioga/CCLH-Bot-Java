@@ -10,6 +10,7 @@ import org.themarioga.cclh.bot.services.intf.TelegramPlayerService;
 import org.themarioga.cclh.commons.exceptions.ApplicationException;
 import org.themarioga.cclh.commons.models.Player;
 import org.themarioga.cclh.commons.services.intf.PlayerService;
+import org.themarioga.cclh.commons.services.intf.UserService;
 
 import java.util.List;
 
@@ -18,11 +19,13 @@ public class TelegramPlayerServiceImpl implements TelegramPlayerService {
 
 	private final TelegramPlayerDao telegramPlayerDao;
 	private final PlayerService playerService;
+	private final UserService userService;
 
 	@Autowired
-	public TelegramPlayerServiceImpl(TelegramPlayerDao telegramPlayerDao, PlayerService playerService) {
+	public TelegramPlayerServiceImpl(TelegramPlayerDao telegramPlayerDao, PlayerService playerService, UserService userService) {
 		this.telegramPlayerDao = telegramPlayerDao;
 		this.playerService = playerService;
+		this.userService = userService;
 	}
 
 	@Override
@@ -45,6 +48,11 @@ public class TelegramPlayerServiceImpl implements TelegramPlayerService {
 		}
 
 		return telegramPlayerList;
+	}
+
+	@Override
+	public TelegramPlayer getByUser(long userId) {
+		return telegramPlayerDao.getByUser(userService.getById(userId));
 	}
 
 	@Override

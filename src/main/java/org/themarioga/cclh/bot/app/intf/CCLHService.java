@@ -27,9 +27,15 @@ public interface CCLHService {
 
     void startGame(TelegramGame tgGame);
 
+    void voteForDeletion(TelegramGame tgGame, long userId);
+
+    void playCard(TelegramGame tgGame, long userId, long cardId);
+
     TelegramGame getGame(long roomId);
 
     TelegramGame getGameByCreatorId(long creatorId);
+
+    TelegramPlayer getPlayer(long userId);
 
     List<TelegramPlayer> getPlayers(TelegramGame game);
 

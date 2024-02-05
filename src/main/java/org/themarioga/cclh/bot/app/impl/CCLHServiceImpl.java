@@ -100,6 +100,18 @@ public class CCLHServiceImpl implements CCLHService {
     }
 
     @Override
+    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    public void voteForDeletion(TelegramGame tgGame, long userId){
+        telegramGameService.voteForDeletion(tgGame, userId);
+    }
+
+    @Override
+    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    public void playCard(TelegramGame tgGame, long userId, long cardId) {
+        telegramGameService.playCard(tgGame, userId, cardId);
+    }
+
+    @Override
     @Transactional(value = Transactional.TxType.SUPPORTS)
     public TelegramGame getGame(long roomId) {
         return telegramGameService.getGame(roomId);
@@ -112,12 +124,18 @@ public class CCLHServiceImpl implements CCLHService {
     }
 
     @Override
+    public TelegramPlayer getPlayer(long userId) {
+        return telegramPlayerService.getByUser(userId);
+    }
+
+    @Override
     @Transactional(value = Transactional.TxType.SUPPORTS)
     public List<TelegramPlayer> getPlayers(TelegramGame game) {
         return telegramPlayerService.getPlayers(game);
     }
 
     @Override
+    @Transactional(value = Transactional.TxType.SUPPORTS)
     public List<Deck> getDeckPaginated(long creatorId, int firstResult, int maxResults) {
         return deckService.getDeckPaginated(userService.getById(creatorId), firstResult, maxResults);
     }
