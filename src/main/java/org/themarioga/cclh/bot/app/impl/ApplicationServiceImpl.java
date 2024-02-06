@@ -493,33 +493,57 @@ public class ApplicationServiceImpl implements ApplicationService {
         });
 
         callbackQueryHandlerMap.put("play_card", (callbackQuery, data) -> {
-            TelegramPlayer telegramPlayer = cclhService.getPlayer(callbackQuery.from().id());
+            TelegramGame telegramGame = cclhService.getByPlayerUser(callbackQuery.from().id());
 
-            if (telegramPlayer != null) {
-                TelegramGame telegramGame = cclhService.getGame(telegramPlayer.getPlayer().getGame().getRoom().getId());
-
+            if (telegramGame != null) {
                 try {
                     cclhService.playCard(telegramGame, callbackQuery.from().id(), Integer.parseInt(data));
 
+                    TelegramPlayer telegramPlayer = cclhService.getPlayer(callbackQuery.from().id());
+
                     if (telegramGame.getGame().getTable().getStatus().equals(TableStatusEnum.PLAYING)) {
-                        Optional<PlayedCard> e = telegramGame.getGame().getTable().getPlayedCards().stream()
-                                .filter(playedCard -> playedCard.getPlayer().getId()
-                                        .equals(telegramPlayer.getPlayer().getId())).findFirst();
-                        if (e.isPresent()) {
+                        PlayedCard playedCard = getPlayedCardByPlayer(telegramGame, telegramPlayer);
+
+                        if (playedCard != null) {
                             botService.sendMessage(new EditMessageText(telegramPlayer.getPlayer().getUser().getId(),
                                     telegramPlayer.getMessageId(),
                                     StringUtils.formatMessage(ResponseMessageI18n.PLAYER_SELECTED_CARD,
                                             telegramGame.getGame().getTable().getCurrentBlackCard().getText(),
-                                            e.get().getCard().getText())));
+                                            playedCard.getCard().getText())));
                         } else {
+                            logger.error("No se ha encontrado el jugador o la carta jugada");
+
                             botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id())
                                     .text(ResponseErrorI18n.PLAYER_DOES_NOT_EXISTS));
                         }
                     } else if (telegramGame.getGame().getTable().getStatus().equals(TableStatusEnum.VOTING)) {
-                        // ToDo: comportamiento cuando hay que votar
+                        if (telegramGame.getGame().getType().equals(GameTypeEnum.DEMOCRACY)) {
+                            sendVotesToAllPlayers(telegramGame);
+                        } else if (telegramGame.getGame().getType().equals(GameTypeEnum.CLASSIC)
+                                    || telegramGame.getGame().getType().equals(GameTypeEnum.DICTATORSHIP)) {
+                            sendVotesToPlayer(telegramGame, cclhService.getPlayer(telegramGame.getGame().getCreator().getId()));
+                        }
                     } else {
                         logger.error("Juego en estado incorrecto: {}", telegramGame.getGame().getId());
                     }
+                } catch (PlayerAlreadyPlayedCardException e) {
+                    logger.error(e.getMessage(), e);
+
+                    botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id())
+                            .text(ResponseErrorI18n.PLAYER_ALREADY_PLAYED_CARD));
+                }
+            } else {
+                botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id())
+                        .text(ResponseErrorI18n.PLAYER_DOES_NOT_EXISTS));
+            }
+        });
+
+        callbackQueryHandlerMap.put("vote_card", (callbackQuery, data) -> {
+            TelegramGame telegramGame = cclhService.getByPlayerUser(callbackQuery.from().id());
+
+            if (telegramGame != null) {
+                try {
+                    // ToDo: process vote
                 } catch (PlayerAlreadyPlayedCardException e) {
                     logger.error(e.getMessage(), e);
 
@@ -650,6 +674,38 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
     }
 
+    private void sendVotesToAllPlayers(TelegramGame telegramGame) {
+        List<TelegramPlayer> telegramPlayers = cclhService.getPlayers(telegramGame);
+
+        for (TelegramPlayer tgPlayer : telegramPlayers) {
+            sendVotesToPlayer(telegramGame, tgPlayer);
+        }
+    }
+
+    private void sendVotesToPlayer(TelegramGame telegramGame, TelegramPlayer tgPlayer) {
+        PlayedCard playedCard = getPlayedCardByPlayer(telegramGame, tgPlayer);
+        if (playedCard != null) {
+            List<PlayedCard> playedCards = telegramGame.getGame().getTable().getPlayedCards();
+
+            InlineKeyboardMarkup cardInlineKeyboard = new InlineKeyboardMarkup();
+            for (PlayedCard otherPlayerPlayedCard : playedCards) {
+                if (!otherPlayerPlayedCard.getPlayer().getId().equals(tgPlayer.getPlayer().getId())) {
+                    cardInlineKeyboard.addRow(new InlineKeyboardButton(otherPlayerPlayedCard.getCard().getText())
+                            .callbackData("vote_card__" + otherPlayerPlayedCard.getCard().getId()));
+                }
+            }
+
+            botService.sendMessage(new EditMessageText(tgPlayer.getPlayer().getUser().getId(),
+                    tgPlayer.getMessageId(),
+                    StringUtils.formatMessage(ResponseMessageI18n.PLAYER_VOTE_CARD,
+                            telegramGame.getGame().getTable().getCurrentBlackCard().getText(),
+                            playedCard.getCard().getText()))
+                    .replyMarkup(cardInlineKeyboard));
+        } else {
+            logger.error("No se ha encontrado la carta del jugador");
+        }
+    }
+
     private String getCreatedGameMessage(TelegramGame telegramGame) {
         return MessageFormat.format(ResponseMessageI18n.GAME_CREATED_GROUP,
                 ResponseMessageI18n.getGameTypeName(telegramGame.getGame().getType()),
@@ -666,6 +722,14 @@ public class ApplicationServiceImpl implements ApplicationService {
     private String getVoteDeletionNumberMessage(TelegramGame telegramGame) {
         return MessageFormat.format(ResponseMessageI18n.GAME_CREATED_CURRENT_VOTE_DELETION_NUMBER,
                 telegramGame.getGame().getDeletionVotes().size());
+    }
+
+    private PlayedCard getPlayedCardByPlayer(TelegramGame telegramGame, TelegramPlayer telegramPlayer) {
+        Optional<PlayedCard> e = telegramGame.getGame().getTable().getPlayedCards().stream()
+                .filter(playedCard -> playedCard.getPlayer().getId()
+                        .equals(telegramPlayer.getPlayer().getId())).findFirst();
+
+	    return e.orElse(null);
     }
 
 }

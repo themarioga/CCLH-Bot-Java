@@ -41,7 +41,7 @@ public class ResponseMessageI18n {
 			
 			{0}
 			
-			Debes votar una carta blanca de las siguientes:
+			Debes elegir una carta blanca de las siguientes:
 			""";
 	public static final String PLAYER_SELECTED_CARD = """
 			La carta negra de esta ronda es:
@@ -51,6 +51,30 @@ public class ResponseMessageI18n {
 			Has elegido la carta blanca:
 			
 			{1}
+			""";
+	public static final String PLAYER_VOTE_CARD = """
+			La carta negra de esta ronda es:
+			
+			{0}
+			
+			Has elegido la carta blanca:
+			
+			{1}
+			
+			Debes votar una carta blanca de las siguientes:
+			""";
+	public static final String PLAYER_VOTED_CARD = """
+			La carta negra de esta ronda es:
+			
+			{0}
+			
+			Has elegido la carta blanca:
+			
+			{1}
+			
+			Has votado la siguiente carta blanca:
+			
+			{2}
 			""";
 	public static final String PLAYER_VOTED_DELETION = "Has votado borrar la partida";
 

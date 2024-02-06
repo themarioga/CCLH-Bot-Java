@@ -12,4 +12,6 @@ public interface TelegramGameDao extends InterfaceHibernateDao<TelegramGame> {
 	TelegramGame getByRoom(Room room);
 
 	TelegramGame getByCreator(User creator);
+
+	TelegramGame getByPlayerUser(User user);
 }

@@ -30,4 +30,9 @@ public class TelegramGameDaoImpl extends AbstractHibernateDao<TelegramGame> impl
 		return getCurrentSession().createQuery("SELECT t FROM TelegramGame t WHERE t.game=(SELECT g FROM Game g WHERE g.creator=:creator)", TelegramGame.class).setParameter("creator", creator).getSingleResultOrNull();
 	}
 
+	@Override
+	public TelegramGame getByPlayerUser(User user) {
+		return getCurrentSession().createQuery("SELECT t FROM TelegramGame t WHERE t.game=(SELECT p.game FROM Player p WHERE p.user=:user)", TelegramGame.class).setParameter("user", user).getSingleResultOrNull();
+	}
+
 }

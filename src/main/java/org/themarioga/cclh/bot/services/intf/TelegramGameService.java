@@ -32,4 +32,6 @@ public interface TelegramGameService {
 
 	TelegramGame getGameByCreatorId(long creatorId);
 
+	TelegramGame getByPlayerUser(long userId);
+
 }

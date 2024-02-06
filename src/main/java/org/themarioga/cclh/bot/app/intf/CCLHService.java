@@ -37,6 +37,8 @@ public interface CCLHService {
 
     TelegramGame getGameByCreatorId(long creatorId);
 
+    TelegramGame getByPlayerUser(long userId);
+
     TelegramPlayer getPlayer(long userId);
 
     List<TelegramPlayer> getPlayers(TelegramGame game);

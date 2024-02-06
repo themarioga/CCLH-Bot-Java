@@ -132,4 +132,10 @@ public class TelegramGameServiceImpl implements TelegramGameService {
 		return telegramGameDao.getByCreator(userService.getById(creatorId));
 	}
 
+	@Override
+	@Transactional(value = Transactional.TxType.SUPPORTS)
+	public TelegramGame getByPlayerUser(long userId) {
+		return telegramGameDao.getByPlayerUser(userService.getById(userId));
+	}
+
 }

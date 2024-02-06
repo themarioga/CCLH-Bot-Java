@@ -130,6 +130,13 @@ public class CCLHServiceImpl implements CCLHService {
     }
 
     @Override
+    @Transactional(value = Transactional.TxType.SUPPORTS)
+    public TelegramGame getByPlayerUser(long userId) {
+        return telegramGameService.getByPlayerUser(userId);
+    }
+
+    @Override
+    @Transactional(value = Transactional.TxType.SUPPORTS)
     public TelegramPlayer getPlayer(long userId) {
         return telegramPlayerService.getByUser(userId);
     }
