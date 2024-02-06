@@ -118,6 +118,12 @@ public class CCLHServiceImpl implements CCLHService {
     }
 
     @Override
+    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    public void voteCard(TelegramGame tgGame, long userId, long cardId) {
+        telegramGameService.voteCard(tgGame, userId, cardId);
+    }
+
+    @Override
     @Transactional(value = Transactional.TxType.SUPPORTS)
     public TelegramGame getGame(long roomId) {
         return telegramGameService.getGame(roomId);

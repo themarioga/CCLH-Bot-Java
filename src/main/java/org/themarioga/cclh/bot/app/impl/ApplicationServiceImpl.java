@@ -41,6 +41,7 @@ import org.themarioga.cclh.commons.exceptions.user.UserDoesntExistsException;
 import org.themarioga.cclh.commons.models.Deck;
 import org.themarioga.cclh.commons.models.PlayedCard;
 import org.themarioga.cclh.commons.models.PlayerHandCard;
+import org.themarioga.cclh.commons.models.VotedCard;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -480,6 +481,9 @@ public class ApplicationServiceImpl implements ApplicationService {
             }));
 
         callbackQueryHandlerMap.put("game_start", (callbackQuery, data) -> {
+            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id())
+                    .text(ResponseMessageI18n.GAME_STARTING));
+
             TelegramGame telegramGame = cclhService.getGame(callbackQuery.message().chat().id());
 
             if (telegramGame != null && callbackQuery.from().id().equals(telegramGame.getGame().getCreator().getId())) {
@@ -493,15 +497,18 @@ public class ApplicationServiceImpl implements ApplicationService {
         });
 
         callbackQueryHandlerMap.put("play_card", (callbackQuery, data) -> {
+            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id())
+                    .text(ResponseMessageI18n.PLAYER_PLAYING));
+
             TelegramGame telegramGame = cclhService.getByPlayerUser(callbackQuery.from().id());
 
             if (telegramGame != null) {
                 try {
                     cclhService.playCard(telegramGame, callbackQuery.from().id(), Integer.parseInt(data));
 
-                    TelegramPlayer telegramPlayer = cclhService.getPlayer(callbackQuery.from().id());
-
                     if (telegramGame.getGame().getTable().getStatus().equals(TableStatusEnum.PLAYING)) {
+                        TelegramPlayer telegramPlayer = cclhService.getPlayer(callbackQuery.from().id());
+
                         PlayedCard playedCard = getPlayedCardByPlayer(telegramGame, telegramPlayer);
 
                         if (playedCard != null) {
@@ -539,11 +546,39 @@ public class ApplicationServiceImpl implements ApplicationService {
         });
 
         callbackQueryHandlerMap.put("vote_card", (callbackQuery, data) -> {
+            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id())
+                    .text(ResponseMessageI18n.PLAYER_VOTING));
+
             TelegramGame telegramGame = cclhService.getByPlayerUser(callbackQuery.from().id());
 
             if (telegramGame != null) {
                 try {
-                    // ToDo: process vote
+                    cclhService.voteCard(telegramGame, callbackQuery.from().id(), Integer.parseInt(data));
+
+                    if (telegramGame.getGame().getTable().getStatus().equals(TableStatusEnum.VOTING)) {
+                        TelegramPlayer telegramPlayer = cclhService.getPlayer(callbackQuery.from().id());
+
+                        PlayedCard playedCard = getPlayedCardByPlayer(telegramGame, telegramPlayer);
+                        VotedCard votedCard = getVotedCardByPlayer(telegramGame, telegramPlayer);
+
+                        if (votedCard != null) {
+                            botService.sendMessage(new EditMessageText(telegramPlayer.getPlayer().getUser().getId(),
+                                    telegramPlayer.getMessageId(),
+                                    StringUtils.formatMessage(ResponseMessageI18n.PLAYER_VOTED_CARD,
+                                            telegramGame.getGame().getTable().getCurrentBlackCard().getText(),
+                                            playedCard.getCard().getText(),
+                                            votedCard.getCard().getText())));
+                        } else {
+                            logger.error("No se ha encontrado el jugador o la carta jugada");
+
+                            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id())
+                                    .text(ResponseErrorI18n.PLAYER_DOES_NOT_EXISTS));
+                        }
+                    } else if (telegramGame.getGame().getTable().getStatus().equals(TableStatusEnum.ENDING)) {
+                        // ToDo: when everyone have voted
+                    } else {
+                        logger.error("Juego en estado incorrecto: {}", telegramGame.getGame().getId());
+                    }
                 } catch (PlayerAlreadyPlayedCardException e) {
                     logger.error(e.getMessage(), e);
 
@@ -730,6 +765,14 @@ public class ApplicationServiceImpl implements ApplicationService {
                         .equals(telegramPlayer.getPlayer().getId())).findFirst();
 
 	    return e.orElse(null);
+    }
+
+    private VotedCard getVotedCardByPlayer(TelegramGame telegramGame, TelegramPlayer telegramPlayer) {
+        Optional<VotedCard> e = telegramGame.getGame().getTable().getVotedCards().stream()
+                .filter(votedCard -> votedCard.getPlayer().getId()
+                        .equals(telegramPlayer.getPlayer().getId())).findFirst();
+
+        return e.orElse(null);
     }
 
 }

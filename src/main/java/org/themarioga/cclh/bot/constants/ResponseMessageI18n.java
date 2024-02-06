@@ -10,6 +10,8 @@ public class ResponseMessageI18n {
 
 	// Game constants
 	public static final String GAME_CREATING = "Un momentito, estoy creando la partida...";
+	public static final String GAME_STARTING = "Comenzando la partida...";
+
 	public static final String GAME_CREATED_GROUP = """
 		¡Ya he creado la partida!
 		El modo de juego es {0}.
@@ -72,10 +74,13 @@ public class ResponseMessageI18n {
 			
 			{1}
 			
-			Has votado la siguiente carta blanca:
+			Has votado la carta blanca:
 			
 			{2}
 			""";
+
+	public static final String PLAYER_PLAYING = "Jugando carta...";
+	public static final String PLAYER_VOTING = "Votando carta...";
 	public static final String PLAYER_VOTED_DELETION = "Has votado borrar la partida";
 
 	public static final String HELP = "Esta es la ayuda";

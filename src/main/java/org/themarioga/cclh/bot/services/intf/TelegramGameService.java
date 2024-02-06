@@ -28,6 +28,8 @@ public interface TelegramGameService {
 
 	void playCard(TelegramGame tgGame, long userId, long cardId);
 
+	void voteCard(TelegramGame tgGame, long userId, long cardId);
+
 	TelegramGame getGame(long roomId);
 
 	TelegramGame getGameByCreatorId(long creatorId);
