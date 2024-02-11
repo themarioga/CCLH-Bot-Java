@@ -3,7 +3,8 @@ package org.themarioga.cclh.bot.app.intf;
 import org.themarioga.cclh.bot.model.TelegramGame;
 import org.themarioga.cclh.bot.model.TelegramPlayer;
 import org.themarioga.cclh.commons.enums.GameTypeEnum;
-import org.themarioga.cclh.commons.models.Deck;
+import org.themarioga.cclh.commons.models.Dictionary;
+import org.themarioga.cclh.commons.models.VotedCard;
 
 import java.util.List;
 
@@ -23,11 +24,15 @@ public interface CCLHService {
 
     void setMaxNumberOfPlayers(TelegramGame game, int maxNumberOfPlayers);
 
-    void setDeck(TelegramGame game, long deckId);
+    void setDictionary(TelegramGame game, long dictionaryId);
 
     void joinGame(TelegramGame game, long userId, int messageId);
 
     void startGame(TelegramGame tgGame);
+
+    void startRound(TelegramGame tgGame);
+
+    void endRound(TelegramGame tgGame);
 
     void voteForDeletion(TelegramGame tgGame, long userId);
 
@@ -45,11 +50,13 @@ public interface CCLHService {
 
     List<TelegramPlayer> getPlayers(TelegramGame game);
 
-    List<Deck> getDeckPaginated(long creatorId, int firstResult, int maxResults);
+    List<Dictionary> getDictionariesPaginated(long creatorId, int firstResult, int maxResults);
 
-	long getDeckCount(long creatorId);
+    VotedCard getMostVotedCard(TelegramGame tgGame);
 
-    int getDecksPerPage();
+	long getDictionaryCount(long creatorId);
+
+    int getDictionariesPerPage();
 
 	int getMinNumberOfPlayers();
 

@@ -10,7 +10,8 @@ import org.themarioga.cclh.bot.services.intf.TelegramGameService;
 import org.themarioga.cclh.bot.services.intf.TelegramPlayerService;
 import org.themarioga.cclh.commons.enums.GameTypeEnum;
 import org.themarioga.cclh.commons.exceptions.ApplicationException;
-import org.themarioga.cclh.commons.models.Deck;
+import org.themarioga.cclh.commons.models.Dictionary;
+import org.themarioga.cclh.commons.models.VotedCard;
 import org.themarioga.cclh.commons.services.intf.*;
 
 import java.util.List;
@@ -19,15 +20,15 @@ import java.util.List;
 public class CCLHServiceImpl implements CCLHService {
 
     private final UserService userService;
-    private final DeckService deckService;
+    private final DictionaryService dictionaryService;
     private final ConfigurationService configurationService;
     private final TelegramGameService telegramGameService;
     private final TelegramPlayerService telegramPlayerService;
 
     @Autowired
-    public CCLHServiceImpl(UserService userService, DeckService deckService, ConfigurationService configurationService, TelegramGameService telegramGameService, TelegramPlayerService telegramPlayerService) {
+    public CCLHServiceImpl(UserService userService, DictionaryService dictionaryService, ConfigurationService configurationService, TelegramGameService telegramGameService, TelegramPlayerService telegramPlayerService) {
         this.userService = userService;
-        this.deckService = deckService;
+        this.dictionaryService = dictionaryService;
         this.configurationService = configurationService;
         this.telegramGameService = telegramGameService;
         this.telegramPlayerService = telegramPlayerService;
@@ -87,8 +88,8 @@ public class CCLHServiceImpl implements CCLHService {
 
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
-    public void setDeck(TelegramGame tgGame, long deckId) {
-        telegramGameService.setDeck(tgGame, deckId);
+    public void setDictionary(TelegramGame tgGame, long dictionaryId) {
+        telegramGameService.setDictionary(tgGame, dictionaryId);
     }
 
     @Override
@@ -103,6 +104,18 @@ public class CCLHServiceImpl implements CCLHService {
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void startGame(TelegramGame tgGame) {
         telegramGameService.startGame(tgGame);
+    }
+
+    @Override
+    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    public void startRound(TelegramGame tgGame) {
+        telegramGameService.startRound(tgGame);
+    }
+
+    @Override
+    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    public void endRound(TelegramGame tgGame) {
+        telegramGameService.endRound(tgGame);
     }
 
     @Override
@@ -155,19 +168,25 @@ public class CCLHServiceImpl implements CCLHService {
 
     @Override
     @Transactional(value = Transactional.TxType.SUPPORTS)
-    public List<Deck> getDeckPaginated(long creatorId, int firstResult, int maxResults) {
-        return deckService.getDeckPaginated(userService.getById(creatorId), firstResult, maxResults);
+    public List<Dictionary> getDictionariesPaginated(long creatorId, int firstResult, int maxResults) {
+        return dictionaryService.getDictionariesPaginated(userService.getById(creatorId), firstResult, maxResults);
     }
 
     @Override
     @Transactional(value = Transactional.TxType.SUPPORTS)
-    public long getDeckCount(long creatorId) {
-        return deckService.getDeckCount(userService.getById(creatorId));
+    public VotedCard getMostVotedCard(TelegramGame tgGame) {
+        return telegramGameService.getMostVotedCard(tgGame);
     }
 
     @Override
     @Transactional(value = Transactional.TxType.SUPPORTS)
-    public int getDecksPerPage() {
+    public long getDictionaryCount(long creatorId) {
+        return dictionaryService.getDictionaryCount(userService.getById(creatorId));
+    }
+
+    @Override
+    @Transactional(value = Transactional.TxType.SUPPORTS)
+    public int getDictionariesPerPage() {
         return Integer.parseInt(configurationService.getConfiguration("game_dictionaries_per_page"));
     }
 

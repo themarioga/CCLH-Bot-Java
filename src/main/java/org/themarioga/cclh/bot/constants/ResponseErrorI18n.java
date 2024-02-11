@@ -14,7 +14,9 @@ public class ResponseErrorI18n {
 
     public static final String GAME_ALREADY_CREATED = "Ya existe un juego activo en este grupo o el creador tiene un juego activo en otro grupo.";
     public static final String GAME_ALREADY_FILLED = "Ya se ha superado el número máximo de jugadores.";
+    public static final String GAME_ALREADY_STARTED = "La partida ya está iniciada.";
     public static final String GAME_ONLY_CREATOR_CAN_CONFIGURE = "Solo el creador de la partida puede configurarla.";
+    public static final String GAME_ONLY_CREATOR_CAN_DELETE = "Solo el creador de la partida puede borrarla.";
     public static final String GAME_USER_DOESNT_EXISTS = "No estas registrado. Escribeme /start por privado.";
     public static final String GAME_NO_GAMES = "No tienes ninguna partida activa.";
 

@@ -13,7 +13,9 @@ import org.themarioga.cclh.commons.enums.ErrorEnum;
 import org.themarioga.cclh.commons.enums.GameTypeEnum;
 import org.themarioga.cclh.commons.enums.TableStatusEnum;
 import org.themarioga.cclh.commons.exceptions.ApplicationException;
+import org.themarioga.cclh.commons.exceptions.game.GameNotStartedException;
 import org.themarioga.cclh.commons.models.Game;
+import org.themarioga.cclh.commons.models.VotedCard;
 import org.themarioga.cclh.commons.services.intf.GameService;
 import org.themarioga.cclh.commons.services.intf.RoomService;
 import org.themarioga.cclh.commons.services.intf.UserService;
@@ -86,8 +88,8 @@ public class TelegramGameServiceImpl implements TelegramGameService {
 
 	@Override
 	@Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
-	public void setDeck(TelegramGame tgGame, long deckId) {
-		tgGame.setGame(gameService.setDeck(tgGame.getGame(), deckId));
+	public void setDictionary(TelegramGame tgGame, long dictionaryId) {
+		tgGame.setGame(gameService.setDictionary(tgGame.getGame(), dictionaryId));
 	}
 
 	@Override
@@ -100,12 +102,24 @@ public class TelegramGameServiceImpl implements TelegramGameService {
 	@Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
 	public void startGame(TelegramGame tgGame) {
 		gameService.startGame(tgGame.getGame());
+	}
 
+	@Override
+	@Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+	public void startRound(TelegramGame tgGame) {
 		if (tgGame.getGame().getTable().getStatus().equals(TableStatusEnum.STARTING)) {
 			gameService.startRound(tgGame.getGame());
 		} else {
 			logger.error("La partida no se ha iniciado correctamente");
+
+			throw new GameNotStartedException();
 		}
+	}
+
+	@Override
+	@Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+	public void endRound(TelegramGame tgGame) {
+		gameService.endRound(tgGame.getGame());
 	}
 
 	@Override
@@ -142,6 +156,12 @@ public class TelegramGameServiceImpl implements TelegramGameService {
 	@Transactional(value = Transactional.TxType.SUPPORTS)
 	public TelegramGame getByPlayerUser(long userId) {
 		return telegramGameDao.getByPlayerUser(userService.getById(userId));
+	}
+
+	@Override
+	@Transactional(value = Transactional.TxType.SUPPORTS)
+	public VotedCard getMostVotedCard(TelegramGame tgGame) {
+		return gameService.getMostVotedCard(tgGame.getGame().getId());
 	}
 
 }
