@@ -355,7 +355,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
                 botService.sendMessage(
                         new EditMessageText(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
-                                getCreatedGameMessage(telegramGame) + "\n Selecciona nº máximo de jugadores:")
+                                getCreatedGameMessage(telegramGame) + "\n Selecciona nº de puntos para ganar:")
                                 .replyMarkup(groupInlineKeyboard));
             } else {
                 botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id())
@@ -594,6 +594,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                             if (telegramGame.getGame().getStatus().equals(GameStatusEnum.STARTED)) {
                                 startRound(telegramGame);
                             } else if (telegramGame.getGame().getStatus().equals(GameStatusEnum.ENDED)) {
+                                logger.debug("ACABA");
                                 // ToDo: when everyone have voted
                             }
                         } else {
@@ -686,7 +687,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 ResponseMessageI18n.GAME_DELETED));
         if (telegramGame.getGame().getStatus().equals(GameStatusEnum.STARTED)) {
             botService.sendMessage(new DeleteMessage(telegramGame.getGame().getRoom().getId(),
-                    telegramGame.getGroupMessageId()));
+                    telegramGame.getBlackCardMessageId()));
         }
         botService.sendMessage(new EditMessageText(telegramGame.getGame().getCreator().getId(),
                 telegramGame.getPrivateMessageId(),
