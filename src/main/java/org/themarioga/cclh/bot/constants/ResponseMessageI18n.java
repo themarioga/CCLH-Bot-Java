@@ -14,20 +14,36 @@ public class ResponseMessageI18n {
 
 	public static final String GAME_CREATED_GROUP = """
 		¡Ya he creado la partida!
-		El modo de juego es {0}.
-		El mazo de cartas seleccionado es {1}.
-		El número de puntos para ganar es {2}.
-		El número máximo de jugadores es {3}.
+		El modo de juego es <b>{0}</b>.
+		El mazo de cartas seleccionado es <b>{1}</b>.
+		El número de puntos para ganar es <b>{2}</b>.
+		El número máximo de jugadores es <b>{3}</b>.
 		""";
-	public static final String GAME_CREATED_CURRENT_PLAYER_NUMBER = "El número actual de jugadores que se han unido es {0}.";
-	public static final String GAME_CREATED_CURRENT_VOTE_DELETION_NUMBER = "{0} jugador/es han votado borrar la partida.";
-	public static final String GAME_CREATED_PRIVATE = "He creado la partida en el grupo, puedes configurarla allí";
+	public static final String GAME_CREATED_CURRENT_PLAYER_NUMBER = "El número actual de jugadores que se han unido es <b>{0}</b>.";
+	public static final String GAME_CREATED_CURRENT_VOTE_DELETION_NUMBER = "<b>{0}</b> jugador/es han votado borrar la partida.";
 	public static final String GAME_SELECT_CARD = """
-			La carta negra de esta ronda es:
-			
-			{0}
+			La carta negra de esta ronda es <b>{0}</b>
 			
 			Ahora los jugadores jugaran sus cartas blancas por privado.
+			""";
+	public static final String GAME_VOTE_CARD = """
+			La carta negra de esta ronda es <b>{0}</b>
+			
+			Los jugadores eligieron las siguientes cartas blancas:
+			{1}
+			
+			Ahora los jugadores votaran por privado.
+			""";
+	public static final String GAME_END_ROUND = """
+			¡Enhorabuena <b>{0}</b>! Tu carta <b>{1}</b> ha ganado la ronda.
+			
+			La carta negra de esta ronda era <b>{2}</b>
+			
+			Los jugadores eligieron las siguientes cartas blancas:
+			{3}
+			
+			Las puntuaciones son las siguientes:
+			{4}
 			""";
 	public static final String GAME_DELETED = "Se ha borrado la partida.";
 
@@ -36,8 +52,9 @@ public class ResponseMessageI18n {
 		¡Bienvenido! Acabo de añadirte a mi base de datos.
 		Siempre que necesites ayuda puedes escribir /help
 		¡Gracias por unirte!""";
-	public static final String PLAYER_CREATING = "Un momentito, estoy intentando unirte a la partida...";
-	public static final String PLAYER_CREATED = "Te has unido a la partida.";
+	public static final String PLAYER_CREATED_GAME = "He creado la partida en el grupo, puedes configurarla allí";
+	public static final String PLAYER_JOINING = "Un momentito, estoy intentando unirte a la partida...";
+	public static final String PLAYER_JOINED = "Te has unido a la partida.";
 	public static final String PLAYER_SELECT_CARD = """
 			La carta negra de esta ronda es:
 			

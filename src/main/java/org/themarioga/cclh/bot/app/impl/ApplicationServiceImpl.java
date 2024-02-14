@@ -6,6 +6,7 @@ import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
+import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.AnswerCallbackQuery;
 import com.pengrad.telegrambot.request.DeleteMessage;
 import com.pengrad.telegrambot.request.EditMessageText;
@@ -39,10 +40,8 @@ import org.themarioga.cclh.commons.exceptions.player.PlayerAlreadyPlayedCardExce
 import org.themarioga.cclh.commons.exceptions.player.PlayerAlreadyVotedDeleteException;
 import org.themarioga.cclh.commons.exceptions.user.UserAlreadyExistsException;
 import org.themarioga.cclh.commons.exceptions.user.UserDoesntExistsException;
+import org.themarioga.cclh.commons.models.*;
 import org.themarioga.cclh.commons.models.Dictionary;
-import org.themarioga.cclh.commons.models.PlayedCard;
-import org.themarioga.cclh.commons.models.PlayerHandCard;
-import org.themarioga.cclh.commons.models.VotedCard;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -87,7 +86,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         sendMainMenu(telegramGame);
 
         botService.sendMessage(new EditMessageText(playerResponse.message().from().id(),
-                playerResponse.message().messageId(), ResponseMessageI18n.PLAYER_CREATED));
+                playerResponse.message().messageId(), ResponseMessageI18n.PLAYER_JOINED));
     }
 
     @Override
@@ -103,7 +102,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     new InlineKeyboardButton("Dejar la partida").callbackData("game_leave")
             );
             botService.sendMessage(new EditMessageText(callbackQuery.from().id(),
-                    playerResponse.message().messageId(), ResponseMessageI18n.PLAYER_CREATED)
+                    playerResponse.message().messageId(), ResponseMessageI18n.PLAYER_JOINED)
                     .replyMarkup(privateInlineKeyboard));
 
             sendMainMenu(telegramGame);
@@ -159,7 +158,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                             @Override
                             public void onResponse(SendMessage privateRequest, SendResponse privateResponse) {
                                 botService.sendMessageAsync(new SendMessage(message.from().id(),
-                                                ResponseMessageI18n.PLAYER_CREATING),
+                                                ResponseMessageI18n.PLAYER_JOINING),
                                         new Callback<SendMessage, SendResponse>() {
                                             @Override
                                             public void onResponse(SendMessage playerRequest, SendResponse playerResponse) {
@@ -258,6 +257,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 botService.sendMessage(
                         new EditMessageText(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
                                 getCreatedGameMessage(telegramGame) + "\n Selecciona modo de juego:")
+                                .parseMode(ParseMode.HTML)
                                 .replyMarkup(groupInlineKeyboard));
             } else {
                 botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id())
@@ -290,6 +290,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 botService.sendMessage(
                         new EditMessageText(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
                                 getCreatedGameMessage(telegramGame) + "\n Selecciona el mazo:")
+                                .parseMode(ParseMode.HTML)
                                 .replyMarkup(groupInlineKeyboard));
             } else {
                 botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id())
@@ -323,6 +324,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 botService.sendMessage(
                         new EditMessageText(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
                                 getCreatedGameMessage(telegramGame) + "\n Selecciona nº máximo de jugadores:")
+                                .parseMode(ParseMode.HTML)
                                 .replyMarkup(groupInlineKeyboard));
             } else {
                 botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id())
@@ -356,6 +358,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 botService.sendMessage(
                         new EditMessageText(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
                                 getCreatedGameMessage(telegramGame) + "\n Selecciona nº de puntos para ganar:")
+                                .parseMode(ParseMode.HTML)
                                 .replyMarkup(groupInlineKeyboard));
             } else {
                 botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id())
@@ -473,7 +476,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         });
 
         callbackQueryHandlerMap.put("game_join", (callbackQuery, data) -> botService.sendMessageAsync(
-                new SendMessage(callbackQuery.from().id(), ResponseMessageI18n.PLAYER_CREATING),
+                new SendMessage(callbackQuery.from().id(), ResponseMessageI18n.PLAYER_JOINING),
             new Callback<SendMessage, SendResponse>() {
                 @Override
                 public void onResponse(SendMessage playerRequest, SendResponse playerResponse) {
@@ -549,6 +552,8 @@ public class ApplicationServiceImpl implements ApplicationService {
                         }
                     } else if (telegramGame.getGame().getTable().getStatus().equals(TableStatusEnum.VOTING)) {
                         if (telegramGame.getGame().getType().equals(GameTypeEnum.DEMOCRACY)) {
+                            sendPlayedCardsMessageToGroup(telegramGame);
+
                             sendVotesToAllPlayers(telegramGame);
                         } else if (telegramGame.getGame().getType().equals(GameTypeEnum.CLASSIC)
                                     || telegramGame.getGame().getType().equals(GameTypeEnum.DICTATORSHIP)) {
@@ -585,20 +590,15 @@ public class ApplicationServiceImpl implements ApplicationService {
                         sendMessageToVoter(telegramGame, callbackQuery);
                     } else if (telegramGame.getGame().getTable().getStatus().equals(TableStatusEnum.ENDING)) {
                         sendMessageToVoter(telegramGame, callbackQuery);
+                        sendVotedCardsMessageToGroup(telegramGame);
 
-                        VotedCard votedCard = cclhService.getMostVotedCard(telegramGame);
+                        cclhService.endRound(telegramGame);
 
-                        if (votedCard != null) {
-                            cclhService.endRound(telegramGame);
-
-                            if (telegramGame.getGame().getStatus().equals(GameStatusEnum.STARTED)) {
-                                startRound(telegramGame);
-                            } else if (telegramGame.getGame().getStatus().equals(GameStatusEnum.ENDED)) {
-                                logger.debug("ACABA");
-                                // ToDo: when everyone have voted
-                            }
-                        } else {
-                            logger.error("No se ha encontrado la carta mas votada del juego {}", telegramGame.getGame().getId());
+                        if (telegramGame.getGame().getStatus().equals(GameStatusEnum.STARTED)) {
+                            startRound(telegramGame);
+                        } else if (telegramGame.getGame().getStatus().equals(GameStatusEnum.ENDED)) {
+                            logger.debug("ACABA");
+                            // ToDo: when everyone have voted
                         }
                     } else {
                         logger.error("Juego en estado incorrecto: {}", telegramGame.getGame().getId());
@@ -650,13 +650,14 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         botService.sendMessage(new EditMessageText(telegramGame.getGame().getRoom().getId(),
                 telegramGame.getGroupMessageId(), msg)
+                .parseMode(ParseMode.HTML)
                 .replyMarkup(groupInlineKeyboard));
 
         InlineKeyboardMarkup privateInlineKeyboard = new InlineKeyboardMarkup(
                 new InlineKeyboardButton("Borrar juego").callbackData("game_delete_private")
         );
         botService.sendMessage(new EditMessageText(telegramGame.getGame().getCreator().getId(),
-                telegramGame.getPrivateMessageId(), ResponseMessageI18n.GAME_CREATED_PRIVATE)
+                telegramGame.getPrivateMessageId(), ResponseMessageI18n.PLAYER_CREATED_GAME)
                 .replyMarkup(privateInlineKeyboard));
     }
 
@@ -672,6 +673,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         botService.sendMessage(
                 new EditMessageText(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
                         getCreatedGameMessage(telegramGame))
+                    .parseMode(ParseMode.HTML)
                     .replyMarkup(groupInlineKeyboard));
     }
 
@@ -714,7 +716,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         String msg = StringUtils.formatMessage(ResponseMessageI18n.GAME_SELECT_CARD,
                 telegramGame.getGame().getTable().getCurrentBlackCard().getText());
 
-        botService.sendMessageAsync(new SendMessage(telegramGame.getGame().getRoom().getId(), msg),
+        botService.sendMessageAsync(new SendMessage(telegramGame.getGame().getRoom().getId(), msg)
+                        .parseMode(ParseMode.HTML),
             new Callback<SendMessage, SendResponse>() {
                 @Override
                 public void onResponse(SendMessage blackCardRequest, SendResponse blackCardResponse) {
@@ -747,6 +750,66 @@ public class ApplicationServiceImpl implements ApplicationService {
                             telegramGame.getGame().getTable().getCurrentBlackCard().getText()))
                     .replyMarkup(playerInlineKeyboard));
         }
+    }
+
+    private void sendPlayedCardsMessageToGroup(TelegramGame telegramGame) {
+        StringBuilder playedCards = new StringBuilder();
+        for (PlayedCard playedCard : telegramGame.getGame().getTable().getPlayedCards()) {
+            playedCards
+                    .append("<b>")
+                    .append(playedCard.getCard().getText())
+                    .append("</b>")
+                    .append("\n");
+        }
+
+        String msg = MessageFormat.format(ResponseMessageI18n.GAME_VOTE_CARD,
+                telegramGame.getGame().getTable().getCurrentBlackCard().getText(),
+                playedCards);
+
+        botService.sendMessage(
+                new EditMessageText(
+                        telegramGame.getGame().getRoom().getId(),
+                        telegramGame.getBlackCardMessageId(),
+                        msg).parseMode(ParseMode.HTML));
+    }
+
+    private void sendVotedCardsMessageToGroup(TelegramGame telegramGame) {
+        VotedCard votedCard = cclhService.getMostVotedCard(telegramGame);
+
+        StringBuilder playedCards = new StringBuilder();
+        for (PlayedCard playedCard : telegramGame.getGame().getTable().getPlayedCards()) {
+            playedCards
+                    .append("<b>")
+                    .append(playedCard.getCard().getText())
+                    .append("</b>")
+                    .append(" - ")
+                    .append(playedCard.getPlayer().getUser().getName())
+                    .append("\n");
+        }
+
+        StringBuilder playerPoints = new StringBuilder();
+        for (Player player : telegramGame.getGame().getPlayers()) {
+            playerPoints
+                    .append("<b>")
+                    .append(player.getUser().getName())
+                    .append("</b>")
+                    .append(": ")
+                    .append(player.getPoints())
+                    .append("\n");
+        }
+
+        String msg = MessageFormat.format(ResponseMessageI18n.GAME_END_ROUND,
+                votedCard.getPlayer().getUser().getName(),
+                votedCard.getCard().getText(),
+                telegramGame.getGame().getTable().getCurrentBlackCard().getText(),
+                playedCards,
+                playerPoints);
+
+        botService.sendMessage(
+                new EditMessageText(
+                        telegramGame.getGame().getRoom().getId(),
+                        telegramGame.getBlackCardMessageId(),
+                        msg).parseMode(ParseMode.HTML));
     }
 
     private void sendVotesToAllPlayers(TelegramGame telegramGame) {
@@ -787,7 +850,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         PlayedCard playedCard = getPlayedCardByPlayer(telegramGame, telegramPlayer);
         VotedCard votedCard = getVotedCardByPlayer(telegramGame, telegramPlayer);
 
-        if (votedCard != null) {
+        if (playedCard != null && votedCard != null) {
             botService.sendMessage(new EditMessageText(telegramPlayer.getPlayer().getUser().getId(),
                     telegramPlayer.getMessageId(),
                     StringUtils.formatMessage(ResponseMessageI18n.PLAYER_VOTED_CARD,
