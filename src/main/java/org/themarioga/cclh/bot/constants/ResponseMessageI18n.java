@@ -45,6 +45,7 @@ public class ResponseMessageI18n {
 			Las puntuaciones son las siguientes:
 			{4}
 			""";
+	public static final String GAME_END_GAME = "¡Fin de la partida! El ganador del juego es... <b>{0}</b>. ¡¡¡Enhorabuena!!!";
 	public static final String GAME_DELETED = "Se ha borrado la partida.";
 
 	// Player constants

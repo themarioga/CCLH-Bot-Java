@@ -26,4 +26,6 @@ public class ResponseErrorI18n {
     public static final String PLAYER_ALREADY_VOTED_CARD = "Ya has votado una carta.";
     public static final String PLAYER_ALREADY_VOTED_DELETION = "Ya has votado una carta.";
 
+    public static final String UNKNOWN_ERROR = "Error desconocido";
+
 }
