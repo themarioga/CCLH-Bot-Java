@@ -17,9 +17,11 @@ public class ResponseErrorI18n {
     public static final String GAME_ALREADY_STARTED = "La partida ya está iniciada.";
     public static final String GAME_ONLY_CREATOR_CAN_CONFIGURE = "Solo el creador de la partida puede configurarla.";
     public static final String GAME_ONLY_CREATOR_CAN_DELETE = "Solo el creador de la partida puede borrarla.";
+    public static final String GAME_ONLY_CREATOR_CAN_START = "Solo el creador de la partida puede iniciarla.";
+    public static final String GAME_DOESNT_EXISTS = "No hay ninguna partida iniciada en este grupo.";
     public static final String GAME_USER_DOESNT_EXISTS = "No estas registrado. Escribeme /start por privado.";
-    public static final String GAME_NO_GAMES = "No tienes ninguna partida activa.";
 
+    public static final String PLAYER_NO_GAMES = "No tienes ninguna partida activa.";
     public static final String PLAYER_ALREADY_JOINED = "Ya estas participando en esta partida.";
     public static final String PLAYER_DOES_NOT_EXISTS = "No estas unido a ninguna partida.";
     public static final String PLAYER_ALREADY_PLAYED_CARD = "Ya has jugado una carta.";

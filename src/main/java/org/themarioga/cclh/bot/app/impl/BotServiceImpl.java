@@ -11,10 +11,8 @@ import com.pengrad.telegrambot.request.DeleteWebhook;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.BaseResponse;
 import com.pengrad.telegrambot.response.SendResponse;
-import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.themarioga.cclh.bot.constants.ResponseErrorI18n;
@@ -22,7 +20,6 @@ import org.themarioga.cclh.bot.util.CallbackQueryHandler;
 import org.themarioga.cclh.bot.util.CommandHandler;
 import org.themarioga.cclh.bot.util.BotUtils;
 import org.themarioga.cclh.bot.app.intf.BotService;
-import org.themarioga.cclh.commons.exceptions.ApplicationException;
 
 import java.io.IOException;
 import java.util.List;
@@ -42,13 +39,9 @@ public class BotServiceImpl implements BotService {
     @Value("${cclh.bot.webhook.certPath}")
     private String webhookCertPath;
 
-    @Autowired
-    public BotService botService;
-
     private TelegramBot bot;
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void startBot(Map<String, CommandHandler> commands, Map<String, CallbackQueryHandler> callbackQueries) {
         logger.trace("Initializing telegram bot...");
 
@@ -60,7 +53,7 @@ public class BotServiceImpl implements BotService {
             bot.execute(new DeleteWebhook().dropPendingUpdates(true));
         }
 
-        bot.setUpdatesListener(updates -> botService.handleUpdates(commands, callbackQueries, updates), e -> {
+        bot.setUpdatesListener(updates -> handleUpdates(commands, callbackQueries, updates), e -> {
             if (e.response() != null) {
                 logger.error("[{}] {}", e.response().errorCode(), e.response().description());
             } else {
@@ -70,7 +63,6 @@ public class BotServiceImpl implements BotService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public int handleUpdates(Map<String, CommandHandler> commands, Map<String, CallbackQueryHandler> callbackQueries, List<Update> updates) {
         logger.trace("Handling updates...");
 
@@ -119,7 +111,6 @@ public class BotServiceImpl implements BotService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public <T extends BaseRequest<T, R>, R extends BaseResponse> Cancellable sendMessage(T request) {
         logger.trace("Enviando mensaje");
 
@@ -137,7 +128,6 @@ public class BotServiceImpl implements BotService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public <T extends BaseRequest<T, R>, R extends BaseResponse> R sendMessageSync(BaseRequest<T, R> request) {
         logger.trace("Enviando mensaje sincrono");
 
@@ -145,7 +135,6 @@ public class BotServiceImpl implements BotService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public <T extends BaseRequest<T, R>, R extends BaseResponse> Cancellable sendMessageAsync(T request, Callback<T, R> callback) {
         logger.trace("Enviando mensaje asincrono");
 
