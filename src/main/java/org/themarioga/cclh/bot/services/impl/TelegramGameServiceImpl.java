@@ -15,7 +15,7 @@ import org.themarioga.cclh.commons.enums.TableStatusEnum;
 import org.themarioga.cclh.commons.exceptions.ApplicationException;
 import org.themarioga.cclh.commons.exceptions.game.GameNotStartedException;
 import org.themarioga.cclh.commons.models.Game;
-import org.themarioga.cclh.commons.models.VotedCard;
+import org.themarioga.cclh.commons.models.PlayedCard;
 import org.themarioga.cclh.commons.services.intf.GameService;
 import org.themarioga.cclh.commons.services.intf.RoomService;
 import org.themarioga.cclh.commons.services.intf.UserService;
@@ -78,6 +78,12 @@ public class TelegramGameServiceImpl implements TelegramGameService {
 	@Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
 	public void setNumberOfCardsToWin(TelegramGame tgGame, int numberOfCardsToWin) {
 		tgGame.setGame(gameService.setNumberOfCardsToWin(tgGame.getGame(), numberOfCardsToWin));
+	}
+
+	@Override
+	@Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+	public void setNumberOfRoundsToEnd(TelegramGame tgGame, int numberOfRoundsToEnd) {
+		tgGame.setGame(gameService.setNumberOfRoundsToEnd(tgGame.getGame(), numberOfRoundsToEnd));
 	}
 
 	@Override
@@ -160,7 +166,7 @@ public class TelegramGameServiceImpl implements TelegramGameService {
 
 	@Override
 	@Transactional(value = Transactional.TxType.SUPPORTS)
-	public VotedCard getMostVotedCard(TelegramGame tgGame) {
+	public PlayedCard getMostVotedCard(TelegramGame tgGame) {
 		return gameService.getMostVotedCard(tgGame.getGame().getId());
 	}
 

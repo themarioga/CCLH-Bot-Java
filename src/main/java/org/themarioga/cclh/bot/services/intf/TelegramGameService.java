@@ -3,7 +3,7 @@ package org.themarioga.cclh.bot.services.intf;
 import org.themarioga.cclh.bot.model.TelegramGame;
 import org.themarioga.cclh.bot.model.TelegramPlayer;
 import org.themarioga.cclh.commons.enums.GameTypeEnum;
-import org.themarioga.cclh.commons.models.VotedCard;
+import org.themarioga.cclh.commons.models.PlayedCard;
 
 public interface TelegramGameService {
 
@@ -16,6 +16,8 @@ public interface TelegramGameService {
 	void setType(TelegramGame game, GameTypeEnum type);
 
 	void setNumberOfCardsToWin(TelegramGame game, int numberOfCardsToWin);
+
+	void setNumberOfRoundsToEnd(TelegramGame game, int numberOfRoundsToEnd);
 
 	void setMaxNumberOfPlayers(TelegramGame game, int maxNumberOfPlayers);
 
@@ -41,6 +43,6 @@ public interface TelegramGameService {
 
 	TelegramGame getByPlayerUser(long userId);
 
-	VotedCard getMostVotedCard(TelegramGame tgGame);
+	PlayedCard getMostVotedCard(TelegramGame tgGame);
 
 }

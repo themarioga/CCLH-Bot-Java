@@ -23,15 +23,21 @@ public interface ApplicationService {
 
 	void gameSelectModeQuery(long roomId, long userId, String callbackQueryId);
 
-	void gameSelectDictionaryQuery(long roomId, long userId, String callbackQueryId, String data);
+	void gameSelectPunctuationModeQuery(long roomId, long userId, String callbackQueryId);
 
-	void gameSelectNCardsToWinQuery(long roomId, long userId, String callbackQueryId);
+	void gameSelectNRoundsToEndQuery(long roomId, long userId, String callbackQueryId);
+
+	void gameSelectNPointsToWinQuery(long roomId, long userId, String callbackQueryId);
+
+	void gameSelectDictionaryQuery(long roomId, long userId, String callbackQueryId, String data);
 
 	void gameChangeMode(long roomId, long userId, String callbackQueryId, String data);
 
 	void gameChangeDictionary(long roomId, long userId, String callbackQueryId, String data);
 
 	void gameChangeMaxPlayers(long roomId, long userId, String callbackQueryId, String data);
+
+	void gameChangeNRoundsToEnd(long roomId, long userId, String callbackQueryId, String data);
 
 	void gameChangeNCardsToWin(long roomId, long userId, String callbackQueryId, String data);
 

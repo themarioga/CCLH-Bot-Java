@@ -11,7 +11,7 @@ import org.themarioga.cclh.bot.services.intf.TelegramPlayerService;
 import org.themarioga.cclh.commons.enums.GameTypeEnum;
 import org.themarioga.cclh.commons.exceptions.ApplicationException;
 import org.themarioga.cclh.commons.models.Dictionary;
-import org.themarioga.cclh.commons.models.VotedCard;
+import org.themarioga.cclh.commons.models.PlayedCard;
 import org.themarioga.cclh.commons.services.intf.*;
 
 import java.util.List;
@@ -78,6 +78,12 @@ public class CCLHServiceImpl implements CCLHService {
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void setNumberOfCardsToWin(TelegramGame tgGame, int numberOfCardsToWin) {
         telegramGameService.setNumberOfCardsToWin(tgGame, numberOfCardsToWin);
+    }
+
+    @Override
+    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    public void setNumberOfRoundsToEnd(TelegramGame game, int numberOfRoundsToEnd) {
+        telegramGameService.setNumberOfRoundsToEnd(game, numberOfRoundsToEnd);
     }
 
     @Override
@@ -174,7 +180,7 @@ public class CCLHServiceImpl implements CCLHService {
 
     @Override
     @Transactional(value = Transactional.TxType.SUPPORTS)
-    public VotedCard getMostVotedCard(TelegramGame tgGame) {
+    public PlayedCard getMostVotedCard(TelegramGame tgGame) {
         return telegramGameService.getMostVotedCard(tgGame);
     }
 
