@@ -1099,133 +1099,133 @@ public class ApplicationServiceImpl implements ApplicationService {
         Map<String, CallbackQueryHandler> callbackQueryHandlerMap = new HashMap<>();
 
         callbackQueryHandlerMap.put("game_created", (callbackQuery, data) -> {
-            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
-
             applicationService.gameCreatedQuery(callbackQuery.message().chat().id(), callbackQuery.from().id(),
                     callbackQuery.id());
+
+            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
         });
 
         callbackQueryHandlerMap.put("game_configure", (callbackQuery, data) -> {
-            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
-
             applicationService.gameConfigureQuery(callbackQuery.message().chat().id(), callbackQuery.from().id(),
                     callbackQuery.id());
+
+            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
         });
 
         callbackQueryHandlerMap.put("game_sel_mode", (callbackQuery, data) -> {
-            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
-
             applicationService.gameSelectModeQuery(callbackQuery.message().chat().id(), callbackQuery.from().id(),
                     callbackQuery.id());
+
+            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
         });
 
         callbackQueryHandlerMap.put("game_sel_point_type", (callbackQuery, data) -> {
-            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
-
             applicationService.gameSelectPunctuationModeQuery(callbackQuery.message().chat().id(), callbackQuery.from().id(),
                     callbackQuery.id());
+
+            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
         });
 
         callbackQueryHandlerMap.put("game_sel_dictionary", (callbackQuery, data) -> {
-            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
-
             applicationService.gameSelectDictionaryQuery(callbackQuery.message().chat().id(), callbackQuery.from().id(),
                     callbackQuery.id(), data);
+
+            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
         });
 
         callbackQueryHandlerMap.put("game_sel_max_players", (callbackQuery, data) -> {
-            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
-
             applicationService.gameSelectMaxPlayersQuery(callbackQuery.message().chat().id(), callbackQuery.from().id(),
                     callbackQuery.id());
+
+            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
         });
 
         callbackQueryHandlerMap.put("game_sel_n_rounds", (callbackQuery, data) -> {
-            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
-
             applicationService.gameSelectNRoundsToEndQuery(callbackQuery.message().chat().id(), callbackQuery.from().id(),
                     callbackQuery.id());
+
+            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
         });
 
         callbackQueryHandlerMap.put("game_sel_n_points", (callbackQuery, data) -> {
-            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
-
             applicationService.gameSelectNPointsToWinQuery(callbackQuery.message().chat().id(), callbackQuery.from().id(),
                     callbackQuery.id());
+
+            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
         });
 
         callbackQueryHandlerMap.put("game_change_mode", (callbackQuery, data) -> {
-            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
-
             applicationService.gameChangeMode(callbackQuery.message().chat().id(), callbackQuery.from().id(),
                     callbackQuery.id(), data);
+
+            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
         });
 
         callbackQueryHandlerMap.put("game_change_dictionary", (callbackQuery, data) -> {
-            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
-
             applicationService.gameChangeDictionary(callbackQuery.message().chat().id(), callbackQuery.from().id(),
                     callbackQuery.id(), data);
+
+            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
         });
 
         callbackQueryHandlerMap.put("game_change_max_players", (callbackQuery, data) -> {
-            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
-
             applicationService.gameChangeMaxPlayers(callbackQuery.message().chat().id(), callbackQuery.from().id(),
                     callbackQuery.id(), data);
+
+            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
         });
 
         callbackQueryHandlerMap.put("game_change_max_rounds", (callbackQuery, data) -> {
-            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
-
             applicationService.gameChangeNRoundsToEnd(callbackQuery.message().chat().id(), callbackQuery.from().id(),
                     callbackQuery.id(), data);
+
+            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
         });
 
         callbackQueryHandlerMap.put("game_change_max_points", (callbackQuery, data) -> {
-            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
-
             applicationService.gameChangeNCardsToWin(callbackQuery.message().chat().id(), callbackQuery.from().id(),
                     callbackQuery.id(), data);
+
+            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
         });
 
         callbackQueryHandlerMap.put("game_join", (callbackQuery, data) -> {
-            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
-
             applicationService.gameJoinQuery(callbackQuery.message().chat().id(), callbackQuery.from().id(),
                     callbackQuery.id());
+
+            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
         });
 
         callbackQueryHandlerMap.put("game_start", (callbackQuery, data) -> {
-            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
-
             applicationService.gameStartQuery(callbackQuery.message().chat().id(), callbackQuery.from().id(),
                     callbackQuery.id());
+
+            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
         });
 
         callbackQueryHandlerMap.put("play_card", (callbackQuery, data) -> {
-            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
-
             applicationService.playerPlayCardQuery(callbackQuery.from().id(), callbackQuery.id(), data);
+
+            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
         });
 
         callbackQueryHandlerMap.put("vote_card", (callbackQuery, data) -> {
-            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
-
             applicationService.playerVoteCardQuery(callbackQuery.from().id(), callbackQuery.id(), data);
+
+            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
         });
 
         callbackQueryHandlerMap.put("game_delete_group", (callbackQuery, data) -> {
-            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
-
             applicationService.gameDeleteGroupQuery(callbackQuery.message().chat().id(), callbackQuery.from().id(),
                     callbackQuery.id());
+
+            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
         });
 
         callbackQueryHandlerMap.put("game_delete_private", (callbackQuery, data) -> {
-            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
-
             applicationService.gameDeletePrivateQuery(callbackQuery.from().id(), callbackQuery.id());
+
+            botService.sendMessage(new AnswerCallbackQuery(callbackQuery.id()));
         });
 
         return callbackQueryHandlerMap;
