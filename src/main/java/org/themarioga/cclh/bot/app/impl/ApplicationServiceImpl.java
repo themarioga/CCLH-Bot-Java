@@ -81,6 +81,10 @@ public class ApplicationServiceImpl implements ApplicationService {
             botService.sendMessage(new SendMessage(userId, ResponseErrorI18n.USER_ALREADY_REGISTERED));
 
             throw e;
+        } catch (ApplicationException e) {
+            botService.sendMessage(new SendMessage(userId, e.getMessage()));
+
+            throw e;
         }
     }
 
@@ -97,9 +101,15 @@ public class ApplicationServiceImpl implements ApplicationService {
             return;
         }
 
-        List<TelegramPlayer> telegramPlayerList = cclhService.deleteGame(telegramGame);
+        try {
+            List<TelegramPlayer> telegramPlayerList = cclhService.deleteGame(telegramGame);
 
-        sendDeleteMessages(telegramGame, telegramPlayerList);
+            sendDeleteMessages(telegramGame, telegramPlayerList);
+        } catch (ApplicationException e) {
+            botService.sendMessage(new SendMessage(userId, e.getMessage()));
+
+            throw e;
+        }
     }
 
     @Override
@@ -181,6 +191,10 @@ public class ApplicationServiceImpl implements ApplicationService {
             botService.sendMessage(new EditMessageText(creatorId,
                     privateMessageId,
                     ResponseErrorI18n.PLAYER_ALREADY_PLAYING));
+
+            throw e;
+        } catch (ApplicationException e) {
+            botService.sendMessage(new SendMessage(creatorId, e.getMessage()));
 
             throw e;
         }
@@ -498,6 +512,11 @@ public class ApplicationServiceImpl implements ApplicationService {
                         .text(ResponseErrorI18n.GAME_ALREADY_STARTED));
 
                 throw e;
+            } catch (ApplicationException e) {
+                botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
+                        .text(e.getMessage()));
+
+                throw e;
             }
         } else {
             botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
@@ -538,6 +557,11 @@ public class ApplicationServiceImpl implements ApplicationService {
                         .text(ResponseErrorI18n.UNKNOWN_ERROR));
 
                 throw e;
+            } catch (ApplicationException e) {
+                botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
+                        .text(e.getMessage()));
+
+                throw e;
             }
         } else {
             botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
@@ -567,10 +591,18 @@ public class ApplicationServiceImpl implements ApplicationService {
             } catch (GameAlreadyStartedException e) {
                 logger.error("La partida de la sala {} ya estaba iniciada cuando se intentó cambiar el modo", roomId);
 
+                botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
+                        .text(ResponseErrorI18n.GAME_ALREADY_STARTED));
+
                 throw e;
             } catch (GameAlreadyFilledException e) {
                 botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
                         .text(ResponseErrorI18n.GAME_ALREADY_FILLED));
+
+                throw e;
+            } catch (ApplicationException e) {
+                botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
+                        .text(e.getMessage()));
 
                 throw e;
             }
@@ -595,9 +627,23 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         if (userId == telegramGame.getGame().getCreator().getId()) {
-            cclhService.setNumberOfRoundsToEnd(telegramGame, Integer.parseInt(data));
+            try {
+                cclhService.setNumberOfRoundsToEnd(telegramGame, Integer.parseInt(data));
 
-            sendConfigMenu(telegramGame);
+                sendConfigMenu(telegramGame);
+            } catch (GameAlreadyStartedException e) {
+                logger.error("La partida de la sala {} ya estaba iniciada cuando se intentó cambiar el modo", roomId);
+
+                botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
+                        .text(ResponseErrorI18n.GAME_ALREADY_STARTED));
+
+                throw e;
+            } catch (ApplicationException e) {
+                botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
+                        .text(e.getMessage()));
+
+                throw e;
+            }
         } else {
             botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
                     .text(ResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE));
@@ -619,9 +665,23 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         if (userId == telegramGame.getGame().getCreator().getId()) {
-            cclhService.setNumberOfCardsToWin(telegramGame, Integer.parseInt(data));
+            try {
+                cclhService.setNumberOfCardsToWin(telegramGame, Integer.parseInt(data));
 
-            sendConfigMenu(telegramGame);
+                sendConfigMenu(telegramGame);
+            } catch (GameAlreadyStartedException e) {
+                logger.error("La partida de la sala {} ya estaba iniciada cuando se intentó cambiar el modo", roomId);
+
+                botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
+                        .text(ResponseErrorI18n.GAME_ALREADY_STARTED));
+
+                throw e;
+            } catch (ApplicationException e) {
+                botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
+                        .text(e.getMessage()));
+
+                throw e;
+            }
         } else {
             botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
                     .text(ResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE));
@@ -643,9 +703,16 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         if (userId == telegramGame.getGame().getCreator().getId()) {
-            List<TelegramPlayer> telegramPlayerList = cclhService.deleteGame(telegramGame);
+            try {
+                List<TelegramPlayer> telegramPlayerList = cclhService.deleteGame(telegramGame);
 
-            sendDeleteMessages(telegramGame, telegramPlayerList);
+                sendDeleteMessages(telegramGame, telegramPlayerList);
+            } catch (ApplicationException e) {
+                botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
+                        .text(e.getMessage()));
+
+                throw e;
+            }
         } else {
             if (telegramGame.getGame().getStatus().equals(GameStatusEnum.STARTED)) {
                 try {
@@ -671,6 +738,11 @@ public class ApplicationServiceImpl implements ApplicationService {
                             .text(ResponseErrorI18n.PLAYER_ALREADY_VOTED_DELETION));
 
                     throw e;
+                } catch (ApplicationException e) {
+                    botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
+                            .text(e.getMessage()));
+
+                    throw e;
                 }
             } else {
                 botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
@@ -692,9 +764,16 @@ public class ApplicationServiceImpl implements ApplicationService {
             return;
         }
 
-        List<TelegramPlayer> telegramPlayerList = cclhService.deleteGame(telegramGame);
+        try {
+            List<TelegramPlayer> telegramPlayerList = cclhService.deleteGame(telegramGame);
 
-        sendDeleteMessages(telegramGame, telegramPlayerList);
+            sendDeleteMessages(telegramGame, telegramPlayerList);
+        } catch (ApplicationException e) {
+            botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
+                    .text(e.getMessage()));
+
+            throw e;
+        }
     }
 
     @Override
@@ -772,6 +851,11 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .text(ResponseErrorI18n.GAME_ALREADY_FILLED));
 
             throw e;
+        } catch (ApplicationException e) {
+            botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
+                    .text(e.getMessage()));
+
+            throw e;
         }
     }
 
@@ -814,6 +898,11 @@ public class ApplicationServiceImpl implements ApplicationService {
             } catch (GameNotStartedException e) {
                 botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
                         .text(ResponseErrorI18n.GAME_NOT_STARTED));
+
+                throw e;
+            } catch (ApplicationException e) {
+                botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
+                        .text(e.getMessage()));
 
                 throw e;
             }
@@ -884,6 +973,11 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .text(ResponseErrorI18n.PLAYER_ALREADY_PLAYED_CARD));
 
             throw e;
+        } catch (ApplicationException e) {
+            botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
+                    .text(e.getMessage()));
+
+            throw e;
         }
     }
 
@@ -947,6 +1041,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         } catch (PlayerAlreadyVotedCardException e) {
             botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
                     .text(ResponseErrorI18n.PLAYER_ALREADY_VOTED_CARD));
+
+            throw e;
+        } catch (ApplicationException e) {
+            botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
+                    .text(e.getMessage()));
 
             throw e;
         }
