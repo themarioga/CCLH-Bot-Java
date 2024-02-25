@@ -31,9 +31,8 @@ import org.themarioga.cclh.commons.enums.GameStatusEnum;
 import org.themarioga.cclh.commons.enums.GameTypeEnum;
 import org.themarioga.cclh.commons.enums.TableStatusEnum;
 import org.themarioga.cclh.commons.exceptions.ApplicationException;
-import org.themarioga.cclh.commons.exceptions.game.GameAlreadyExistsException;
-import org.themarioga.cclh.commons.exceptions.game.GameAlreadyFilledException;
-import org.themarioga.cclh.commons.exceptions.game.GameAlreadyStartedException;
+import org.themarioga.cclh.commons.exceptions.dictionary.DictionaryDoesntExistsException;
+import org.themarioga.cclh.commons.exceptions.game.*;
 import org.themarioga.cclh.commons.exceptions.player.PlayerAlreadyExistsException;
 import org.themarioga.cclh.commons.exceptions.player.PlayerAlreadyPlayedCardException;
 import org.themarioga.cclh.commons.exceptions.player.PlayerAlreadyVotedCardException;
@@ -119,27 +118,12 @@ public class ApplicationServiceImpl implements ApplicationService {
                                                 new Callback<SendMessage, SendResponse>() {
                                                     @Override
                                                     public void onResponse(SendMessage playerRequest, SendResponse playerResponse) {
-                                                        try {
-                                                            applicationService.createGame(roomId,
-                                                                    roomTitle,
-                                                                    creatorId,
-                                                                    groupResponse.message().messageId(),
-                                                                    privateResponse.message().messageId(),
-                                                                    playerResponse.message().messageId());
-                                                        } catch (GameAlreadyExistsException e) {
-                                                            logger.error("Ya existe una partida para al sala {} ({}) o creado por {}.",
-                                                                    roomId, roomTitle, creatorId);
-
-                                                            botService.sendMessage(new EditMessageText(roomId,
-                                                                    groupResponse.message().messageId(),
-                                                                    ResponseErrorI18n.GAME_ALREADY_CREATED));
-
-                                                            botService.sendMessage(new EditMessageText(creatorId,
-                                                                    privateResponse.message().messageId(),
-                                                                    ResponseErrorI18n.GAME_ALREADY_CREATED));
-
-                                                            throw e;
-                                                        }
+                                                        applicationService.createGame(roomId,
+                                                                roomTitle,
+                                                                creatorId,
+                                                                groupResponse.message().messageId(),
+                                                                privateResponse.message().messageId(),
+                                                                playerResponse.message().messageId());
                                                     }
 
                                                     @Override
@@ -166,12 +150,40 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void createGame(long roomId, String roomTitle, long creatorId, int groupMessageId, int privateMessageId, int playerMessageId) {
-        TelegramGame telegramGame =
-                cclhService.createGame(roomId, roomTitle, creatorId, groupMessageId, privateMessageId, playerMessageId);
+        try {
+            TelegramGame telegramGame =
+                    cclhService.createGame(roomId, roomTitle, creatorId, groupMessageId, privateMessageId, playerMessageId);
 
-        sendMainMenu(telegramGame);
+            sendMainMenu(telegramGame);
 
-        botService.sendMessage(new EditMessageText(creatorId, privateMessageId, ResponseMessageI18n.PLAYER_JOINED));
+            botService.sendMessage(new EditMessageText(creatorId, privateMessageId, ResponseMessageI18n.PLAYER_JOINED));
+        } catch (GameAlreadyExistsException e) {
+            logger.error("Ya existe una partida para al sala {} ({}) o creado por {}.",
+                    roomId, roomTitle, creatorId);
+
+            botService.sendMessage(new EditMessageText(roomId,
+                    groupMessageId,
+                    ResponseErrorI18n.GAME_ALREADY_CREATED));
+
+            botService.sendMessage(new EditMessageText(creatorId,
+                    privateMessageId,
+                    ResponseErrorI18n.GAME_ALREADY_CREATED));
+
+            throw e;
+        } catch (PlayerAlreadyExistsException e) {
+            logger.error("El jugador {} que intenta crear la partida en la sala {}({}) ya está en otra partida.",
+                    creatorId, roomId, roomTitle);
+
+            botService.sendMessage(new EditMessageText(roomId,
+                    groupMessageId,
+                    ResponseErrorI18n.PLAYER_ALREADY_PLAYING));
+
+            botService.sendMessage(new EditMessageText(creatorId,
+                    privateMessageId,
+                    ResponseErrorI18n.PLAYER_ALREADY_PLAYING));
+
+            throw e;
+        }
     }
 
     @Override
@@ -475,9 +487,18 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         if (userId == telegramGame.getGame().getCreator().getId()) {
-            cclhService.setType(telegramGame, GameTypeEnum.getEnum(Integer.parseInt(data)));
+            try {
+                cclhService.setType(telegramGame, GameTypeEnum.getEnum(Integer.parseInt(data)));
 
-            sendConfigMenu(telegramGame);
+                sendConfigMenu(telegramGame);
+            } catch (GameAlreadyStartedException e) {
+                logger.error("La partida de la sala {} ya estaba iniciada cuando se intentó cambiar el modo", roomId);
+
+                botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
+                        .text(ResponseErrorI18n.GAME_ALREADY_STARTED));
+
+                throw e;
+            }
         } else {
             botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
                     .text(ResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE));
@@ -499,9 +520,25 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         if (userId == telegramGame.getGame().getCreator().getId()) {
-            cclhService.setDictionary(telegramGame, Integer.parseInt(data));
+            try {
+                cclhService.setDictionary(telegramGame, Integer.parseInt(data));
 
-            sendConfigMenu(telegramGame);
+                sendConfigMenu(telegramGame);
+            } catch (GameAlreadyStartedException e) {
+                logger.error("La partida de la sala {} ya estaba iniciada cuando se intentó cambiar el modo", roomId);
+
+                botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
+                        .text(ResponseErrorI18n.GAME_ALREADY_STARTED));
+
+                throw e;
+            } catch (DictionaryDoesntExistsException e) {
+                logger.error("El diccionario {} no existe para la sala {}", data, roomId);
+
+                botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
+                        .text(ResponseErrorI18n.UNKNOWN_ERROR));
+
+                throw e;
+            }
         } else {
             botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
                     .text(ResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE));
@@ -527,6 +564,10 @@ public class ApplicationServiceImpl implements ApplicationService {
                 cclhService.setMaxNumberOfPlayers(telegramGame, Integer.parseInt(data));
 
                 sendConfigMenu(telegramGame);
+            } catch (GameAlreadyStartedException e) {
+                logger.error("La partida de la sala {} ya estaba iniciada cuando se intentó cambiar el modo", roomId);
+
+                throw e;
             } catch (GameAlreadyFilledException e) {
                 botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
                         .text(ResponseErrorI18n.GAME_ALREADY_FILLED));
@@ -620,6 +661,11 @@ public class ApplicationServiceImpl implements ApplicationService {
                     } else {
                         sendMainMenu(telegramGame);
                     }
+                } catch (GameNotStartedException e) {
+                    botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
+                            .text(ResponseErrorI18n.GAME_DOESNT_EXISTS));
+
+                    throw e;
                 } catch (PlayerAlreadyVotedDeleteException e) {
                     botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
                             .text(ResponseErrorI18n.PLAYER_ALREADY_VOTED_DELETION));
@@ -716,6 +762,16 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .text(ResponseErrorI18n.GAME_USER_DOESNT_EXISTS));
 
             throw e;
+        } catch (GameAlreadyStartedException e) {
+            botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
+                    .text(ResponseErrorI18n.GAME_ALREADY_STARTED));
+
+            throw e;
+        } catch (GameAlreadyFilledException e) {
+            botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
+                    .text(ResponseErrorI18n.GAME_ALREADY_FILLED));
+
+            throw e;
         }
     }
 
@@ -748,6 +804,16 @@ public class ApplicationServiceImpl implements ApplicationService {
             } catch (GameAlreadyStartedException e) {
                 botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
                         .text(ResponseErrorI18n.GAME_ALREADY_STARTED));
+
+                throw e;
+            } catch (GameNotFilledException e) {
+                botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
+                        .text(ResponseErrorI18n.GAME_NOT_FILLED));
+
+                throw e;
+            } catch (GameNotStartedException e) {
+                botService.sendMessage(new AnswerCallbackQuery(callbackQueryId)
+                        .text(ResponseErrorI18n.GAME_NOT_STARTED));
 
                 throw e;
             }

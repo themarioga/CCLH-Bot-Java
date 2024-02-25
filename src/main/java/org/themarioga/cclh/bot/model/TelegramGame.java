@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.themarioga.cclh.commons.models.Game;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 @jakarta.persistence.Table(name = "t_telegram_game", uniqueConstraints = {@UniqueConstraint(columnNames = {"game_id"})})
@@ -50,6 +51,19 @@ public class TelegramGame implements Serializable {
 
 	public void setGame(Game game) {
 		this.game = game;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		TelegramGame that = (TelegramGame) o;
+		return Objects.equals(game, that.game) && Objects.equals(groupMessageId, that.groupMessageId) && Objects.equals(privateMessageId, that.privateMessageId) && Objects.equals(blackCardMessageId, that.blackCardMessageId);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(game, groupMessageId, privateMessageId, blackCardMessageId);
 	}
 
 	@Override
