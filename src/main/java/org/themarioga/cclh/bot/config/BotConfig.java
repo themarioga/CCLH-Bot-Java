@@ -8,6 +8,7 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Profile;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.Webhook;
 import org.telegram.telegrambots.meta.generics.WebhookBot;
@@ -18,26 +19,25 @@ import org.themarioga.cclh.bot.app.impl.WebhookBotServiceImpl;
 import org.themarioga.cclh.bot.app.intf.ApplicationService;
 import org.themarioga.cclh.bot.app.intf.BotService;
 
+import java.io.File;
+
 @Configuration
 public class BotConfig {
 
 	@Value("${cclh.bot.token}")
 	private String token;
 
-	@Value("${cclh.bot.webhook.url:#{null}}")
-	private String webhookURL;
-
-	@Value("${cclh.bot.webhook.keystore.path:#{null}}")
-	private String webhookKeystorePath;
-
-	@Value("${cclh.bot.webhook.keystore.password:#{null}}")
-	private String webhookKeystorePassword;
-
 	@Value("${cclh.bot.name}")
 	private String name;
 
 	@Value("${cclh.bot.path}")
 	private String path;
+
+	@Value("${cclh.bot.webhook.url:#{null}}")
+	private String webhookURL;
+
+	@Value("${cclh.bot.webhook.path:#{null}}")
+	private String webhookPath;
 
 	// Dev instantiation
 
@@ -76,7 +76,7 @@ public class BotConfig {
 	@ConditionalOnMissingBean(TelegramBotsApi.class)
 	public TelegramBotsApi telegramBotsApiPro(Webhook webhook, WebhookBot webhookBotService) throws TelegramApiException {
 		TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class, webhook);
-		telegramBotsApi.registerBot(webhookBotService, SetWebhook.builder().url(webhookURL).build());
+		telegramBotsApi.registerBot(webhookBotService, SetWebhook.builder().url(webhookURL).certificate(new InputFile(new File(webhookPath))).build());
 
 		return telegramBotsApi;
 	}
