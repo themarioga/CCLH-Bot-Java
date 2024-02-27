@@ -1,6 +1,6 @@
 package org.themarioga.cclh.bot.util;
 
-import com.pengrad.telegrambot.model.Message;
+import org.telegram.telegrambots.meta.api.objects.Message;
 
 public interface CommandHandler {
 

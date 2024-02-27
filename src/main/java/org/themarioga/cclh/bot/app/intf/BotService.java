@@ -1,26 +1,31 @@
 package org.themarioga.cclh.bot.app.intf;
 
-import com.pengrad.telegrambot.Callback;
-import com.pengrad.telegrambot.Cancellable;
-import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.BaseRequest;
-import com.pengrad.telegrambot.response.BaseResponse;
-import org.themarioga.cclh.bot.util.CallbackQueryHandler;
-import org.themarioga.cclh.bot.util.CommandHandler;
-
-import java.util.List;
-import java.util.Map;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 public interface BotService {
 
-	void startBot(Map<String, CommandHandler> commands, Map<String, CallbackQueryHandler> callbackQueries);
+	void sendMessage(long chatId, String text);
 
-	int handleUpdates(Map<String, CommandHandler> commands, Map<String, CallbackQueryHandler> callbackQueries, List<Update> updates);
+	void sendMessageAsync(long chatId, String text, Callback callback);
 
-    <T extends BaseRequest<T, R>, R extends BaseResponse> Cancellable sendMessage(T request);
+	void editMessage(long chatId, int messageId, String text);
 
-    <T extends BaseRequest<T, R>, R extends BaseResponse> R sendMessageSync(BaseRequest<T, R> request);
+	void editMessage(long chatId, int messageId, String text, InlineKeyboardMarkup inlineKeyboardMarkup);
 
-    <T extends BaseRequest<T, R>, R extends BaseResponse> Cancellable sendMessageAsync(T request, Callback<T, R> callback);
+	void deleteMessage(long chatId, int messageId);
+
+	void answerCallbackQuery(String callbackQueryId);
+
+	void answerCallbackQuery(String callbackQueryId, String text);
+
+	interface Callback {
+
+		void success(BotApiMethod<Message> method, Message response);
+
+		void failure(BotApiMethod<Message> method, Exception e);
+
+	}
 
 }

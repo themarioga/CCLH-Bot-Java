@@ -1,11 +1,17 @@
 package org.themarioga.cclh.bot.app.intf;
 
 import jakarta.transaction.Transactional;
+import org.themarioga.cclh.bot.util.CallbackQueryHandler;
+import org.themarioga.cclh.bot.util.CommandHandler;
 import org.themarioga.cclh.commons.exceptions.ApplicationException;
+
+import java.util.Map;
 
 public interface ApplicationService {
 
-    void run();
+	Map<String, CommandHandler> getBotCommands();
+
+	Map<String, CallbackQueryHandler> getCallbackQueries();
 
 	void registerUser(long userId, String username);
 

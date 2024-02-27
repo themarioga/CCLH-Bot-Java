@@ -1,6 +1,6 @@
 package org.themarioga.cclh.bot.util;
 
-import com.pengrad.telegrambot.model.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 public interface CallbackQueryHandler {
 
