@@ -20,6 +20,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <!-- CCLH -->
         <dependency>
@@ -45,6 +52,13 @@
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots</artifactId>
             <version>6.9.7.1</version>
+        </dependency>
+
+        <!-- Let's Encrypt -->
+        <dependency>
+            <groupId>com.github.valb3r.letsencrypt-helper</groupId>
+            <artifactId>letsencrypt-helper-tomcat</artifactId>
+            <version>0.4.0</version>
         </dependency>
 
         <!-- BBDD -->
@@ -93,11 +107,6 @@
             <properties>
                 <spring.profiles.active>dev</spring.profiles.active>
                 <tests.skip>true</tests.skip>
-
-                <log.level.bot>debug</log.level.bot>
-                <log.level.sql>debug</log.level.sql>
-                <log.level.jpa>warn</log.level.jpa>
-                <log.level.root>warn</log.level.root>
             </properties>
             <dependencies>
                 <dependency>
@@ -109,15 +118,18 @@
         </profile>
 
         <profile>
+            <id>pre</id>
+            <properties>
+                <spring.profiles.active>pre</spring.profiles.active>
+                <tests.skip>true</tests.skip>
+            </properties>
+        </profile>
+
+        <profile>
             <id>pro</id>
             <properties>
                 <spring.profiles.active>pro</spring.profiles.active>
                 <tests.skip>true</tests.skip>
-
-                <log.level.bot>info</log.level.bot>
-                <log.level.sql>warn</log.level.sql>
-                <log.level.jpa>warn</log.level.jpa>
-                <log.level.root>warn</log.level.root>
             </properties>
         </profile>
     </profiles>

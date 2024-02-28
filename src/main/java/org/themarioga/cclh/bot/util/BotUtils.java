@@ -1,7 +1,10 @@
 package org.themarioga.cclh.bot.util;
 
 import org.springframework.util.StringUtils;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.User;
+
+import java.io.File;
 
 public class BotUtils {
 
@@ -24,6 +27,15 @@ public class BotUtils {
         if (StringUtils.hasText(user.getLastName())) output += " " + user.getLastName();
         if (StringUtils.hasText(user.getUserName())) output += " (@" + user.getUserName() + ")";
         return output;
+    }
+
+    public static InputFile getCertificate(String path) {
+        InputFile certificate = null;
+        File file = new File(path);
+        if (file.exists() && file.canRead()) {
+            certificate = new InputFile(file);
+        }
+        return certificate;
     }
 
 }
