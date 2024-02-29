@@ -32,7 +32,7 @@ public class BotConfig {
 	}
 
 	@Bean("telegramBotsApiWebhook")
-	@DependsOn({"serverlessWebhook", "webhookBotService"})
+	@DependsOn("serverlessWebhook")
 	@ConditionalOnMissingBean(TelegramBotsApi.class)
 	@ConditionalOnProperty(prefix = "cclh.bot", name="type", havingValue = "webhook")
 	public TelegramBotsApi telegramBotsApiWebhook(Webhook webhook) throws TelegramApiException {
