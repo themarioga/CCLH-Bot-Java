@@ -1,4 +1,4 @@
-package org.themarioga.cclh.bot.constants;
+package org.themarioga.cclh.bot.game.constants;
 
 public class ResponseErrorI18n {
 

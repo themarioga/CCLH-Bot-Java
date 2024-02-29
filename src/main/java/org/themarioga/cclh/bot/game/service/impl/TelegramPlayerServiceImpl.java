@@ -1,12 +1,12 @@
-package org.themarioga.cclh.bot.services.impl;
+package org.themarioga.cclh.bot.game.service.impl;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.themarioga.cclh.bot.dao.intf.TelegramPlayerDao;
-import org.themarioga.cclh.bot.model.TelegramGame;
-import org.themarioga.cclh.bot.model.TelegramPlayer;
-import org.themarioga.cclh.bot.services.intf.TelegramPlayerService;
+import org.themarioga.cclh.bot.game.dao.intf.TelegramPlayerDao;
+import org.themarioga.cclh.bot.game.model.TelegramGame;
+import org.themarioga.cclh.bot.game.model.TelegramPlayer;
+import org.themarioga.cclh.bot.game.service.intf.TelegramPlayerService;
 import org.themarioga.cclh.commons.exceptions.ApplicationException;
 import org.themarioga.cclh.commons.models.Player;
 import org.themarioga.cclh.commons.services.intf.PlayerService;

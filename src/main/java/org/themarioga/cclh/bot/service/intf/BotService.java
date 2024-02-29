@@ -1,4 +1,4 @@
-package org.themarioga.cclh.bot.app.intf;
+package org.themarioga.cclh.bot.service.intf;
 
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;

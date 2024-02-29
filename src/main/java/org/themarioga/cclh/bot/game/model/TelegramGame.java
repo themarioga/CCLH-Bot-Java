@@ -1,4 +1,4 @@
-package org.themarioga.cclh.bot.model;
+package org.themarioga.cclh.bot.game.model;
 
 import jakarta.persistence.*;
 import org.themarioga.cclh.commons.models.Game;

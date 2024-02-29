@@ -1,8 +1,8 @@
-package org.themarioga.cclh.bot.app.impl;
+package org.themarioga.cclh.bot.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.telegram.telegrambots.bots.TelegramWebhookBot;
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -14,37 +14,35 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.meta.updateshandlers.SentCallback;
-import org.themarioga.cclh.bot.app.intf.ApplicationService;
-import org.themarioga.cclh.bot.app.intf.BotService;
-import org.themarioga.cclh.bot.constants.ResponseErrorI18n;
+import org.themarioga.cclh.bot.service.intf.ApplicationService;
+import org.themarioga.cclh.bot.service.intf.BotService;
+import org.themarioga.cclh.bot.game.constants.ResponseErrorI18n;
 import org.themarioga.cclh.bot.util.BotUtils;
 import org.themarioga.cclh.bot.util.CallbackQueryHandler;
 import org.themarioga.cclh.bot.util.CommandHandler;
 
 import java.util.Map;
 
-public class WebhookBotServiceImpl extends TelegramWebhookBot implements BotService {
+public class LongPollingBotServiceImpl extends TelegramLongPollingBot implements BotService {
 
-    private static final Logger logger = LoggerFactory.getLogger(WebhookBotServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(LongPollingBotServiceImpl.class);
 
     private final String user;
-    private final String path;
 
 	private final Map<String, CommandHandler> commands;
     private final Map<String, CallbackQueryHandler> callbackQueries;
 
-    public WebhookBotServiceImpl(String token, String user, String internalPath, ApplicationService applicationService) {
+    public LongPollingBotServiceImpl(String token, String user, ApplicationService applicationService) {
         super(token);
 
         this.user = user;
-        this.path = internalPath;
 
 	    commands = applicationService.getBotCommands();
         callbackQueries = applicationService.getCallbackQueries();
     }
 
     @Override
-    public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
+    public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().getText() != null && update.getMessage().getText().startsWith("/")) {
             CommandHandler commandHandler = commands.get(update.getMessage().getText().split("@")[0]);
             if (commandHandler != null) {
@@ -79,18 +77,11 @@ public class WebhookBotServiceImpl extends TelegramWebhookBot implements BotServ
                 answerCallbackQuery(update.getCallbackQuery().getId(), ResponseErrorI18n.COMMAND_DOES_NOT_EXISTS);
             }
         }
-
-        return null;
     }
 
     @Override
     public String getBotUsername() {
         return user;
-    }
-
-    @Override
-    public String getBotPath() {
-        return path;
     }
 
     @Override

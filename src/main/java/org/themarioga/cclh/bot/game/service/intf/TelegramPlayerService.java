@@ -1,7 +1,7 @@
-package org.themarioga.cclh.bot.services.intf;
+package org.themarioga.cclh.bot.game.service.intf;
 
-import org.themarioga.cclh.bot.model.TelegramGame;
-import org.themarioga.cclh.bot.model.TelegramPlayer;
+import org.themarioga.cclh.bot.game.model.TelegramGame;
+import org.themarioga.cclh.bot.game.model.TelegramPlayer;
 
 import java.util.List;
 

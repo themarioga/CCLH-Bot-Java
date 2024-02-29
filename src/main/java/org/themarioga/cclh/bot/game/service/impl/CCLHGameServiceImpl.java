@@ -1,4 +1,4 @@
-package org.themarioga.cclh.bot.app.impl;
+package org.themarioga.cclh.bot.game.service.impl;
 
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -9,16 +9,14 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.themarioga.cclh.bot.app.intf.ApplicationService;
-import org.themarioga.cclh.bot.app.intf.BotService;
-import org.themarioga.cclh.bot.app.intf.CCLHService;
-import org.themarioga.cclh.bot.constants.ResponseErrorI18n;
-import org.themarioga.cclh.bot.constants.ResponseMessageI18n;
-import org.themarioga.cclh.bot.model.TelegramGame;
-import org.themarioga.cclh.bot.model.TelegramPlayer;
-import org.themarioga.cclh.bot.util.BotUtils;
-import org.themarioga.cclh.bot.util.CallbackQueryHandler;
-import org.themarioga.cclh.bot.util.CommandHandler;
+import org.themarioga.cclh.bot.game.model.TelegramGame;
+import org.themarioga.cclh.bot.game.model.TelegramPlayer;
+import org.themarioga.cclh.bot.service.intf.BotService;
+import org.themarioga.cclh.bot.game.service.intf.CCLHGameService;
+import org.themarioga.cclh.bot.game.constants.ResponseErrorI18n;
+import org.themarioga.cclh.bot.game.constants.ResponseMessageI18n;
+import org.themarioga.cclh.bot.game.service.intf.TelegramGameService;
+import org.themarioga.cclh.bot.game.service.intf.TelegramPlayerService;
 import org.themarioga.cclh.bot.util.StringUtils;
 import org.themarioga.cclh.commons.enums.GamePunctuationTypeEnum;
 import org.themarioga.cclh.commons.enums.GameStatusEnum;
@@ -35,207 +33,31 @@ import org.themarioga.cclh.commons.exceptions.user.UserAlreadyExistsException;
 import org.themarioga.cclh.commons.exceptions.user.UserDoesntExistsException;
 import org.themarioga.cclh.commons.models.Dictionary;
 import org.themarioga.cclh.commons.models.*;
+import org.themarioga.cclh.commons.services.intf.ConfigurationService;
+import org.themarioga.cclh.commons.services.intf.DictionaryService;
+import org.themarioga.cclh.commons.services.intf.UserService;
 
 import java.text.MessageFormat;
 import java.util.*;
 
 @Service
-public class ApplicationServiceImpl implements ApplicationService {
+public class CCLHGameServiceImpl implements CCLHGameService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ApplicationServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(CCLHGameServiceImpl.class);
 
-    BotService botService;
-    CCLHService cclhService;
-    ApplicationService applicationService;
-
-    @Override
-    public Map<String, CommandHandler> getBotCommands() {
-        Map<String, CommandHandler> commands = new HashMap<>();
-
-        commands.put("/start", message -> {
-            if (!message.getChat().getType().equals("private")) {
-                logger.error("Comando /start enviado en lugar incorrecto por {}", BotUtils.getUserInfo(message.getFrom()));
-
-                botService.sendMessage(message.getChat().getId(), ResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
-
-                return;
-            }
-
-            applicationService.registerUser(message.getFrom().getId(), BotUtils.getUsername(message.getFrom()));
-        });
-
-        commands.put("/create", message -> {
-            if (message.getChat().getType().equals("private")) {
-                logger.error("Comando /start enviado en lugar incorrecto por {}", BotUtils.getUserInfo(message.getFrom()));
-
-                botService.sendMessage(message.getChat().getId(), ResponseErrorI18n.COMMAND_SHOULD_BE_ON_GROUP);
-
-                return;
-            }
-
-            applicationService.startCreatingGame(message.getChat().getId(), message.getChat().getTitle(), message.getFrom().getId());
-        });
-
-        commands.put("/deleteMyGames", message -> {
-            if (!message.getChat().getType().equals("private")) {
-                logger.error("Comando /start enviado en lugar incorrecto por {}", BotUtils.getUserInfo(message.getFrom()));
-
-
-                botService.sendMessage(message.getChat().getId(), ResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
-
-                return;
-            }
-
-            applicationService.deleteMyGames(message.getFrom().getId());
-        });
-
-        commands.put("/help", message -> botService.sendMessage(message.getChat().getId(), ResponseMessageI18n.HELP));
-
-        return commands;
-    }
-
-    @Override
-    public Map<String, CallbackQueryHandler> getCallbackQueries() {
-        Map<String, CallbackQueryHandler> callbackQueryHandlerMap = new HashMap<>();
-
-        callbackQueryHandlerMap.put("game_created", (callbackQuery, data) -> {
-            applicationService.gameCreatedQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
-                    callbackQuery.getId());
-
-            botService.answerCallbackQuery(callbackQuery.getId());
-        });
-
-        callbackQueryHandlerMap.put("game_configure", (callbackQuery, data) -> {
-            applicationService.gameConfigureQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
-                    callbackQuery.getId());
-
-            botService.answerCallbackQuery(callbackQuery.getId());
-        });
-
-        callbackQueryHandlerMap.put("game_sel_mode", (callbackQuery, data) -> {
-            applicationService.gameSelectModeQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
-                    callbackQuery.getId());
-
-            botService.answerCallbackQuery(callbackQuery.getId());
-        });
-
-        callbackQueryHandlerMap.put("game_sel_point_type", (callbackQuery, data) -> {
-            applicationService.gameSelectPunctuationModeQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
-                    callbackQuery.getId());
-
-            botService.answerCallbackQuery(callbackQuery.getId());
-        });
-
-        callbackQueryHandlerMap.put("game_sel_dictionary", (callbackQuery, data) -> {
-            applicationService.gameSelectDictionaryQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
-                    callbackQuery.getId(), data);
-
-            botService.answerCallbackQuery(callbackQuery.getId());
-        });
-
-        callbackQueryHandlerMap.put("game_sel_max_players", (callbackQuery, data) -> {
-            applicationService.gameSelectMaxPlayersQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
-                    callbackQuery.getId());
-
-            botService.answerCallbackQuery(callbackQuery.getId());
-        });
-
-        callbackQueryHandlerMap.put("game_sel_n_rounds", (callbackQuery, data) -> {
-            applicationService.gameSelectNRoundsToEndQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
-                    callbackQuery.getId());
-
-            botService.answerCallbackQuery(callbackQuery.getId());
-        });
-
-        callbackQueryHandlerMap.put("game_sel_n_points", (callbackQuery, data) -> {
-            applicationService.gameSelectNPointsToWinQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
-                    callbackQuery.getId());
-
-            botService.answerCallbackQuery(callbackQuery.getId());
-        });
-
-        callbackQueryHandlerMap.put("game_change_mode", (callbackQuery, data) -> {
-            applicationService.gameChangeMode(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
-                    callbackQuery.getId(), data);
-
-            botService.answerCallbackQuery(callbackQuery.getId());
-        });
-
-        callbackQueryHandlerMap.put("game_change_dictionary", (callbackQuery, data) -> {
-            applicationService.gameChangeDictionary(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
-                    callbackQuery.getId(), data);
-
-            botService.answerCallbackQuery(callbackQuery.getId());
-        });
-
-        callbackQueryHandlerMap.put("game_change_max_players", (callbackQuery, data) -> {
-            applicationService.gameChangeMaxPlayers(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
-                    callbackQuery.getId(), data);
-
-            botService.answerCallbackQuery(callbackQuery.getId());
-        });
-
-        callbackQueryHandlerMap.put("game_change_max_rounds", (callbackQuery, data) -> {
-            applicationService.gameChangeNRoundsToEnd(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
-                    callbackQuery.getId(), data);
-
-            botService.answerCallbackQuery(callbackQuery.getId());
-        });
-
-        callbackQueryHandlerMap.put("game_change_max_points", (callbackQuery, data) -> {
-            applicationService.gameChangeNCardsToWin(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
-                    callbackQuery.getId(), data);
-
-            botService.answerCallbackQuery(callbackQuery.getId());
-        });
-
-        callbackQueryHandlerMap.put("game_join", (callbackQuery, data) -> {
-            applicationService.gameJoinQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
-                    callbackQuery.getId());
-
-            botService.answerCallbackQuery(callbackQuery.getId());
-        });
-
-        callbackQueryHandlerMap.put("game_start", (callbackQuery, data) -> {
-            applicationService.gameStartQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
-                    callbackQuery.getId());
-
-            botService.answerCallbackQuery(callbackQuery.getId());
-        });
-
-        callbackQueryHandlerMap.put("play_card", (callbackQuery, data) -> {
-            applicationService.playerPlayCardQuery(callbackQuery.getFrom().getId(), callbackQuery.getId(), data);
-
-            botService.answerCallbackQuery(callbackQuery.getId());
-        });
-
-        callbackQueryHandlerMap.put("vote_card", (callbackQuery, data) -> {
-            applicationService.playerVoteCardQuery(callbackQuery.getFrom().getId(), callbackQuery.getId(), data);
-
-            botService.answerCallbackQuery(callbackQuery.getId());
-        });
-
-        callbackQueryHandlerMap.put("game_delete_group", (callbackQuery, data) -> {
-            applicationService.gameDeleteGroupQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
-                    callbackQuery.getId());
-
-            botService.answerCallbackQuery(callbackQuery.getId());
-        });
-
-        callbackQueryHandlerMap.put("game_delete_private", (callbackQuery, data) -> {
-            applicationService.gameDeletePrivateQuery(callbackQuery.getFrom().getId(), callbackQuery.getId());
-
-            botService.answerCallbackQuery(callbackQuery.getId());
-        });
-
-        return callbackQueryHandlerMap;
-    }
+    private BotService botService;
+    private CCLHGameService cclhGameService;
+    private UserService userService;
+    private DictionaryService dictionaryService;
+    private ConfigurationService configurationService;
+    private TelegramGameService telegramGameService;
+    private TelegramPlayerService telegramPlayerService;
 
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void registerUser(long userId, String username) {
         try {
-            cclhService.registerUser(userId, username);
+            userService.createOrReactivate(userId, username);
 
             botService.sendMessage(userId, ResponseMessageI18n.PLAYER_WELCOME);
         } catch (UserAlreadyExistsException e) {
@@ -254,7 +76,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void deleteMyGames(long userId) {
-        TelegramGame telegramGame = cclhService.getGameByCreatorId(userId);
+        TelegramGame telegramGame = telegramGameService.getGameByCreatorId(userId);
 
         if (telegramGame == null) {
             logger.error("No existe juego asociado al usuario {}", userId);
@@ -265,7 +87,9 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         try {
-            List<TelegramPlayer> telegramPlayerList = cclhService.deleteGame(telegramGame);
+            List<TelegramPlayer> telegramPlayerList = telegramPlayerService.deletePlayers(telegramGame);
+
+            telegramGameService.deleteGame(telegramGame);
 
             sendDeleteMessages(telegramGame, telegramPlayerList);
         } catch (ApplicationException e) {
@@ -287,7 +111,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                         botService.sendMessageAsync(creatorId, ResponseMessageI18n.PLAYER_JOINING, new BotService.Callback() {
                             @Override
                             public void success(BotApiMethod<Message> method, Message playerResponse) {
-                                applicationService.createGame(roomId, roomTitle, creatorId, groupResponse.getMessageId(),
+                                cclhGameService.createGame(roomId, roomTitle, creatorId, groupResponse.getMessageId(),
                                         privateResponse.getMessageId(), playerResponse.getMessageId());
                             }
 
@@ -316,8 +140,11 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void createGame(long roomId, String roomTitle, long creatorId, int groupMessageId, int privateMessageId, int playerMessageId) {
         try {
-            TelegramGame telegramGame =
-                    cclhService.createGame(roomId, roomTitle, creatorId, groupMessageId, privateMessageId, playerMessageId);
+            TelegramGame telegramGame = telegramGameService.createGame(roomId, roomTitle, creatorId, groupMessageId, privateMessageId);
+
+            TelegramPlayer telegramPlayer = telegramPlayerService.createPlayer(telegramGame, creatorId, playerMessageId);
+
+            telegramGameService.joinGame(telegramGame, telegramPlayer);
 
             sendMainMenu(telegramGame);
 
@@ -358,7 +185,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void gameCreatedQuery(long roomId, long userId, String callbackQueryId) {
-        TelegramGame telegramGame = cclhService.getGame(roomId);
+        TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
@@ -378,7 +205,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void gameConfigureQuery(long roomId, long userId, String callbackQueryId) {
-        TelegramGame telegramGame = cclhService.getGame(roomId);
+        TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
@@ -398,7 +225,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void gameSelectModeQuery(long roomId, long userId, String callbackQueryId) {
-        TelegramGame telegramGame = cclhService.getGame(roomId);
+        TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
@@ -421,7 +248,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .build();
 
             botService.editMessage(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
-                            getGameCreatedGroupMessage(telegramGame) + "\n Selecciona modo de juego:", groupInlineKeyboard);
+                    getGameCreatedGroupMessage(telegramGame) + "\n Selecciona modo de juego:", groupInlineKeyboard);
         } else {
             botService.answerCallbackQuery(callbackQueryId, ResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
         }
@@ -430,7 +257,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void gameSelectPunctuationModeQuery(long roomId, long userId, String callbackQueryId) {
-        TelegramGame telegramGame = cclhService.getGame(roomId);
+        TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
@@ -461,7 +288,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void gameSelectNRoundsToEndQuery(long roomId, long userId, String callbackQueryId) {
-        TelegramGame telegramGame = cclhService.getGame(roomId);
+        TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
@@ -475,8 +302,8 @@ public class ApplicationServiceImpl implements ApplicationService {
             InlineKeyboardMarkup groupInlineKeyboard = InlineKeyboardMarkup.builder()
                     .keyboardRow(Arrays.asList(
                             InlineKeyboardButton.builder().text("1").callbackData("game_change_max_rounds__1").build(),
-		                    InlineKeyboardButton.builder().text("2").callbackData("game_change_max_rounds__2").build(),
-		                    InlineKeyboardButton.builder().text("3").callbackData("game_change_max_rounds__3").build()))
+                            InlineKeyboardButton.builder().text("2").callbackData("game_change_max_rounds__2").build(),
+                            InlineKeyboardButton.builder().text("3").callbackData("game_change_max_rounds__3").build()))
                     .keyboardRow(Arrays.asList(
                             InlineKeyboardButton.builder().text("4").callbackData("game_change_max_rounds__4").build(),
                             InlineKeyboardButton.builder().text("5").callbackData("game_change_max_rounds__5").build(),
@@ -500,7 +327,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void gameSelectNPointsToWinQuery(long roomId, long userId, String callbackQueryId) {
-        TelegramGame telegramGame = cclhService.getGame(roomId);
+        TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
@@ -539,7 +366,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void gameSelectDictionaryQuery(long roomId, long userId, String callbackQueryId, String data) {
-        TelegramGame telegramGame = cclhService.getGame(roomId);
+        TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
@@ -551,10 +378,10 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         if (userId == telegramGame.getGame().getCreator().getId()) {
             int pageNumber = Integer.parseInt(data);
-            int dictionariesPerPage = cclhService.getDictionariesPerPage();
-            int totalDictionaries = (int) cclhService.getDictionaryCount(userId);
+            int dictionariesPerPage = getGameDictionariesPerPage();
+            long totalDictionaries = dictionaryService.getDictionaryCount(userService.getById(userId));
             int firstResult = (pageNumber - 1) * dictionariesPerPage;
-            List<Dictionary> dictionaryList = cclhService.getDictionariesPaginated(userId, firstResult, dictionariesPerPage);
+            List<Dictionary> dictionaryList = dictionaryService.getDictionariesPaginated(userService.getById(userId), firstResult, dictionariesPerPage);
 
             InlineKeyboardMarkup.InlineKeyboardMarkupBuilder groupInlineKeyboard = InlineKeyboardMarkup.builder();
             if (pageNumber > 1) {
@@ -565,7 +392,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 groupInlineKeyboard.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
                         .text(dictionary.getName()).callbackData("game_change_dictionary__" + dictionary.getId()).build()));
             }
-            if (totalDictionaries > pageNumber * dictionariesPerPage) {
+            if (totalDictionaries > (long) pageNumber * dictionariesPerPage) {
                 groupInlineKeyboard.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
                         .text("➡").callbackData("game_sel_dictionary__" + (pageNumber + 1)).build()));
             }
@@ -582,7 +409,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void gameSelectMaxPlayersQuery(long roomId, long userId, String callbackQueryId) {
-        TelegramGame telegramGame = cclhService.getGame(roomId);
+        TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
@@ -603,7 +430,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                             InlineKeyboardButton.builder().text("7").callbackData("game_change_max_players__7").build(),
                             InlineKeyboardButton.builder().text("8").callbackData("game_change_max_players__8").build()))
                     .keyboardRow(Collections.singletonList(
-		                    InlineKeyboardButton.builder().text("9").callbackData("game_change_max_players__9").build()))
+                            InlineKeyboardButton.builder().text("9").callbackData("game_change_max_players__9").build()))
                     .keyboardRow(Collections.singletonList(
                             InlineKeyboardButton.builder().text("⬅ Volver").callbackData("game_configure").build()))
                     .build();
@@ -619,7 +446,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void gameChangeMode(long roomId, long userId, String callbackQueryId, String data) {
-        TelegramGame telegramGame = cclhService.getGame(roomId);
+        TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
@@ -631,7 +458,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         if (userId == telegramGame.getGame().getCreator().getId()) {
             try {
-                cclhService.setType(telegramGame, GameTypeEnum.getEnum(Integer.parseInt(data)));
+                telegramGameService.setType(telegramGame, GameTypeEnum.getEnum(Integer.parseInt(data)));
 
                 sendConfigMenu(telegramGame);
             } catch (GameAlreadyStartedException e) {
@@ -653,7 +480,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void gameChangeDictionary(long roomId, long userId, String callbackQueryId, String data) {
-        TelegramGame telegramGame = cclhService.getGame(roomId);
+        TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
@@ -665,7 +492,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         if (userId == telegramGame.getGame().getCreator().getId()) {
             try {
-                cclhService.setDictionary(telegramGame, Integer.parseInt(data));
+                telegramGameService.setDictionary(telegramGame, Integer.parseInt(data));
 
                 sendConfigMenu(telegramGame);
             } catch (GameAlreadyStartedException e) {
@@ -693,7 +520,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void gameChangeMaxPlayers(long roomId, long userId, String callbackQueryId, String data) {
-        TelegramGame telegramGame = cclhService.getGame(roomId);
+        TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
@@ -705,7 +532,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         if (userId == telegramGame.getGame().getCreator().getId()) {
             try {
-                cclhService.setMaxNumberOfPlayers(telegramGame, Integer.parseInt(data));
+                telegramGameService.setMaxNumberOfPlayers(telegramGame, Integer.parseInt(data));
 
                 sendConfigMenu(telegramGame);
             } catch (GameAlreadyStartedException e) {
@@ -731,7 +558,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void gameChangeNRoundsToEnd(long roomId, long userId, String callbackQueryId, String data) {
-        TelegramGame telegramGame = cclhService.getGame(roomId);
+        TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
@@ -743,7 +570,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         if (userId == telegramGame.getGame().getCreator().getId()) {
             try {
-                cclhService.setNumberOfRoundsToEnd(telegramGame, Integer.parseInt(data));
+                telegramGameService.setNumberOfRoundsToEnd(telegramGame, Integer.parseInt(data));
 
                 sendConfigMenu(telegramGame);
             } catch (GameAlreadyStartedException e) {
@@ -765,7 +592,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void gameChangeNCardsToWin(long roomId, long userId, String callbackQueryId, String data) {
-        TelegramGame telegramGame = cclhService.getGame(roomId);
+        TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
@@ -777,7 +604,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         if (userId == telegramGame.getGame().getCreator().getId()) {
             try {
-                cclhService.setNumberOfCardsToWin(telegramGame, Integer.parseInt(data));
+                telegramGameService.setNumberOfCardsToWin(telegramGame, Integer.parseInt(data));
 
                 sendConfigMenu(telegramGame);
             } catch (GameAlreadyStartedException e) {
@@ -799,7 +626,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void gameDeleteGroupQuery(long roomId, long userId, String callbackQueryId) {
-        TelegramGame telegramGame = cclhService.getGame(roomId);
+        TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
@@ -811,7 +638,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         if (userId == telegramGame.getGame().getCreator().getId()) {
             try {
-                List<TelegramPlayer> telegramPlayerList = cclhService.deleteGame(telegramGame);
+                List<TelegramPlayer> telegramPlayerList = telegramPlayerService.deletePlayers(telegramGame);
+
+                telegramGameService.deleteGame(telegramGame);
 
                 sendDeleteMessages(telegramGame, telegramPlayerList);
             } catch (ApplicationException e) {
@@ -822,12 +651,14 @@ public class ApplicationServiceImpl implements ApplicationService {
         } else {
             if (telegramGame.getGame().getStatus().equals(GameStatusEnum.STARTED)) {
                 try {
-                    cclhService.voteForDeletion(telegramGame, userId);
+                    telegramGameService.voteForDeletion(telegramGame, userId);
 
                     botService.answerCallbackQuery(callbackQueryId, ResponseMessageI18n.PLAYER_VOTED_DELETION);
 
                     if (telegramGame.getGame().getStatus().equals(GameStatusEnum.DELETING)) {
-                        List<TelegramPlayer> telegramPlayerList = cclhService.deleteGame(telegramGame);
+                        List<TelegramPlayer> telegramPlayerList = telegramPlayerService.deletePlayers(telegramGame);
+
+                        telegramGameService.deleteGame(telegramGame);
 
                         sendDeleteMessages(telegramGame, telegramPlayerList);
                     } else {
@@ -855,7 +686,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void gameDeletePrivateQuery(long userId, String callbackQueryId) {
-        TelegramGame telegramGame = cclhService.getGameByCreatorId(userId);
+        TelegramGame telegramGame = telegramGameService.getGameByCreatorId(userId);
 
         if (telegramGame == null) {
             logger.error("No existe juego asociado al usuario {}", userId);
@@ -866,7 +697,9 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         try {
-            List<TelegramPlayer> telegramPlayerList = cclhService.deleteGame(telegramGame);
+            List<TelegramPlayer> telegramPlayerList = telegramPlayerService.deletePlayers(telegramGame);
+
+            telegramGameService.deleteGame(telegramGame);
 
             sendDeleteMessages(telegramGame, telegramPlayerList);
         } catch (ApplicationException e) {
@@ -879,7 +712,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void gameJoinQuery(long roomId, long userId, String callbackQueryId) {
-        TelegramGame telegramGame = cclhService.getGame(roomId);
+        TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
@@ -894,7 +727,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 @Override
                 public void success(BotApiMethod<Message> method, Message response) {
                     try {
-                        applicationService.joinGame(
+                        cclhGameService.joinGame(
                                 roomId,
                                 userId,
                                 callbackQueryId,
@@ -919,14 +752,16 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void joinGame(long roomId, long userId, String callbackQueryId, int playerMessageId) {
-        TelegramGame telegramGame = cclhService.getGame(roomId);
+        TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
         try {
-            cclhService.joinGame(telegramGame, userId, playerMessageId);
+            TelegramPlayer telegramPlayer = telegramPlayerService.createPlayer(telegramGame, userId, playerMessageId);
+
+            telegramGameService.joinGame(telegramGame, telegramPlayer);
 
             InlineKeyboardMarkup privateInlineKeyboard = InlineKeyboardMarkup.builder()
-                            .keyboardRow(Collections.singletonList(InlineKeyboardButton.builder().text("Dejar la partida")
-                                    .callbackData("game_leave").build()))
+                    .keyboardRow(Collections.singletonList(InlineKeyboardButton.builder().text("Dejar la partida")
+                            .callbackData("game_leave").build()))
                     .build();
 
             botService.editMessage(userId, playerMessageId, ResponseMessageI18n.PLAYER_JOINED, privateInlineKeyboard);
@@ -954,7 +789,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void gameStartQuery(long roomId, long userId, String callbackQueryId) {
-        TelegramGame telegramGame = cclhService.getGame(roomId);
+        TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
@@ -966,7 +801,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         if (userId == telegramGame.getGame().getCreator().getId()) {
             try {
-                cclhService.startGame(telegramGame);
+                telegramGameService.startGame(telegramGame);
 
                 if (telegramGame.getGame().getStatus().equals(GameStatusEnum.STARTED)) {
                     startRound(telegramGame);
@@ -1002,7 +837,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void playerPlayCardQuery(long userId, String callbackQueryId, String data) {
-        TelegramGame telegramGame = cclhService.getByPlayerUser(userId);
+        TelegramGame telegramGame = telegramGameService.getByPlayerUser(userId);
 
         if (telegramGame == null) {
             logger.error("No existe juego asociado al usuario {}", userId);
@@ -1013,10 +848,10 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         try {
-            cclhService.playCard(telegramGame, userId, Integer.parseInt(data));
+            telegramGameService.playCard(telegramGame, userId, Integer.parseInt(data));
 
             if (telegramGame.getGame().getTable().getStatus().equals(TableStatusEnum.PLAYING)) {
-                TelegramPlayer telegramPlayer = cclhService.getPlayer(userId);
+                TelegramPlayer telegramPlayer = telegramPlayerService.getByUser(userId);
 
                 PlayedCard playedCard = getPlayedCardByPlayer(telegramGame, telegramPlayer);
 
@@ -1034,18 +869,18 @@ public class ApplicationServiceImpl implements ApplicationService {
             } else if (telegramGame.getGame().getTable().getStatus().equals(TableStatusEnum.VOTING)) {
                 if (telegramGame.getGame().getType().equals(GameTypeEnum.DEMOCRACY)) {
                     botService.editMessage(
-                                    telegramGame.getGame().getRoom().getId(),
-                                    telegramGame.getBlackCardMessageId(),
-                                    getGameVoteCardMessage(telegramGame));
+                            telegramGame.getGame().getRoom().getId(),
+                            telegramGame.getBlackCardMessageId(),
+                            getGameVoteCardMessage(telegramGame));
 
-                    List<TelegramPlayer> telegramPlayers = cclhService.getPlayers(telegramGame);
+                    List<TelegramPlayer> telegramPlayers = telegramPlayerService.getPlayers(telegramGame);
 
                     for (TelegramPlayer tgPlayer : telegramPlayers) {
                         sendVotesToPlayer(telegramGame, tgPlayer);
                     }
                 } else if (telegramGame.getGame().getType().equals(GameTypeEnum.CLASSIC)
                         || telegramGame.getGame().getType().equals(GameTypeEnum.DICTATORSHIP)) {
-                    sendVotesToPlayer(telegramGame, cclhService.getPlayer(telegramGame.getGame().getCreator().getId()));
+                    sendVotesToPlayer(telegramGame, telegramPlayerService.getByUser(telegramGame.getGame().getCreator().getId()));
                 }
             } else {
                 logger.error("Juego en estado incorrecto: {}", telegramGame.getGame().getId());
@@ -1064,7 +899,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
     public void playerVoteCardQuery(long userId, String callbackQueryId, String data) {
-        TelegramGame telegramGame = cclhService.getByPlayerUser(userId);
+        TelegramGame telegramGame = telegramGameService.getByPlayerUser(userId);
 
         if (telegramGame == null) {
             logger.error("No existe juego asociado al usuario {}", userId);
@@ -1075,21 +910,21 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         try {
-            cclhService.voteCard(telegramGame, userId, Integer.parseInt(data));
+            telegramGameService.voteCard(telegramGame, userId, Integer.parseInt(data));
 
             if (telegramGame.getGame().getTable().getStatus().equals(TableStatusEnum.VOTING)) {
                 sendMessageToVoter(telegramGame, userId, callbackQueryId);
             } else if (telegramGame.getGame().getTable().getStatus().equals(TableStatusEnum.ENDING)) {
                 sendMessageToVoter(telegramGame, userId, callbackQueryId);
 
-                PlayedCard mostVotedCard = cclhService.getMostVotedCard(telegramGame);
+                PlayedCard mostVotedCard = telegramGameService.getMostVotedCard(telegramGame);
 
                 botService.editMessage(
-                                telegramGame.getGame().getRoom().getId(),
-                                telegramGame.getBlackCardMessageId(),
-                                getGameEndRoundMessage(telegramGame, mostVotedCard));
+                        telegramGame.getGame().getRoom().getId(),
+                        telegramGame.getBlackCardMessageId(),
+                        getGameEndRoundMessage(telegramGame, mostVotedCard));
 
-                cclhService.endRound(telegramGame);
+                telegramGameService.endRound(telegramGame);
 
                 if (telegramGame.getGame().getStatus().equals(GameStatusEnum.STARTED)) {
                     startRound(telegramGame);
@@ -1099,7 +934,9 @@ public class ApplicationServiceImpl implements ApplicationService {
                     if (winner != null) {
                         botService.sendMessage(telegramGame.getGame().getRoom().getId(), getGameEndGameMessage(winner));
 
-                        List<TelegramPlayer> telegramPlayerList = cclhService.deleteGame(telegramGame);
+                        List<TelegramPlayer> telegramPlayerList = telegramPlayerService.deletePlayers(telegramGame);
+
+                        telegramGameService.deleteGame(telegramGame);
 
                         sendEndMessages(telegramGame, telegramPlayerList);
                     } else {
@@ -1136,7 +973,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             groupInlineKeyboard.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
                     .text("Configurar la partida").callbackData("game_configure").build()));
 
-            if (telegramGame.getGame().getPlayers().size() >= cclhService.getMinNumberOfPlayers()) {
+            if (telegramGame.getGame().getPlayers().size() >= getGameMinNumberOfPlayers()) {
                 groupInlineKeyboard.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
                         .text("Iniciar la partida").callbackData("game_start").build()));
             }
@@ -1160,8 +997,8 @@ public class ApplicationServiceImpl implements ApplicationService {
                 telegramGame.getGroupMessageId(), msg, groupInlineKeyboard.build());
 
         InlineKeyboardMarkup privateInlineKeyboard = InlineKeyboardMarkup.builder()
-                        .keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
-                                .text("Borrar juego").callbackData("game_delete_private").build()))
+                .keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
+                        .text("Borrar juego").callbackData("game_delete_private").build()))
                 .build();
 
         botService.editMessage(telegramGame.getGame().getCreator().getId(),
@@ -1180,10 +1017,10 @@ public class ApplicationServiceImpl implements ApplicationService {
                         .text("Cambiar nº máximo de jugadores").callbackData("game_sel_max_players").build()))
                 .keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
                         .text("⬅ Volver").callbackData("game_created").build()))
-                        .build();
+                .build();
 
         botService.editMessage(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
-                        getGameCreatedGroupMessage(telegramGame), groupInlineKeyboard);
+                getGameCreatedGroupMessage(telegramGame), groupInlineKeyboard);
     }
 
     private void sendDeleteMessages(TelegramGame telegramGame, List<TelegramPlayer> telegramPlayerList) {
@@ -1219,7 +1056,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private void startRound(TelegramGame telegramGame) {
         if (telegramGame.getGame().getTable().getStatus().equals(TableStatusEnum.STARTING)) {
-            cclhService.startRound(telegramGame);
+            telegramGameService.startRound(telegramGame);
 
             if (telegramGame.getGame().getTable().getStatus().equals(TableStatusEnum.PLAYING)) {
                 String msg = StringUtils.formatMessage(ResponseMessageI18n.GAME_SELECT_CARD,
@@ -1228,7 +1065,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 botService.sendMessageAsync(telegramGame.getGame().getRoom().getId(), msg, new BotService.Callback() {
                     @Override
                     public void success(BotApiMethod<Message> method, Message response) {
-                        cclhService.setBlackCardMessage(telegramGame, response.getMessageId());
+                        telegramGameService.setBlackCardMessage(telegramGame, response.getMessageId());
                     }
 
                     @Override
@@ -1237,7 +1074,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     }
                 });
 
-                List<TelegramPlayer> telegramPlayers = new ArrayList<>(cclhService.getPlayers(telegramGame));
+                List<TelegramPlayer> telegramPlayers = new ArrayList<>(telegramPlayerService.getPlayers(telegramGame));
 
                 if (!telegramGame.getGame().getType().equals(GameTypeEnum.DEMOCRACY)) {
                     telegramPlayers.removeIf(telegramPlayer -> telegramPlayer.getPlayer().getId()
@@ -1288,7 +1125,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     private void sendMessageToVoter(TelegramGame telegramGame, long userId, String callbackQueryId) {
-        TelegramPlayer telegramPlayer = cclhService.getPlayer(userId);
+        TelegramPlayer telegramPlayer = telegramPlayerService.getByUser(userId);
 
         PlayedCard playedCard = getPlayedCardByPlayer(telegramGame, telegramPlayer);
         VotedCard votedCard = getVotedCardByPlayer(telegramGame, telegramPlayer);
@@ -1423,7 +1260,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .filter(playedCard -> playedCard.getPlayer().getId()
                         .equals(telegramPlayer.getPlayer().getId())).findFirst();
 
-	    return e.orElse(null);
+        return e.orElse(null);
     }
 
     private VotedCard getVotedCardByPlayer(TelegramGame telegramGame, TelegramPlayer telegramPlayer) {
@@ -1434,19 +1271,47 @@ public class ApplicationServiceImpl implements ApplicationService {
         return e.orElse(null);
     }
 
+    private int getGameMinNumberOfPlayers() {
+        return Integer.parseInt(configurationService.getConfiguration("game_min_number_of_players"));
+    }
+
+    private int getGameDictionariesPerPage() {
+        return Integer.parseInt(configurationService.getConfiguration("game_dictionaries_per_page"));
+    }
+
     @Autowired
     public void setBotService(BotService botService) {
         this.botService = botService;
     }
 
     @Autowired
-    public void setCCLHService(CCLHService cclhService) {
-        this.cclhService = cclhService;
+    public void setCclhBotService(CCLHGameService cclhGameService) {
+        this.cclhGameService = cclhGameService;
     }
 
     @Autowired
-    public void setApplicationService(ApplicationService applicationService) {
-        this.applicationService = applicationService;
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Autowired
+    public void setDictionaryService(DictionaryService dictionaryService) {
+        this.dictionaryService = dictionaryService;
+    }
+
+    @Autowired
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
+    }
+
+    @Autowired
+    public void setTelegramGameService(TelegramGameService telegramGameService) {
+        this.telegramGameService = telegramGameService;
+    }
+
+    @Autowired
+    public void setTelegramPlayerService(TelegramPlayerService telegramPlayerService) {
+        this.telegramPlayerService = telegramPlayerService;
     }
 
 }

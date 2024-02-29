@@ -1,4 +1,4 @@
-package org.themarioga.cclh.bot.constants;
+package org.themarioga.cclh.bot.game.constants;
 
 import org.themarioga.cclh.commons.enums.GameTypeEnum;
 

@@ -1,14 +1,14 @@
-package org.themarioga.cclh.bot.services.impl;
+package org.themarioga.cclh.bot.game.service.impl;
 
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.themarioga.cclh.bot.dao.intf.TelegramGameDao;
-import org.themarioga.cclh.bot.model.TelegramGame;
-import org.themarioga.cclh.bot.model.TelegramPlayer;
-import org.themarioga.cclh.bot.services.intf.TelegramGameService;
+import org.themarioga.cclh.bot.game.dao.intf.TelegramGameDao;
+import org.themarioga.cclh.bot.game.model.TelegramGame;
+import org.themarioga.cclh.bot.game.model.TelegramPlayer;
+import org.themarioga.cclh.bot.game.service.intf.TelegramGameService;
 import org.themarioga.cclh.commons.enums.ErrorEnum;
 import org.themarioga.cclh.commons.enums.GameTypeEnum;
 import org.themarioga.cclh.commons.enums.TableStatusEnum;
