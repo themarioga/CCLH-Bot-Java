@@ -64,7 +64,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             cclhGameService.deleteMyGames(message.getFrom().getId());
         });
 
-        commands.put("/help", message -> botService.sendMessage(message.getChat().getId(), ResponseMessageI18n.HELP));
+        commands.put("/help", message -> cclhGameService.sendHelpMessage(message.getChatId()));
 
         return commands;
     }

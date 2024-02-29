@@ -110,7 +110,13 @@ public class ResponseMessageI18n {
 
 	public static final String PLAYER_VOTED_DELETION = "Has votado borrar la partida";
 
-	public static final String HELP = "Esta es la ayuda";
+	public static final String HELP = """
+			Bienvenido a la ayuda de {0} versión {1}
+			Puedes consultar la ayuda en el siguiente enlace: {2}
+			Disfrutad del bot y... ¡A jugar!
+			
+			Creado por {3}.
+			""";
 
 	public static String getGameTypeName(GameTypeEnum gameTypeEnum) {
 		if (gameTypeEnum == GameTypeEnum.DEMOCRACY) {

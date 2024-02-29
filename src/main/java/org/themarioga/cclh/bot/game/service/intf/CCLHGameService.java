@@ -50,4 +50,6 @@ public interface CCLHGameService {
 
     void playerVoteCardQuery(long userId, String callbackQueryId, String data);
 
+    void sendHelpMessage(long roomId);
+
 }

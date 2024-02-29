@@ -961,6 +961,11 @@ public class CCLHGameServiceImpl implements CCLHGameService {
         }
     }
 
+    @Override
+    public void sendHelpMessage(long roomId) {
+        botService.sendMessage(roomId, getHelpMessage());
+    }
+
     private void sendMainMenu(TelegramGame telegramGame) {
         InlineKeyboardMarkup.InlineKeyboardMarkupBuilder groupInlineKeyboard = InlineKeyboardMarkup.builder();
 
@@ -1248,6 +1253,10 @@ public class CCLHGameServiceImpl implements CCLHGameService {
         return MessageFormat.format(ResponseMessageI18n.GAME_END_GAME, winner.getUser().getName());
     }
 
+    private String getHelpMessage() {
+        return MessageFormat.format(ResponseMessageI18n.HELP, getBotName(), getBotVersion(), getBotHelpURL(), getBotCreatorName());
+    }
+
     private Player getWinnerPlayer(TelegramGame telegramGame) {
         Optional<Player> e = telegramGame.getGame().getPlayers().stream()
                 .max(Comparator.comparing(Player::getPoints));
@@ -1277,6 +1286,27 @@ public class CCLHGameServiceImpl implements CCLHGameService {
 
     private int getGameDictionariesPerPage() {
         return Integer.parseInt(configurationService.getConfiguration("game_dictionaries_per_page"));
+    }
+
+    private String getBotName() {
+        return configurationService.getConfiguration("cclh_bot_name") +
+                "(" + configurationService.getConfiguration("cclh_bot_alias") + ")";
+    }
+
+    private String getBotVersion() {
+        return configurationService.getConfiguration("cclh_bot_version");
+    }
+
+    private String getBotCreatorId() {
+        return configurationService.getConfiguration("cclh_bot_owner_id");
+    }
+
+    private String getBotCreatorName() {
+        return configurationService.getConfiguration("cclh_bot_owner_alias");
+    }
+
+    private String getBotHelpURL() {
+        return configurationService.getConfiguration("cclh_bot_help_url");
     }
 
     @Autowired
