@@ -112,8 +112,11 @@ public class ResponseMessageI18n {
 
 	public static final String HELP = """
 			Bienvenido a la ayuda de {0} versión {1}
+			
 			Puedes consultar la ayuda en el siguiente enlace: {2}
+			
 			Disfrutad del bot y... ¡A jugar!
+			
 			
 			Creado por {3}.
 			""";

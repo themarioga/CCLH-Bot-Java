@@ -1290,7 +1290,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
 
     private String getBotName() {
         return configurationService.getConfiguration("cclh_bot_name") +
-                "(" + configurationService.getConfiguration("cclh_bot_alias") + ")";
+                " (" + configurationService.getConfiguration("cclh_bot_alias") + ")";
     }
 
     private String getBotVersion() {
