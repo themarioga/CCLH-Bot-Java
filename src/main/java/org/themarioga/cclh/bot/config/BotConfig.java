@@ -1,5 +1,7 @@
 package org.themarioga.cclh.bot.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -20,6 +22,8 @@ import org.themarioga.cclh.bot.util.BotUtils;
 
 @Configuration
 public class BotConfig {
+
+	private final Logger logger = LoggerFactory.getLogger(BotConfig.class);
 
 	@Value("${cclh.bot.token}")
 	private String token;
@@ -75,10 +79,13 @@ public class BotConfig {
 	@ConditionalOnMissingBean(TelegramBotsApi.class)
 	@ConditionalOnProperty(prefix = "cclh.bot", name="type", havingValue = "webhook")
 	public TelegramBotsApi telegramBotsApiPro(Webhook webhook, WebhookBot webhookBotService) throws TelegramApiException {
+		logger.info("Iniciando webhook en la url {}...", webhookURL);
+
 		SetWebhook.SetWebhookBuilder webhookBuilder = SetWebhook.builder().url(webhookURL);
 
 		InputFile certificate = BotUtils.getCertificate(webhookCertPath);
 		if (certificate != null) {
+			logger.info("Sending certificate {}...", webhookCertPath);
 			webhookBuilder.certificate(certificate);
 		}
 
