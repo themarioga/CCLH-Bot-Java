@@ -100,8 +100,14 @@ public class TelegramGameServiceImpl implements TelegramGameService {
 
 	@Override
 	@Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
-	public void joinGame(TelegramGame tgGame, TelegramPlayer tgPlayer) {
+	public void addPlayer(TelegramGame tgGame, TelegramPlayer tgPlayer) {
 		gameService.addPlayer(tgGame.getGame(), tgPlayer.getPlayer());
+	}
+
+	@Override
+	@Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+	public void removePlayer(TelegramGame tgGame, TelegramPlayer tgPlayer) {
+		gameService.removePlayer(tgGame.getGame(), tgPlayer.getPlayer());
 	}
 
 	@Override

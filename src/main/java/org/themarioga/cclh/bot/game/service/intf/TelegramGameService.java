@@ -23,7 +23,9 @@ public interface TelegramGameService {
 
 	void setDictionary(TelegramGame game, long dictionaryId);
 
-	void joinGame(TelegramGame game, TelegramPlayer player);
+	void addPlayer(TelegramGame game, TelegramPlayer player);
+
+	void removePlayer(TelegramGame game, TelegramPlayer player);
 
 	void startGame(TelegramGame tgGame);
 

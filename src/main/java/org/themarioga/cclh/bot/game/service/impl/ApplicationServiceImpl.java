@@ -8,7 +8,6 @@ import org.themarioga.cclh.bot.game.service.intf.CCLHGameService;
 import org.themarioga.cclh.bot.service.intf.ApplicationService;
 import org.themarioga.cclh.bot.service.intf.BotService;
 import org.themarioga.cclh.bot.game.constants.ResponseErrorI18n;
-import org.themarioga.cclh.bot.game.constants.ResponseMessageI18n;
 import org.themarioga.cclh.bot.util.BotUtils;
 import org.themarioga.cclh.bot.util.CallbackQueryHandler;
 import org.themarioga.cclh.bot.util.CommandHandler;
@@ -36,7 +35,11 @@ public class ApplicationServiceImpl implements ApplicationService {
                 return;
             }
 
-            cclhGameService.registerUser(message.getFrom().getId(), BotUtils.getUsername(message.getFrom()));
+            try {
+                cclhGameService.registerUser(message.getFrom().getId(), BotUtils.getUsername(message.getFrom()));
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
         });
 
         commands.put("/create", message -> {
@@ -48,7 +51,11 @@ public class ApplicationServiceImpl implements ApplicationService {
                 return;
             }
 
-            cclhGameService.startCreatingGame(message.getChat().getId(), message.getChat().getTitle(), message.getFrom().getId());
+            try {
+                cclhGameService.startCreatingGame(message.getChat().getId(), message.getChat().getTitle(), message.getFrom().getId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
         });
 
         commands.put("/deleteMyGames", message -> {
@@ -61,7 +68,11 @@ public class ApplicationServiceImpl implements ApplicationService {
                 return;
             }
 
-            cclhGameService.deleteMyGames(message.getFrom().getId());
+            try {
+                cclhGameService.deleteMyGames(message.getFrom().getId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
         });
 
         commands.put("/help", message -> cclhGameService.sendHelpMessage(message.getChatId()));
@@ -74,131 +85,217 @@ public class ApplicationServiceImpl implements ApplicationService {
         Map<String, CallbackQueryHandler> callbackQueryHandlerMap = new HashMap<>();
 
         callbackQueryHandlerMap.put("game_created", (callbackQuery, data) -> {
-            cclhGameService.gameCreatedQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
+            try {
+                cclhGameService.gameCreatedQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
                     callbackQuery.getId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
 
             botService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_configure", (callbackQuery, data) -> {
-            cclhGameService.gameConfigureQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
+            try {
+                cclhGameService.gameConfigureQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
                     callbackQuery.getId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
 
             botService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_sel_mode", (callbackQuery, data) -> {
-            cclhGameService.gameSelectModeQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
+            try {
+                cclhGameService.gameSelectModeQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
                     callbackQuery.getId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
 
             botService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_sel_point_type", (callbackQuery, data) -> {
-            cclhGameService.gameSelectPunctuationModeQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
+            try {
+                cclhGameService.gameSelectPunctuationModeQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
                     callbackQuery.getId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
 
             botService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_sel_dictionary", (callbackQuery, data) -> {
-            cclhGameService.gameSelectDictionaryQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
+            try {
+                cclhGameService.gameSelectDictionaryQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
                     callbackQuery.getId(), data);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
 
             botService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_sel_max_players", (callbackQuery, data) -> {
-            cclhGameService.gameSelectMaxPlayersQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
+            try {
+                cclhGameService.gameSelectMaxPlayersQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
                     callbackQuery.getId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
 
             botService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_sel_n_rounds", (callbackQuery, data) -> {
-            cclhGameService.gameSelectNRoundsToEndQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
+            try {
+                cclhGameService.gameSelectNRoundsToEndQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
                     callbackQuery.getId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
 
             botService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_sel_n_points", (callbackQuery, data) -> {
-            cclhGameService.gameSelectNPointsToWinQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
+            try {
+                cclhGameService.gameSelectNPointsToWinQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
                     callbackQuery.getId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
 
             botService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_change_mode", (callbackQuery, data) -> {
-            cclhGameService.gameChangeMode(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
+            try {
+                cclhGameService.gameChangeMode(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
                     callbackQuery.getId(), data);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
 
             botService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_change_dictionary", (callbackQuery, data) -> {
-            cclhGameService.gameChangeDictionary(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
+            try {
+                cclhGameService.gameChangeDictionary(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
                     callbackQuery.getId(), data);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
 
             botService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_change_max_players", (callbackQuery, data) -> {
-            cclhGameService.gameChangeMaxPlayers(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
+            try {
+                cclhGameService.gameChangeMaxPlayers(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
                     callbackQuery.getId(), data);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
 
             botService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_change_max_rounds", (callbackQuery, data) -> {
-            cclhGameService.gameChangeNRoundsToEnd(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
+            try {
+                cclhGameService.gameChangeNRoundsToEnd(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
                     callbackQuery.getId(), data);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
 
             botService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_change_max_points", (callbackQuery, data) -> {
-            cclhGameService.gameChangeNCardsToWin(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
+            try {
+                cclhGameService.gameChangeNCardsToWin(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
                     callbackQuery.getId(), data);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
 
             botService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_join", (callbackQuery, data) -> {
-            cclhGameService.gameJoinQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
+            try {
+                cclhGameService.gameJoinQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
                     callbackQuery.getId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+
+            botService.answerCallbackQuery(callbackQuery.getId());
+        });
+
+        callbackQueryHandlerMap.put("game_leave", (callbackQuery, data) -> {
+            try {
+                cclhGameService.leaveGame(callbackQuery.getFrom().getId(), callbackQuery.getId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
 
             botService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_start", (callbackQuery, data) -> {
-            cclhGameService.gameStartQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
+            try {
+                cclhGameService.gameStartQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
                     callbackQuery.getId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
 
             botService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("play_card", (callbackQuery, data) -> {
-            cclhGameService.playerPlayCardQuery(callbackQuery.getFrom().getId(), callbackQuery.getId(), data);
+            try {
+                cclhGameService.playerPlayCardQuery(callbackQuery.getFrom().getId(), callbackQuery.getId(), data);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
 
             botService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("vote_card", (callbackQuery, data) -> {
-            cclhGameService.playerVoteCardQuery(callbackQuery.getFrom().getId(), callbackQuery.getId(), data);
+            try {
+                cclhGameService.playerVoteCardQuery(callbackQuery.getFrom().getId(), callbackQuery.getId(), data);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
 
             botService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_delete_group", (callbackQuery, data) -> {
-            cclhGameService.gameDeleteGroupQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
+            try {
+                cclhGameService.gameDeleteGroupQuery(callbackQuery.getMessage().getChatId(), callbackQuery.getFrom().getId(),
                     callbackQuery.getId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
 
             botService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_delete_private", (callbackQuery, data) -> {
-            cclhGameService.gameDeletePrivateQuery(callbackQuery.getFrom().getId(), callbackQuery.getId());
+            try {
+                cclhGameService.gameDeletePrivateQuery(callbackQuery.getFrom().getId(), callbackQuery.getId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
 
             botService.answerCallbackQuery(callbackQuery.getId());
         });

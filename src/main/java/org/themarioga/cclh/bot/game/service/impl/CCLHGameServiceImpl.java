@@ -111,8 +111,12 @@ public class CCLHGameServiceImpl implements CCLHGameService {
                         botService.sendMessageAsync(creatorId, ResponseMessageI18n.PLAYER_JOINING, new BotService.Callback() {
                             @Override
                             public void success(BotApiMethod<Message> method, Message playerResponse) {
-                                cclhGameService.createGame(roomId, roomTitle, creatorId, groupResponse.getMessageId(),
-                                        privateResponse.getMessageId(), playerResponse.getMessageId());
+                                try {
+                                    cclhGameService.createGame(roomId, roomTitle, creatorId, groupResponse.getMessageId(),
+                                            privateResponse.getMessageId(), playerResponse.getMessageId());
+                                } catch (Exception e) {
+                                    logger.error(e.getMessage(), e);
+                                }
                             }
 
                             @Override
@@ -144,11 +148,13 @@ public class CCLHGameServiceImpl implements CCLHGameService {
 
             TelegramPlayer telegramPlayer = telegramPlayerService.createPlayer(telegramGame, creatorId, playerMessageId);
 
-            telegramGameService.joinGame(telegramGame, telegramPlayer);
+            telegramGameService.addPlayer(telegramGame, telegramPlayer);
 
             sendMainMenu(telegramGame);
 
-            botService.editMessage(creatorId, privateMessageId, ResponseMessageI18n.PLAYER_JOINED);
+            sendCreatorPrivateMenu(telegramGame);
+
+            botService.editMessage(creatorId, playerMessageId, ResponseMessageI18n.PLAYER_JOINED);
         } catch (GameAlreadyExistsException e) {
             logger.error("Ya existe una partida para al sala {} ({}) o creado por {}.",
                     roomId, roomTitle, creatorId);
@@ -732,10 +738,8 @@ public class CCLHGameServiceImpl implements CCLHGameService {
                                 userId,
                                 callbackQueryId,
                                 response.getMessageId());
-                    } catch (PlayerAlreadyExistsException e) {
-                        botService.answerCallbackQuery(callbackQueryId, ResponseErrorI18n.PLAYER_ALREADY_JOINED);
-
-                        throw e;
+                    } catch (Exception e) {
+                        logger.error(e.getMessage(), e);
                     }
                 }
 
@@ -757,7 +761,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
         try {
             TelegramPlayer telegramPlayer = telegramPlayerService.createPlayer(telegramGame, userId, playerMessageId);
 
-            telegramGameService.joinGame(telegramGame, telegramPlayer);
+            telegramGameService.addPlayer(telegramGame, telegramPlayer);
 
             InlineKeyboardMarkup privateInlineKeyboard = InlineKeyboardMarkup.builder()
                     .keyboardRow(Collections.singletonList(InlineKeyboardButton.builder().text("Dejar la partida")
@@ -771,6 +775,10 @@ public class CCLHGameServiceImpl implements CCLHGameService {
             botService.answerCallbackQuery(callbackQueryId, ResponseErrorI18n.GAME_USER_DOESNT_EXISTS);
 
             throw e;
+        } catch (PlayerAlreadyExistsException e) {
+            botService.answerCallbackQuery(callbackQueryId, ResponseErrorI18n.PLAYER_ALREADY_JOINED);
+
+            throw e;
         } catch (GameAlreadyStartedException e) {
             botService.answerCallbackQuery(callbackQueryId, ResponseErrorI18n.GAME_ALREADY_STARTED);
 
@@ -779,6 +787,28 @@ public class CCLHGameServiceImpl implements CCLHGameService {
             botService.answerCallbackQuery(callbackQueryId, ResponseErrorI18n.GAME_ALREADY_FILLED);
 
             throw e;
+        } catch (ApplicationException e) {
+            botService.answerCallbackQuery(callbackQueryId, e.getMessage());
+
+            throw e;
+        }
+    }
+
+    @Override
+    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    public void leaveGame(long userId, String callbackQueryId) {
+        TelegramGame telegramGame = telegramGameService.getByPlayerUser(userId);
+
+        try {
+            TelegramPlayer telegramPlayer = telegramPlayerService.getByUser(userId);
+
+            telegramGameService.removePlayer(telegramGame, telegramPlayer);
+            telegramPlayerService.deletePlayer(telegramPlayer);
+
+            botService.answerCallbackQuery(callbackQueryId, "Has dejado la partida");
+            botService.deleteMessage(telegramPlayer.getPlayer().getUser().getId(), telegramPlayer.getMessageId());
+
+            sendMainMenu(telegramGame);
         } catch (ApplicationException e) {
             botService.answerCallbackQuery(callbackQueryId, e.getMessage());
 
@@ -1000,7 +1030,9 @@ public class CCLHGameServiceImpl implements CCLHGameService {
 
         botService.editMessage(telegramGame.getGame().getRoom().getId(),
                 telegramGame.getGroupMessageId(), msg, groupInlineKeyboard.build());
+    }
 
+    private void sendCreatorPrivateMenu(TelegramGame telegramGame) {
         InlineKeyboardMarkup privateInlineKeyboard = InlineKeyboardMarkup.builder()
                 .keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
                         .text("Borrar juego").callbackData("game_delete_private").build()))

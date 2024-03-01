@@ -44,6 +44,8 @@ public interface CCLHGameService {
 
     void joinGame(long roomId, long userId, String callbackQueryId, int playerMessageId);
 
+    void leaveGame(long userId, String callbackQueryId);
+
     void gameStartQuery(long roomId, long userId, String callbackQueryId);
 
     void playerPlayCardQuery(long userId, String callbackQueryId, String data);

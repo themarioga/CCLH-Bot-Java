@@ -40,6 +40,13 @@ public class TelegramPlayerServiceImpl implements TelegramPlayerService {
 
 	@Override
 	@Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+	public void deletePlayer(TelegramPlayer telegramPlayer) {
+		telegramPlayerDao.delete(telegramPlayer);
+		playerService.delete(telegramPlayer.getPlayer());
+	}
+
+	@Override
+	@Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
 	public List<TelegramPlayer> deletePlayers(TelegramGame tgGame) {
 		List<TelegramPlayer> telegramPlayerList = telegramPlayerDao.getByGame(tgGame.getGame());
 
