@@ -59,6 +59,17 @@
             <groupId>com.github.valb3r.letsencrypt-helper</groupId>
             <artifactId>letsencrypt-helper-tomcat</artifactId>
             <version>0.4.0</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jose4j</artifactId>
+                    <groupId>org.bitbucket.b_c</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.bitbucket.b_c</groupId>
+            <artifactId>jose4j</artifactId>
+            <version>0.9.5</version>
         </dependency>
 
         <!-- BBDD -->
