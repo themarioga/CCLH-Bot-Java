@@ -8,7 +8,7 @@ public interface CCLHGameService {
 
     void startCreatingGame(long roomId, String roomTitle, long creatorId);
 
-    void createGame(long roomId, String roomTitle, long creatorId, int groupMessageId, int privateMessageId, int playerMessageId);
+    void createGame(long roomId, String roomTitle, long creatorId, String creatorName, int privateMessageId, int groupMessageId, int playerMessageId);
 
     void gameCreatedQuery(long roomId, long userId, String callbackQueryId);
 
@@ -42,7 +42,7 @@ public interface CCLHGameService {
 
     void gameJoinQuery(long roomId, long userId, String callbackQueryId);
 
-    void joinGame(long roomId, long userId, String callbackQueryId, int playerMessageId);
+    void joinGame(long roomId, long userId, String username, int playerMessageId, String callbackQueryId);
 
     void leaveGame(long userId, String callbackQueryId);
 

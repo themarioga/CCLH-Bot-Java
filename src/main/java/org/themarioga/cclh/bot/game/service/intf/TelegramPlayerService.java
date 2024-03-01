@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface TelegramPlayerService {
 
-	TelegramPlayer createPlayer(TelegramGame telegramGame, long userId, int messageId);
+	TelegramPlayer createPlayer(TelegramGame telegramGame, long userId, String username, int messageId);
 
 	void deletePlayer(TelegramPlayer telegramPlayer);
 

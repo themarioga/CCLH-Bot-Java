@@ -17,6 +17,7 @@ import org.themarioga.cclh.bot.game.constants.ResponseErrorI18n;
 import org.themarioga.cclh.bot.game.constants.ResponseMessageI18n;
 import org.themarioga.cclh.bot.game.service.intf.TelegramGameService;
 import org.themarioga.cclh.bot.game.service.intf.TelegramPlayerService;
+import org.themarioga.cclh.bot.util.BotUtils;
 import org.themarioga.cclh.bot.util.StringUtils;
 import org.themarioga.cclh.commons.enums.GamePunctuationTypeEnum;
 import org.themarioga.cclh.commons.enums.GameStatusEnum;
@@ -112,8 +113,8 @@ public class CCLHGameServiceImpl implements CCLHGameService {
                             @Override
                             public void success(BotApiMethod<Message> method, Message playerResponse) {
                                 try {
-                                    cclhGameService.createGame(roomId, roomTitle, creatorId, groupResponse.getMessageId(),
-                                            privateResponse.getMessageId(), playerResponse.getMessageId());
+                                    cclhGameService.createGame(roomId, roomTitle, creatorId, BotUtils.getUsername(playerResponse.getChat()),
+                                            privateResponse.getMessageId(), groupResponse.getMessageId(), playerResponse.getMessageId());
                                 } catch (Exception e) {
                                     logger.error(e.getMessage(), e);
                                 }
@@ -142,11 +143,11 @@ public class CCLHGameServiceImpl implements CCLHGameService {
 
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
-    public void createGame(long roomId, String roomTitle, long creatorId, int groupMessageId, int privateMessageId, int playerMessageId) {
+    public void createGame(long roomId, String roomTitle, long creatorId, String creatorName, int privateMessageId, int groupMessageId, int playerMessageId) {
         try {
             TelegramGame telegramGame = telegramGameService.createGame(roomId, roomTitle, creatorId, groupMessageId, privateMessageId);
 
-            TelegramPlayer telegramPlayer = telegramPlayerService.createPlayer(telegramGame, creatorId, playerMessageId);
+            TelegramPlayer telegramPlayer = telegramPlayerService.createPlayer(telegramGame, creatorId, creatorName, playerMessageId);
 
             telegramGameService.addPlayer(telegramGame, telegramPlayer);
 
@@ -736,8 +737,8 @@ public class CCLHGameServiceImpl implements CCLHGameService {
                         cclhGameService.joinGame(
                                 roomId,
                                 userId,
-                                callbackQueryId,
-                                response.getMessageId());
+                                BotUtils.getUsername(response.getChat()),
+                                response.getMessageId(), callbackQueryId);
                     } catch (Exception e) {
                         logger.error(e.getMessage(), e);
                     }
@@ -755,11 +756,11 @@ public class CCLHGameServiceImpl implements CCLHGameService {
 
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
-    public void joinGame(long roomId, long userId, String callbackQueryId, int playerMessageId) {
+    public void joinGame(long roomId, long userId, String username, int playerMessageId, String callbackQueryId) {
         TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
         try {
-            TelegramPlayer telegramPlayer = telegramPlayerService.createPlayer(telegramGame, userId, playerMessageId);
+            TelegramPlayer telegramPlayer = telegramPlayerService.createPlayer(telegramGame, userId, username, playerMessageId);
 
             telegramGameService.addPlayer(telegramGame, telegramPlayer);
 

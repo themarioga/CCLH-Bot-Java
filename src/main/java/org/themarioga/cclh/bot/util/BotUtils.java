@@ -1,6 +1,7 @@
 package org.themarioga.cclh.bot.util;
 
 import org.springframework.util.StringUtils;
+import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.User;
 
@@ -26,6 +27,14 @@ public class BotUtils {
         if (StringUtils.hasText(user.getFirstName())) output += user.getFirstName();
         if (StringUtils.hasText(user.getLastName())) output += " " + user.getLastName();
         if (StringUtils.hasText(user.getUserName())) output += " (@" + user.getUserName() + ")";
+        return output;
+    }
+
+    public static String getUsername(Chat chat) {
+        String output = "";
+        if (StringUtils.hasText(chat.getFirstName())) output += chat.getFirstName();
+        if (StringUtils.hasText(chat.getLastName())) output += " " + chat.getLastName();
+        if (StringUtils.hasText(chat.getUserName())) output += " (@" + chat.getUserName() + ")";
         return output;
     }
 

@@ -30,8 +30,13 @@ public class TelegramPlayerServiceImpl implements TelegramPlayerService {
 
 	@Override
 	@Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
-	public TelegramPlayer createPlayer(TelegramGame telegramGame, long userId, int messageId) {
+	public TelegramPlayer createPlayer(TelegramGame telegramGame, long userId, String username, int messageId) {
 		Player player = playerService.create(telegramGame.getGame(), userId);
+
+		if (!player.getUser().getName().equals(username)) {
+			userService.rename(player.getUser(), username);
+		}
+
 		TelegramPlayer telegramPlayer = new TelegramPlayer();
 		telegramPlayer.setPlayer(player);
 		telegramPlayer.setMessageId(messageId);
