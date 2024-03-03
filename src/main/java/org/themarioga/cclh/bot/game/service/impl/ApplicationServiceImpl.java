@@ -62,7 +62,6 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!message.getChat().getType().equals("private")) {
                 logger.error("Comando /start enviado en lugar incorrecto por {}", BotUtils.getUserInfo(message.getFrom()));
 
-
                 botService.sendMessage(message.getChat().getId(), ResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
 
                 return;

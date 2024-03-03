@@ -890,6 +890,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
                     botService.editMessage(telegramPlayer.getPlayer().getUser().getId(),
                             telegramPlayer.getMessageId(),
                             StringUtils.formatMessage(ResponseMessageI18n.PLAYER_SELECTED_CARD,
+                                    telegramGame.getGame().getTable().getCurrentRoundNumber(),
                                     telegramGame.getGame().getTable().getCurrentBlackCard().getText(),
                                     playedCard.getCard().getText()));
                 } else {
@@ -1084,7 +1085,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     private void sendEndMessages(TelegramGame telegramGame, List<TelegramPlayer> telegramPlayerList) {
         // Delete game messages
         for (TelegramPlayer telegramPlayer : telegramPlayerList) {
-            botService.editMessage(telegramPlayer.getPlayer().getUser().getId(), telegramPlayer.getMessageId(), "");
+            botService.deleteMessage(telegramPlayer.getPlayer().getUser().getId(), telegramPlayer.getMessageId());
         }
 
         // Edit game messages
@@ -1098,6 +1099,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
 
             if (telegramGame.getGame().getTable().getStatus().equals(TableStatusEnum.PLAYING)) {
                 String msg = StringUtils.formatMessage(ResponseMessageI18n.GAME_SELECT_CARD,
+                        telegramGame.getGame().getTable().getCurrentRoundNumber(),
                         telegramGame.getGame().getTable().getCurrentBlackCard().getText());
 
                 botService.sendMessageAsync(telegramGame.getGame().getRoom().getId(), msg, new BotService.Callback() {
@@ -1129,6 +1131,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
                     botService.editMessage(telegramPlayer.getPlayer().getUser().getId(),
                             telegramPlayer.getMessageId(),
                             StringUtils.formatMessage(ResponseMessageI18n.PLAYER_SELECT_CARD,
+                                    telegramGame.getGame().getTable().getCurrentRoundNumber(),
                                     telegramGame.getGame().getTable().getCurrentBlackCard().getText()),
                             playerInlineKeyboard.build());
                 }
