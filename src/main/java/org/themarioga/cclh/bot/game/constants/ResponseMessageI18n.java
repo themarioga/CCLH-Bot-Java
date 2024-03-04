@@ -33,20 +33,20 @@ public class ResponseMessageI18n {
 			La carta negra de esta ronda es <b>{1}</b>
 			
 			Los jugadores eligieron las siguientes cartas blancas:
-			{2}
+			<b>{2}</b>
 			
 			Ahora los jugadores votaran por privado.
 			""";
 	public static final String GAME_END_ROUND = """
-			¡Enhorabuena <b>{0}</b>! Tu carta <b>{1}</b> ha ganado la ronda {2}.
+			¡Enhorabuena <b>{0}</b>! Tu carta <b>{1}</b> ha ganado la ronda <b>{2}</b>.
 			
 			La carta negra de esta ronda era <b>{3}</b>
 			
 			Los jugadores eligieron las siguientes cartas blancas:
-			{4}
+			<b>{4}</b>
 			
 			Las puntuaciones son las siguientes:
-			{5}
+			<b>{5}</b>
 			""";
 	public static final String GAME_END_GAME = "¡Fin de la partida! El ganador del juego es... <b>{0}</b>. ¡¡¡Enhorabuena!!!";
 	public static final String GAME_DELETED = "Se ha borrado la partida.";
@@ -64,7 +64,7 @@ public class ResponseMessageI18n {
 			
 			La carta negra de esta ronda es:
 			
-			{1}
+			<b>{1}</b>
 			
 			Debes elegir una carta blanca de las siguientes:
 			""";
@@ -73,22 +73,22 @@ public class ResponseMessageI18n {
 			
 			La carta negra de esta ronda es:
 			
-			{1}
+			<b>{1}</b>
 			
 			Has elegido la carta blanca:
 			
-			{2}
+			<b>{2}</b>
 			""";
 	public static final String PLAYER_VOTE_CARD = """
 			<b>Ronda {0}</b>
 			
 			La carta negra de esta ronda es:
 			
-			{1}
+			<b>{1}</b>
 			
 			Has elegido la carta blanca:
 			
-			{2}
+			<b>{2}</b>
 			
 			Debes votar una carta blanca de las siguientes:
 			""";
@@ -97,15 +97,15 @@ public class ResponseMessageI18n {
 			
 			La carta negra de esta ronda es:
 			
-			{1}
+			<b>{1}</b>
 			
 			Has elegido la carta blanca:
 			
-			{2}
+			<b>{2}</b>
 			
 			Has votado la carta blanca:
 			
-			{3}
+			<b>{3}</b>
 			""";
 
 	public static final String PLAYER_VOTED_DELETION = "Has votado borrar la partida";
