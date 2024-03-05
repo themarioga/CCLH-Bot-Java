@@ -1,6 +1,8 @@
 package org.themarioga.cclh.bot.game.service.impl;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.themarioga.cclh.bot.game.dao.intf.TelegramPlayerDao;
@@ -29,7 +31,7 @@ public class TelegramPlayerServiceImpl implements TelegramPlayerService {
 	}
 
 	@Override
-	@Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
 	public TelegramPlayer createPlayer(TelegramGame telegramGame, long userId, String username, int messageId) {
 		Player player = playerService.create(telegramGame.getGame(), userId);
 
@@ -44,14 +46,14 @@ public class TelegramPlayerServiceImpl implements TelegramPlayerService {
 	}
 
 	@Override
-	@Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
 	public void deletePlayer(TelegramPlayer telegramPlayer) {
 		telegramPlayerDao.delete(telegramPlayer);
 		playerService.delete(telegramPlayer.getPlayer());
 	}
 
 	@Override
-	@Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
 	public List<TelegramPlayer> deletePlayers(TelegramGame tgGame) {
 		List<TelegramPlayer> telegramPlayerList = telegramPlayerDao.getByGame(tgGame.getGame());
 
@@ -63,12 +65,13 @@ public class TelegramPlayerServiceImpl implements TelegramPlayerService {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
 	public TelegramPlayer getByUser(long userId) {
 		return telegramPlayerDao.getByUser(userService.getById(userId));
 	}
 
 	@Override
-	@Transactional(value = Transactional.TxType.SUPPORTS)
+	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
 	public List<TelegramPlayer> getPlayers(TelegramGame tgGame) {
 		return telegramPlayerDao.getByGame(tgGame.getGame());
 	}

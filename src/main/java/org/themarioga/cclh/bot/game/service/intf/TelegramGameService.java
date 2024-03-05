@@ -3,7 +3,9 @@ package org.themarioga.cclh.bot.game.service.intf;
 import org.themarioga.cclh.bot.game.model.TelegramGame;
 import org.themarioga.cclh.bot.game.model.TelegramPlayer;
 import org.themarioga.cclh.commons.enums.GameTypeEnum;
+import org.themarioga.cclh.commons.models.Game;
 import org.themarioga.cclh.commons.models.PlayedCard;
+import org.themarioga.cclh.commons.models.Table;
 
 public interface TelegramGameService {
 
@@ -46,5 +48,9 @@ public interface TelegramGameService {
 	TelegramGame getByPlayerUser(long userId);
 
 	PlayedCard getMostVotedCard(TelegramGame tgGame);
+
+	boolean checkIfEveryoneHavePlayedACard(TelegramGame tgGame);
+
+	boolean checkIfEveryoneHaveVotedACard(TelegramGame tgGame);
 
 }

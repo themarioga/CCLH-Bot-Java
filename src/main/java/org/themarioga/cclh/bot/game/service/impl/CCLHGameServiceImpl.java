@@ -1,6 +1,8 @@
 package org.themarioga.cclh.bot.game.service.impl;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +57,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     private TelegramPlayerService telegramPlayerService;
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void registerUser(long userId, String username) {
         try {
             userService.createOrReactivate(userId, username);
@@ -75,7 +77,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void deleteMyGames(long userId) {
         TelegramGame telegramGame = telegramGameService.getGameByCreatorId(userId);
 
@@ -101,7 +103,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void startCreatingGame(long roomId, String roomTitle, long creatorId) {
         botService.sendMessageAsync(roomId, ResponseMessageI18n.GAME_CREATING, new BotService.Callback() {
             @Override
@@ -142,7 +144,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void createGame(long roomId, String roomTitle, long creatorId, String creatorName, int privateMessageId, int groupMessageId, int playerMessageId) {
         try {
             TelegramGame telegramGame = telegramGameService.createGame(roomId, roomTitle, creatorId, groupMessageId, privateMessageId);
@@ -190,7 +192,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void gameCreatedQuery(long roomId, long userId, String callbackQueryId) {
         TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
@@ -210,7 +212,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void gameConfigureQuery(long roomId, long userId, String callbackQueryId) {
         TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
@@ -230,7 +232,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void gameSelectModeQuery(long roomId, long userId, String callbackQueryId) {
         TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
@@ -262,7 +264,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void gameSelectPunctuationModeQuery(long roomId, long userId, String callbackQueryId) {
         TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
@@ -293,7 +295,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void gameSelectNRoundsToEndQuery(long roomId, long userId, String callbackQueryId) {
         TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
@@ -332,7 +334,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void gameSelectNPointsToWinQuery(long roomId, long userId, String callbackQueryId) {
         TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
@@ -371,7 +373,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void gameSelectDictionaryQuery(long roomId, long userId, String callbackQueryId, String data) {
         TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
@@ -414,7 +416,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void gameSelectMaxPlayersQuery(long roomId, long userId, String callbackQueryId) {
         TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
@@ -451,7 +453,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void gameChangeMode(long roomId, long userId, String callbackQueryId, String data) {
         TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
@@ -485,7 +487,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void gameChangeDictionary(long roomId, long userId, String callbackQueryId, String data) {
         TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
@@ -525,7 +527,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void gameChangeMaxPlayers(long roomId, long userId, String callbackQueryId, String data) {
         TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
@@ -563,7 +565,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void gameChangeNRoundsToEnd(long roomId, long userId, String callbackQueryId, String data) {
         TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
@@ -597,7 +599,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void gameChangeNCardsToWin(long roomId, long userId, String callbackQueryId, String data) {
         TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
@@ -631,7 +633,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void gameDeleteGroupQuery(long roomId, long userId, String callbackQueryId) {
         TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
@@ -691,7 +693,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void gameDeletePrivateQuery(long userId, String callbackQueryId) {
         TelegramGame telegramGame = telegramGameService.getGameByCreatorId(userId);
 
@@ -717,7 +719,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void gameJoinQuery(long roomId, long userId, String callbackQueryId) {
         TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
@@ -755,7 +757,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void joinGame(long roomId, long userId, String username, int playerMessageId, String callbackQueryId) {
         TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
@@ -796,7 +798,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void leaveGame(long userId, String callbackQueryId) {
         TelegramGame telegramGame = telegramGameService.getByPlayerUser(userId);
 
@@ -818,7 +820,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void gameStartQuery(long roomId, long userId, String callbackQueryId) {
         TelegramGame telegramGame = telegramGameService.getGame(roomId);
 
@@ -866,7 +868,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class, isolation = Isolation.READ_UNCOMMITTED)
     public void playerPlayCardQuery(long userId, String callbackQueryId, String data) {
         TelegramGame telegramGame = telegramGameService.getByPlayerUser(userId);
 
@@ -882,6 +884,14 @@ public class CCLHGameServiceImpl implements CCLHGameService {
             telegramGameService.playCard(telegramGame, userId, Integer.parseInt(data));
 
             if (telegramGame.getGame().getTable().getStatus().equals(TableStatusEnum.PLAYING)) {
+                if (telegramGameService.checkIfEveryoneHavePlayedACard(telegramGame)) {
+                    logger.error("Juego en estado incorrecto: {}", telegramGame.getGame().getId());
+
+                    botService.answerCallbackQuery(callbackQueryId, ResponseErrorI18n.UNKNOWN_ERROR);
+
+                    throw new ApplicationException("Error desconocido");
+                }
+
                 TelegramPlayer telegramPlayer = telegramPlayerService.getByUser(userId);
 
                 PlayedCard playedCard = getPlayedCardByPlayer(telegramGame, telegramPlayer);
@@ -929,7 +939,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = ApplicationException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class, isolation = Isolation.READ_UNCOMMITTED)
     public void playerVoteCardQuery(long userId, String callbackQueryId, String data) {
         TelegramGame telegramGame = telegramGameService.getByPlayerUser(userId);
 
@@ -945,6 +955,14 @@ public class CCLHGameServiceImpl implements CCLHGameService {
             telegramGameService.voteCard(telegramGame, userId, Integer.parseInt(data));
 
             if (telegramGame.getGame().getTable().getStatus().equals(TableStatusEnum.VOTING)) {
+                if (telegramGameService.checkIfEveryoneHaveVotedACard(telegramGame)) {
+                    logger.error("Juego en estado incorrecto: {}", telegramGame.getGame().getId());
+
+                    botService.answerCallbackQuery(callbackQueryId, ResponseErrorI18n.UNKNOWN_ERROR);
+
+                    throw new ApplicationException("Error desconocido");
+                }
+
                 sendMessageToVoter(telegramGame, userId, callbackQueryId);
             } else if (telegramGame.getGame().getTable().getStatus().equals(TableStatusEnum.ENDING)) {
                 sendMessageToVoter(telegramGame, userId, callbackQueryId);
@@ -975,12 +993,16 @@ public class CCLHGameServiceImpl implements CCLHGameService {
                         logger.error("Juego en estado incorrecto: {}", telegramGame.getGame().getId());
 
                         botService.answerCallbackQuery(callbackQueryId, ResponseErrorI18n.UNKNOWN_ERROR);
+
+                        throw new ApplicationException("Error desconocido");
                     }
                 }
             } else {
                 logger.error("Juego en estado incorrecto: {}", telegramGame.getGame().getId());
 
                 botService.answerCallbackQuery(callbackQueryId, ResponseErrorI18n.UNKNOWN_ERROR);
+
+                throw new ApplicationException("Error desconocido");
             }
         } catch (PlayerAlreadyVotedCardException e) {
             botService.answerCallbackQuery(callbackQueryId, ResponseErrorI18n.PLAYER_ALREADY_VOTED_CARD);
