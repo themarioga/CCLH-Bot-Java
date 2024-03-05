@@ -1097,6 +1097,8 @@ public class CCLHGameServiceImpl implements CCLHGameService {
         if (telegramGame.getGame().getTable().getStatus().equals(TableStatusEnum.STARTING)) {
             telegramGameService.startRound(telegramGame);
 
+            sendMainMenu(telegramGame);
+
             if (telegramGame.getGame().getTable().getStatus().equals(TableStatusEnum.PLAYING)) {
                 String msg = StringUtils.formatMessage(ResponseMessageI18n.GAME_SELECT_CARD,
                         telegramGame.getGame().getTable().getCurrentRoundNumber(),
@@ -1262,9 +1264,9 @@ public class CCLHGameServiceImpl implements CCLHGameService {
         }
 
         return MessageFormat.format(ResponseMessageI18n.GAME_END_ROUND,
-                telegramGame.getGame().getTable().getCurrentRoundNumber(),
                 mostVotedCard.getPlayer().getUser().getName(),
                 mostVotedCard.getCard().getText(),
+                telegramGame.getGame().getTable().getCurrentRoundNumber(),
                 telegramGame.getGame().getTable().getCurrentBlackCard().getText(),
                 playedCards,
                 playerPoints);
