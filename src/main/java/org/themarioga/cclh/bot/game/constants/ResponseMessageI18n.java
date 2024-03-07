@@ -114,6 +114,8 @@ public class ResponseMessageI18n {
 
 	public static final String PLAYER_VOTED_DELETION = "Has votado borrar la partida";
 
+	public static final String ALL_MESSAGES_SENT = "Se han enviado todos los mensajes.";
+
 	public static final String HELP = """
 			Bienvenido a la ayuda de {0} versión {1}
 			

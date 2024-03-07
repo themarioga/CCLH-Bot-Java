@@ -58,5 +58,7 @@ public interface CCLHGameService {
 
     void sendHelpMessage(long roomId);
 
+    void sendMessageToEveryone(String msg);
+
     Long getBotCreatorId();
 }

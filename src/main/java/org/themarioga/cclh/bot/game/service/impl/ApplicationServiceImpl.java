@@ -115,6 +115,26 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
         });
 
+        commands.put("/sendMessage", (message, data) -> {
+            if (!message.getChat().getType().equals("private")
+                    || !message.getChat().getId().equals(cclhGameService.getBotCreatorId())
+                    || data == null) {
+                logger.error("Comando /sendMessage enviado en lugar incorrecto por {}", BotUtils.getUserInfo(message.getFrom()));
+
+                botService.sendMessage(message.getChat().getId(), ResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
+
+                return;
+            }
+
+            try {
+                cclhGameService.sendMessageToEveryone(data);
+
+                botService.sendMessage(message.getChatId(), ResponseMessageI18n.ALL_MESSAGES_SENT);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        });
+
         commands.put("/help", (message, data) -> cclhGameService.sendHelpMessage(message.getChatId()));
 
         return commands;

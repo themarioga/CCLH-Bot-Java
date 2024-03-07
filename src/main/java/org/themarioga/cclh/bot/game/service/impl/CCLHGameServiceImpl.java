@@ -38,6 +38,7 @@ import org.themarioga.cclh.commons.models.Dictionary;
 import org.themarioga.cclh.commons.models.*;
 import org.themarioga.cclh.commons.services.intf.ConfigurationService;
 import org.themarioga.cclh.commons.services.intf.DictionaryService;
+import org.themarioga.cclh.commons.services.intf.RoomService;
 import org.themarioga.cclh.commons.services.intf.UserService;
 
 import java.text.MessageFormat;
@@ -51,6 +52,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     private BotService botService;
     private CCLHGameService cclhGameService;
     private UserService userService;
+    private RoomService roomService;
     private DictionaryService dictionaryService;
     private ConfigurationService configurationService;
     private TelegramGameService telegramGameService;
@@ -1067,6 +1069,42 @@ public class CCLHGameServiceImpl implements CCLHGameService {
         botService.sendMessage(roomId, getHelpMessage());
     }
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
+    public void sendMessageToEveryone(String msg) {
+        List<User> userList = userService.getAllUsers();
+
+        for (User user : userList) {
+            try {
+                botService.sendMessage(user.getId(), msg);
+
+                userService.setActive(user, true);
+            } catch (Exception e) {
+                logger.error("El usuario {}({}) ha sido bloqueado por el error {}", user.getName(), user.getId(), e.getMessage(), e);
+
+                userService.setActive(user, false);
+
+                botService.sendMessage(cclhGameService.getBotCreatorId(), "Desactivando al usuario " + user.getName());
+            }
+        }
+
+        List<Room> roomList = roomService.getAllRooms();
+
+        for (Room room : roomList) {
+            try {
+                botService.sendMessage(room.getId(), msg);
+
+                roomService.setActive(room, true);
+            } catch (Exception e) {
+                logger.error("La sala {}({}) ha sido bloqueada por el error {}", room.getName(), room.getId(), e.getMessage(), e);
+
+                roomService.setActive(room, false);
+
+                botService.sendMessage(cclhGameService.getBotCreatorId(), "Desactivando la sala " + room.getName());
+            }
+        }
+    }
+
     private void sendMainMenu(TelegramGame telegramGame) {
         InlineKeyboardMarkup.InlineKeyboardMarkupBuilder groupInlineKeyboard = InlineKeyboardMarkup.builder();
 
@@ -1431,6 +1469,11 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    @Autowired
+    public void setRoomService(RoomService roomService) {
+        this.roomService = roomService;
     }
 
     @Autowired
