@@ -6,6 +6,8 @@ import org.themarioga.cclh.commons.models.Game;
 import org.themarioga.cclh.commons.models.Room;
 import org.themarioga.cclh.commons.models.User;
 
+import java.util.List;
+
 public interface TelegramGameDao extends InterfaceHibernateDao<TelegramGame> {
 	TelegramGame getByGame(Game game);
 
@@ -14,4 +16,6 @@ public interface TelegramGameDao extends InterfaceHibernateDao<TelegramGame> {
 	TelegramGame getByCreator(User creator);
 
 	TelegramGame getByPlayerUser(User user);
+
+	List<TelegramGame> getGameList();
 }

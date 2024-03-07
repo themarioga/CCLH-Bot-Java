@@ -104,6 +104,53 @@ public class CCLHGameServiceImpl implements CCLHGameService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
+    public void deleteGameByCreatorUsername(String username) {
+        TelegramGame telegramGame = telegramGameService.getGameByCreatorUsername(username);
+
+        if (telegramGame == null) {
+            logger.error("No existe juego asociado al usuario {}", username);
+
+            return;
+        }
+
+        try {
+            List<TelegramPlayer> telegramPlayerList = telegramPlayerService.deletePlayers(telegramGame);
+
+            telegramGameService.deleteGame(telegramGame);
+
+            sendDeleteMessages(telegramGame, telegramPlayerList);
+        } catch (ApplicationException e) {
+            botService.sendMessage(telegramGame.getGame().getCreator().getId(), e.getMessage());
+
+            throw e;
+        }
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
+    public void deleteAllGames() {
+        List<TelegramGame> telegramGameList = telegramGameService.getGameList();
+
+        for (TelegramGame telegramGame : telegramGameList) {
+            try {
+                List<TelegramPlayer> telegramPlayerList = telegramPlayerService.deletePlayers(telegramGame);
+
+                telegramGameService.deleteGame(telegramGame);
+
+                sendDeleteMessages(telegramGame, telegramPlayerList);
+
+                botService.sendMessage(telegramGame.getGame().getCreator().getId(),
+                        ResponseMessageI18n.GAME_DELETION_FORCED);
+            } catch (ApplicationException e) {
+                botService.sendMessage(telegramGame.getGame().getCreator().getId(), e.getMessage());
+
+                throw e;
+            }
+        }
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void startCreatingGame(long roomId, String roomTitle, long creatorId) {
         botService.sendMessageAsync(roomId, ResponseMessageI18n.GAME_CREATING, new BotService.Callback() {
             @Override
@@ -969,12 +1016,12 @@ public class CCLHGameServiceImpl implements CCLHGameService {
 
                 PlayedCard mostVotedCard = telegramGameService.getMostVotedCard(telegramGame);
 
+                telegramGameService.endRound(telegramGame);
+
                 botService.editMessage(
                         telegramGame.getGame().getRoom().getId(),
                         telegramGame.getBlackCardMessageId(),
                         getGameEndRoundMessage(telegramGame, mostVotedCard));
-
-                telegramGameService.endRound(telegramGame);
 
                 if (telegramGame.getGame().getStatus().equals(GameStatusEnum.STARTED)) {
                     startRound(telegramGame);
@@ -1357,8 +1404,10 @@ public class CCLHGameServiceImpl implements CCLHGameService {
         return configurationService.getConfiguration("cclh_bot_version");
     }
 
-    private String getBotCreatorId() {
-        return configurationService.getConfiguration("cclh_bot_owner_id");
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
+    public Long getBotCreatorId() {
+        return Long.parseLong(configurationService.getConfiguration("cclh_bot_owner_id"));
     }
 
     private String getBotCreatorName() {

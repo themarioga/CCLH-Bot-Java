@@ -8,6 +8,8 @@ import org.themarioga.cclh.commons.models.Game;
 import org.themarioga.cclh.commons.models.Room;
 import org.themarioga.cclh.commons.models.User;
 
+import java.util.List;
+
 @Repository
 public class TelegramGameDaoImpl extends AbstractHibernateDao<TelegramGame> implements TelegramGameDao {
 
@@ -33,6 +35,11 @@ public class TelegramGameDaoImpl extends AbstractHibernateDao<TelegramGame> impl
 	@Override
 	public TelegramGame getByPlayerUser(User user) {
 		return getCurrentSession().createQuery("SELECT t FROM TelegramGame t WHERE t.game=(SELECT p.game FROM Player p WHERE p.user=:user)", TelegramGame.class).setParameter("user", user).getSingleResultOrNull();
+	}
+
+	@Override
+	public List<TelegramGame> getGameList() {
+		return getCurrentSession().createQuery("SELECT t FROM TelegramGame t", TelegramGame.class).getResultList();
 	}
 
 }

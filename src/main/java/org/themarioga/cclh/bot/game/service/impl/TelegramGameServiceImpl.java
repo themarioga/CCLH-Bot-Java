@@ -1,6 +1,5 @@
 package org.themarioga.cclh.bot.game.service.impl;
 
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
@@ -22,6 +21,8 @@ import org.themarioga.cclh.commons.services.intf.GameService;
 import org.themarioga.cclh.commons.services.intf.RoomService;
 import org.themarioga.cclh.commons.services.intf.TableService;
 import org.themarioga.cclh.commons.services.intf.UserService;
+
+import java.util.List;
 
 @Service
 public class TelegramGameServiceImpl implements TelegramGameService {
@@ -171,8 +172,20 @@ public class TelegramGameServiceImpl implements TelegramGameService {
 
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
+	public TelegramGame getGameByCreatorUsername(String creatorUsername) {
+		return telegramGameDao.getByCreator(userService.getByUsername(creatorUsername));
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
 	public TelegramGame getByPlayerUser(long userId) {
 		return telegramGameDao.getByPlayerUser(userService.getById(userId));
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
+	public List<TelegramGame> getGameList() {
+		return telegramGameDao.getGameList();
 	}
 
 	@Override

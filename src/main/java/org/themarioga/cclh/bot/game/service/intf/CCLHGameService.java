@@ -6,6 +6,10 @@ public interface CCLHGameService {
 
     void deleteMyGames(long userId);
 
+    void deleteGameByCreatorUsername(String user);
+
+    void deleteAllGames();
+
     void startCreatingGame(long roomId, String roomTitle, long creatorId);
 
     void createGame(long roomId, String roomTitle, long creatorId, String creatorName, int privateMessageId, int groupMessageId, int playerMessageId);
@@ -54,4 +58,5 @@ public interface CCLHGameService {
 
     void sendHelpMessage(long roomId);
 
+    Long getBotCreatorId();
 }

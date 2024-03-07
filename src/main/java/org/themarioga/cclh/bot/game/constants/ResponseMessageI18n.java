@@ -51,6 +51,10 @@ public class ResponseMessageI18n {
 	public static final String GAME_END_GAME = "¡Fin de la partida! El ganador del juego es... <b>{0}</b>. ¡¡¡Enhorabuena!!!";
 	public static final String GAME_DELETED = "Se ha borrado la partida.";
 
+	public static final String GAME_DELETION_USER = "Se ha borrado la partida de {0}.";
+	public static final String GAME_DELETION_ALL = "Se han borrado todas las partidas.";
+	public static final String GAME_DELETION_FORCED = "Lo sentimos. Su partida ha sido borrada por la administración. Puede crear una partida nueva.";
+
 	// Player constants
 	public static final String PLAYER_WELCOME = """
 		¡Bienvenido! Acabo de añadirte a mi base de datos.

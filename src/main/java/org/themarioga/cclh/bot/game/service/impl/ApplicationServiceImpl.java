@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.themarioga.cclh.bot.game.constants.ResponseMessageI18n;
 import org.themarioga.cclh.bot.game.service.intf.CCLHGameService;
 import org.themarioga.cclh.bot.service.intf.ApplicationService;
 import org.themarioga.cclh.bot.service.intf.BotService;
@@ -12,6 +13,7 @@ import org.themarioga.cclh.bot.util.BotUtils;
 import org.themarioga.cclh.bot.util.CallbackQueryHandler;
 import org.themarioga.cclh.bot.util.CommandHandler;
 
+import java.text.MessageFormat;
 import java.util.*;
 
 @Service
@@ -26,7 +28,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     public Map<String, CommandHandler> getBotCommands() {
         Map<String, CommandHandler> commands = new HashMap<>();
 
-        commands.put("/start", message -> {
+        commands.put("/start", (message, data) -> {
             if (!message.getChat().getType().equals("private")) {
                 logger.error("Comando /start enviado en lugar incorrecto por {}", BotUtils.getUserInfo(message.getFrom()));
 
@@ -42,9 +44,9 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
         });
 
-        commands.put("/create", message -> {
+        commands.put("/create", (message, data) -> {
             if (message.getChat().getType().equals("private")) {
-                logger.error("Comando /start enviado en lugar incorrecto por {}", BotUtils.getUserInfo(message.getFrom()));
+                logger.error("Comando /create enviado en lugar incorrecto por {}", BotUtils.getUserInfo(message.getFrom()));
 
                 botService.sendMessage(message.getChat().getId(), ResponseErrorI18n.COMMAND_SHOULD_BE_ON_GROUP);
 
@@ -58,9 +60,9 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
         });
 
-        commands.put("/deleteMyGames", message -> {
+        commands.put("/deletemygames", (message, data) -> {
             if (!message.getChat().getType().equals("private")) {
-                logger.error("Comando /start enviado en lugar incorrecto por {}", BotUtils.getUserInfo(message.getFrom()));
+                logger.error("Comando /deletemygames enviado en lugar incorrecto por {}", BotUtils.getUserInfo(message.getFrom()));
 
                 botService.sendMessage(message.getChat().getId(), ResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
 
@@ -74,7 +76,46 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
         });
 
-        commands.put("/help", message -> cclhGameService.sendHelpMessage(message.getChatId()));
+        commands.put("/deletegamebyusername", (message, data) -> {
+            if (!message.getChat().getType().equals("private")
+                    || !message.getChat().getId().equals(cclhGameService.getBotCreatorId())
+                    || data == null) {
+                logger.error("Comando /deletegamebyusername enviado en lugar incorrecto por {}", BotUtils.getUserInfo(message.getFrom()));
+
+                botService.sendMessage(message.getChat().getId(), ResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
+
+                return;
+            }
+
+            try {
+                cclhGameService.deleteGameByCreatorUsername(data);
+
+                botService.sendMessage(message.getChatId(), MessageFormat.format(ResponseMessageI18n.GAME_DELETION_USER, data));
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        });
+
+        commands.put("/deleteallgames", (message, data) -> {
+            if (!message.getChat().getType().equals("private")
+                    || !message.getChat().getId().equals(cclhGameService.getBotCreatorId())) {
+                logger.error("Comando /deleteallgames enviado en lugar incorrecto por {}", BotUtils.getUserInfo(message.getFrom()));
+
+                botService.sendMessage(message.getChat().getId(), ResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
+
+                return;
+            }
+
+            try {
+                cclhGameService.deleteAllGames();
+
+                botService.sendMessage(message.getChatId(), ResponseMessageI18n.GAME_DELETION_ALL);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        });
+
+        commands.put("/help", (message, data) -> cclhGameService.sendHelpMessage(message.getChatId()));
 
         return commands;
     }
