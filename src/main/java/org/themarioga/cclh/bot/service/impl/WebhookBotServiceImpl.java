@@ -99,7 +99,7 @@ public class WebhookBotServiceImpl extends TelegramWebhookBot implements BotServ
 	    try {
             SendMessage sendMessage = new SendMessage(String.valueOf(chatId), text);
             sendMessage.enableHtml(true);
-		    execute(sendMessage);
+            executeAsync(sendMessage);
 	    } catch (TelegramApiException e) {
             logger.error(e.getMessage(), e);
 	    }
@@ -139,7 +139,7 @@ public class WebhookBotServiceImpl extends TelegramWebhookBot implements BotServ
             editMessageText.setMessageId(messageId);
             editMessageText.setText(text);
             editMessageText.enableHtml(true);
-            execute(editMessageText);
+            executeAsync(editMessageText);
         } catch (TelegramApiException e) {
             logger.error(e.getMessage(), e);
         }
@@ -154,7 +154,7 @@ public class WebhookBotServiceImpl extends TelegramWebhookBot implements BotServ
             editMessageText.setText(text);
             editMessageText.enableHtml(true);
             editMessageText.setReplyMarkup(inlineKeyboardMarkup);
-            execute(editMessageText);
+            executeAsync(editMessageText);
         } catch (TelegramApiException e) {
             logger.error(e.getMessage(), e);
         }
@@ -163,7 +163,7 @@ public class WebhookBotServiceImpl extends TelegramWebhookBot implements BotServ
     @Override
     public void deleteMessage(long chatId, int messageId) {
         try {
-            execute(new DeleteMessage(String.valueOf(chatId), messageId));
+            executeAsync(new DeleteMessage(String.valueOf(chatId), messageId));
         } catch (TelegramApiException e) {
             logger.error(e.getMessage(), e);
         }
@@ -172,7 +172,7 @@ public class WebhookBotServiceImpl extends TelegramWebhookBot implements BotServ
     @Override
     public void answerCallbackQuery(String callbackQueryId) {
         try {
-            execute(new AnswerCallbackQuery(callbackQueryId));
+            executeAsync(new AnswerCallbackQuery(callbackQueryId));
         } catch (TelegramApiException e) {
             logger.error(e.getMessage(), e);
         }
@@ -183,7 +183,7 @@ public class WebhookBotServiceImpl extends TelegramWebhookBot implements BotServ
         try {
             AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery(callbackQueryId);
             answerCallbackQuery.setText(text);
-            execute(answerCallbackQuery);
+            executeAsync(answerCallbackQuery);
         } catch (TelegramApiException e) {
             logger.error(e.getMessage(), e);
         }
