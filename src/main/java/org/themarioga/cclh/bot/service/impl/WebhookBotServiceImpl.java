@@ -6,6 +6,7 @@ import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updates.Close;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -21,6 +22,7 @@ import org.themarioga.cclh.bot.util.BotUtils;
 import org.themarioga.cclh.bot.util.CallbackQueryHandler;
 import org.themarioga.cclh.bot.util.CommandHandler;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class WebhookBotServiceImpl extends TelegramWebhookBot implements BotService {
@@ -49,7 +51,7 @@ public class WebhookBotServiceImpl extends TelegramWebhookBot implements BotServ
             String[] command = update.getMessage().getText().replace("@cclhbot", "").split(" ");
             CommandHandler commandHandler = commands.get(command[0]);
             if (commandHandler != null) {
-                commandHandler.callback(update.getMessage(), command.length > 1 ? command[1] : null);
+                commandHandler.callback(update.getMessage(), command.length > 1 ? String.join(" ", Arrays.copyOfRange(command, 1, command.length)) : null);
             } else {
                 logger.error("Comando desconocido {} enviado por {}",
                         update.getMessage().getText(),
@@ -81,7 +83,7 @@ public class WebhookBotServiceImpl extends TelegramWebhookBot implements BotServ
             }
         }
 
-        return null;
+        return new Close();
     }
 
     @Override

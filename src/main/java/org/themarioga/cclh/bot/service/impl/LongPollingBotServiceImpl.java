@@ -21,6 +21,7 @@ import org.themarioga.cclh.bot.util.BotUtils;
 import org.themarioga.cclh.bot.util.CallbackQueryHandler;
 import org.themarioga.cclh.bot.util.CommandHandler;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class LongPollingBotServiceImpl extends TelegramLongPollingBot implements BotService {
@@ -47,7 +48,7 @@ public class LongPollingBotServiceImpl extends TelegramLongPollingBot implements
             String[] command = update.getMessage().getText().replace("@cclhbot", "").split(" ");
             CommandHandler commandHandler = commands.get(command[0]);
             if (commandHandler != null) {
-                commandHandler.callback(update.getMessage(), command[1]);
+                commandHandler.callback(update.getMessage(), command.length > 1 ? String.join(" ", Arrays.copyOfRange(command, 1, command.length)) : null);
             } else {
                 logger.error("Comando desconocido {} enviado por {}",
                         update.getMessage().getText(),

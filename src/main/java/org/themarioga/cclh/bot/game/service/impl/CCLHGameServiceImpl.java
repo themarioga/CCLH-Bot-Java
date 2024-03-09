@@ -58,6 +58,8 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     private TelegramGameService telegramGameService;
     private TelegramPlayerService telegramPlayerService;
 
+    private Boolean canSendGlobalMessages = Boolean.TRUE;
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void registerUser(long userId, String username) {
@@ -121,6 +123,8 @@ public class CCLHGameServiceImpl implements CCLHGameService {
             telegramGameService.deleteGame(telegramGame);
 
             sendDeleteMessages(telegramGame, telegramPlayerList);
+
+            botService.sendMessage(cclhGameService.getBotCreatorId(), MessageFormat.format(ResponseMessageI18n.GAME_DELETION_USER, username));
         } catch (ApplicationException e) {
             botService.sendMessage(telegramGame.getGame().getCreator().getId(), e.getMessage());
 
@@ -143,6 +147,8 @@ public class CCLHGameServiceImpl implements CCLHGameService {
 
                 botService.sendMessage(telegramGame.getGame().getCreator().getId(),
                         ResponseMessageI18n.GAME_DELETION_FORCED);
+
+                botService.sendMessage(cclhGameService.getBotCreatorId(), ResponseMessageI18n.GAME_DELETION_ALL);
             } catch (ApplicationException e) {
                 botService.sendMessage(telegramGame.getGame().getCreator().getId(), e.getMessage());
 
@@ -1065,44 +1071,67 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Override
-    public void sendHelpMessage(long roomId) {
-        botService.sendMessage(roomId, getHelpMessage());
-    }
-
-    @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void sendMessageToEveryone(String msg) {
         List<User> userList = userService.getAllUsers();
 
         for (User user : userList) {
-            try {
-                botService.sendMessage(user.getId(), msg);
+            if (Boolean.TRUE.equals(canSendGlobalMessages)) {
+                botService.sendMessageAsync(user.getId(), msg, new BotService.Callback() {
+                    @Override
+                    public void success(BotApiMethod<Message> method, Message response) {
+                        userService.setActive(user, true);
+                    }
 
-                userService.setActive(user, true);
-            } catch (Exception e) {
-                logger.error("El usuario {}({}) ha sido bloqueado por el error {}", user.getName(), user.getId(), e.getMessage(), e);
+                    @Override
+                    public void failure(BotApiMethod<Message> method, Exception e) {
+                        logger.error("El usuario {}({}) ha sido bloqueado por el error {}", user.getName(), user.getId(), e.getMessage(), e);
 
-                userService.setActive(user, false);
+                        userService.setActive(user, false);
 
-                botService.sendMessage(cclhGameService.getBotCreatorId(), "Desactivando al usuario " + user.getName());
+                        botService.sendMessage(cclhGameService.getBotCreatorId(), "Desactivando al usuario " + user.getName());
+                    }
+                });
             }
         }
 
         List<Room> roomList = roomService.getAllRooms();
 
         for (Room room : roomList) {
-            try {
-                botService.sendMessage(room.getId(), msg);
+            if (Boolean.TRUE.equals(canSendGlobalMessages)) {
+                botService.sendMessageAsync(room.getId(), msg, new BotService.Callback() {
+                    @Override
+                    public void success(BotApiMethod<Message> method, Message response) {
+                        roomService.setActive(room, true);
+                    }
 
-                roomService.setActive(room, true);
-            } catch (Exception e) {
-                logger.error("La sala {}({}) ha sido bloqueada por el error {}", room.getName(), room.getId(), e.getMessage(), e);
+                    @Override
+                    public void failure(BotApiMethod<Message> method, Exception e) {
+                        logger.error("La sala {}({}) ha sido bloqueada por el error {}", room.getName(), room.getId(), e.getMessage(), e);
 
-                roomService.setActive(room, false);
+                        roomService.setActive(room, false);
 
-                botService.sendMessage(cclhGameService.getBotCreatorId(), "Desactivando la sala " + room.getName());
+                        botService.sendMessage(cclhGameService.getBotCreatorId(), "Desactivando la sala " + room.getName());
+                    }
+                });
             }
         }
+    }
+
+    @Override
+    public void toggleGlobalMessages() {
+        canSendGlobalMessages = !canSendGlobalMessages;
+
+        if (Boolean.TRUE.equals(canSendGlobalMessages)) {
+            botService.sendMessage(cclhGameService.getBotCreatorId(), "Activados mensajes globales");
+        } else {
+            botService.sendMessage(cclhGameService.getBotCreatorId(), "Desctivados mensajes globales");
+        }
+    }
+
+    @Override
+    public void sendHelpMessage(long roomId) {
+        botService.sendMessage(roomId, getHelpMessage());
     }
 
     private void sendMainMenu(TelegramGame telegramGame) {

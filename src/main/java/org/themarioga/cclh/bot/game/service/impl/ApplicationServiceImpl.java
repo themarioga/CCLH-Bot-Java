@@ -89,8 +89,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 
             try {
                 cclhGameService.deleteGameByCreatorUsername(data);
-
-                botService.sendMessage(message.getChatId(), MessageFormat.format(ResponseMessageI18n.GAME_DELETION_USER, data));
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -108,14 +106,12 @@ public class ApplicationServiceImpl implements ApplicationService {
 
             try {
                 cclhGameService.deleteAllGames();
-
-                botService.sendMessage(message.getChatId(), ResponseMessageI18n.GAME_DELETION_ALL);
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
         });
 
-        commands.put("/sendMessage", (message, data) -> {
+        commands.put("/sendmessagetoeveryone", (message, data) -> {
             if (!message.getChat().getType().equals("private")
                     || !message.getChat().getId().equals(cclhGameService.getBotCreatorId())
                     || data == null) {
@@ -130,6 +126,23 @@ public class ApplicationServiceImpl implements ApplicationService {
                 cclhGameService.sendMessageToEveryone(data);
 
                 botService.sendMessage(message.getChatId(), ResponseMessageI18n.ALL_MESSAGES_SENT);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        });
+
+        commands.put("/toggleglobalmessages", (message, data) -> {
+            if (!message.getChat().getType().equals("private")
+                    || !message.getChat().getId().equals(cclhGameService.getBotCreatorId())) {
+                logger.error("Comando /sendMessage enviado en lugar incorrecto por {}", BotUtils.getUserInfo(message.getFrom()));
+
+                botService.sendMessage(message.getChat().getId(), ResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
+
+                return;
+            }
+
+            try {
+                cclhGameService.toggleGlobalMessages();
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }

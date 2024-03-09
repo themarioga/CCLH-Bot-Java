@@ -56,7 +56,9 @@ public interface CCLHGameService {
 
     void playerVoteCardQuery(long userId, String callbackQueryId, String data);
 
-    void sendHelpMessage(long roomId);
+	void toggleGlobalMessages();
+
+	void sendHelpMessage(long roomId);
 
     void sendMessageToEveryone(String msg);
 
