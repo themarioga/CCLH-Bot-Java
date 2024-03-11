@@ -1024,12 +1024,16 @@ public class CCLHGameServiceImpl implements CCLHGameService {
 
                 PlayedCard mostVotedCard = telegramGameService.getMostVotedCard(telegramGame);
 
-                telegramGameService.endRound(telegramGame);
+                if (mostVotedCard == null) throw new ApplicationException("No se ha localizado ninguna carta ganadora");
+
+                telegramPlayerService.incrementPoints(mostVotedCard.getPlayer());
 
                 botService.editMessage(
                         telegramGame.getGame().getRoom().getId(),
                         telegramGame.getBlackCardMessageId(),
                         getGameEndRoundMessage(telegramGame, mostVotedCard));
+
+                telegramGameService.endRound(telegramGame);
 
                 if (telegramGame.getGame().getStatus().equals(GameStatusEnum.STARTED)) {
                     startRound(telegramGame);
@@ -1339,7 +1343,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
                     telegramGame.getGame().getNumberOfCardsToWin());
         } else if (telegramGame.getGame().getPunctuationType() == GamePunctuationTypeEnum.ROUNDS) {
             msg += MessageFormat.format(ResponseMessageI18n.GAME_SELECTED_ROUNDS_TO_END,
-                    telegramGame.getGame().getNumberOfCardsToWin());
+                    telegramGame.getGame().getNumberOfRounds());
         }
 
         msg += "\n";
@@ -1377,9 +1381,9 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     private String getGameEndRoundMessage(TelegramGame telegramGame, PlayedCard mostVotedCard) {
-        StringBuilder playedCards = new StringBuilder();
+        StringBuilder playedCardsSB = new StringBuilder();
         for (PlayedCard playedCard : telegramGame.getGame().getTable().getPlayedCards()) {
-            playedCards
+            playedCardsSB
                     .append("<b>")
                     .append(playedCard.getCard().getText())
                     .append("</b>")
@@ -1388,9 +1392,9 @@ public class CCLHGameServiceImpl implements CCLHGameService {
                     .append("\n");
         }
 
-        StringBuilder playerPoints = new StringBuilder();
+        StringBuilder playerPointsSB = new StringBuilder();
         for (Player player : telegramGame.getGame().getPlayers()) {
-            playerPoints
+            playerPointsSB
                     .append("<b>")
                     .append(player.getUser().getName())
                     .append("</b>")
@@ -1404,8 +1408,8 @@ public class CCLHGameServiceImpl implements CCLHGameService {
                 mostVotedCard.getCard().getText(),
                 telegramGame.getGame().getTable().getCurrentRoundNumber(),
                 telegramGame.getGame().getTable().getCurrentBlackCard().getText(),
-                playedCards,
-                playerPoints);
+                playedCardsSB,
+                playerPointsSB);
     }
 
     private String getPlayerVoteCardMessage(TelegramGame telegramGame, PlayedCard playedCard) {

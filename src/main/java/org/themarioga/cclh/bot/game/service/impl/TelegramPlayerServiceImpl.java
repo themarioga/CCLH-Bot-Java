@@ -1,6 +1,5 @@
 package org.themarioga.cclh.bot.game.service.impl;
 
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +61,12 @@ public class TelegramPlayerServiceImpl implements TelegramPlayerService {
 		}
 
 		return telegramPlayerList;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
+	public void incrementPoints(Player player) {
+		playerService.incrementPoints(player);
 	}
 
 	@Override
