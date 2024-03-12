@@ -14,7 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.themarioga.cclh.bot.game.model.TelegramGame;
 import org.themarioga.cclh.bot.game.model.TelegramPlayer;
 import org.themarioga.cclh.bot.service.intf.BotService;
-import org.themarioga.cclh.bot.game.service.intf.CCLHGameService;
+import org.themarioga.cclh.bot.game.service.intf.CCLHBotService;
 import org.themarioga.cclh.bot.game.constants.ResponseErrorI18n;
 import org.themarioga.cclh.bot.game.constants.ResponseMessageI18n;
 import org.themarioga.cclh.bot.game.service.intf.TelegramGameService;
@@ -45,12 +45,12 @@ import java.text.MessageFormat;
 import java.util.*;
 
 @Service
-public class CCLHGameServiceImpl implements CCLHGameService {
+public class CCLHBotServiceImpl implements CCLHBotService {
 
-    private final Logger logger = LoggerFactory.getLogger(CCLHGameServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(CCLHBotServiceImpl.class);
 
     private BotService botService;
-    private CCLHGameService cclhGameService;
+    private CCLHBotService cclhBotService;
     private UserService userService;
     private RoomService roomService;
     private DictionaryService dictionaryService;
@@ -124,7 +124,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
 
             sendDeleteMessages(telegramGame, telegramPlayerList);
 
-            botService.sendMessage(cclhGameService.getBotCreatorId(), MessageFormat.format(ResponseMessageI18n.GAME_DELETION_USER, username));
+            botService.sendMessage(cclhBotService.getBotCreatorId(), MessageFormat.format(ResponseMessageI18n.GAME_DELETION_USER, username));
         } catch (ApplicationException e) {
             botService.sendMessage(telegramGame.getGame().getCreator().getId(), e.getMessage());
 
@@ -148,7 +148,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
                 botService.sendMessage(telegramGame.getGame().getCreator().getId(),
                         ResponseMessageI18n.GAME_DELETION_FORCED);
 
-                botService.sendMessage(cclhGameService.getBotCreatorId(), ResponseMessageI18n.GAME_DELETION_ALL);
+                botService.sendMessage(cclhBotService.getBotCreatorId(), ResponseMessageI18n.GAME_DELETION_ALL);
             } catch (ApplicationException e) {
                 botService.sendMessage(telegramGame.getGame().getCreator().getId(), e.getMessage());
 
@@ -170,7 +170,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
                             @Override
                             public void success(BotApiMethod<Message> method, Message playerResponse) {
                                 try {
-                                    cclhGameService.createGame(roomId, roomTitle, creatorId, BotUtils.getUsername(playerResponse.getChat()),
+                                    cclhBotService.createGame(roomId, roomTitle, creatorId, BotUtils.getUsername(playerResponse.getChat()),
                                             privateResponse.getMessageId(), groupResponse.getMessageId(), playerResponse.getMessageId());
                                 } catch (Exception e) {
                                     logger.error(e.getMessage(), e);
@@ -791,7 +791,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
                 @Override
                 public void success(BotApiMethod<Message> method, Message response) {
                     try {
-                        cclhGameService.joinGame(
+                        cclhBotService.joinGame(
                                 roomId,
                                 userId,
                                 BotUtils.getUsername(response.getChat()),
@@ -1093,7 +1093,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
 
                         userService.setActive(user, false);
 
-                        botService.sendMessage(cclhGameService.getBotCreatorId(), "Desactivando al usuario " + user.getName());
+                        botService.sendMessage(cclhBotService.getBotCreatorId(), "Desactivando al usuario " + user.getName());
                     }
                 });
             }
@@ -1115,7 +1115,7 @@ public class CCLHGameServiceImpl implements CCLHGameService {
 
                         roomService.setActive(room, false);
 
-                        botService.sendMessage(cclhGameService.getBotCreatorId(), "Desactivando la sala " + room.getName());
+                        botService.sendMessage(cclhBotService.getBotCreatorId(), "Desactivando la sala " + room.getName());
                     }
                 });
             }
@@ -1127,9 +1127,9 @@ public class CCLHGameServiceImpl implements CCLHGameService {
         canSendGlobalMessages = !canSendGlobalMessages;
 
         if (Boolean.TRUE.equals(canSendGlobalMessages)) {
-            botService.sendMessage(cclhGameService.getBotCreatorId(), "Activados mensajes globales");
+            botService.sendMessage(cclhBotService.getBotCreatorId(), "Activados mensajes globales");
         } else {
-            botService.sendMessage(cclhGameService.getBotCreatorId(), "Desctivados mensajes globales");
+            botService.sendMessage(cclhBotService.getBotCreatorId(), "Desctivados mensajes globales");
         }
     }
 
@@ -1495,8 +1495,8 @@ public class CCLHGameServiceImpl implements CCLHGameService {
     }
 
     @Autowired
-    public void setCclhBotService(CCLHGameService cclhGameService) {
-        this.cclhGameService = cclhGameService;
+    public void setCclhBotService(CCLHBotService cclhBotService) {
+        this.cclhBotService = cclhBotService;
     }
 
     @Autowired

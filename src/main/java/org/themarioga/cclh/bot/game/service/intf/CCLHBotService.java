@@ -1,6 +1,6 @@
 package org.themarioga.cclh.bot.game.service.intf;
 
-public interface CCLHGameService {
+public interface CCLHBotService {
 
     void registerUser(long userId, String username);
 
