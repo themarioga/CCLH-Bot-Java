@@ -2,6 +2,7 @@ package org.themarioga.cclh.bot.game.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -39,15 +40,17 @@ public class CCLHBotConfig {
 	// Long polling instantiation
 
 	@Bean("cclhGameBot")
-	@DependsOn({"telegramBotsApiLongPolling", "applicationServiceImpl"})
+	@DependsOn({"telegramBotsApiLongPolling", "cclhBotApplicationService"})
 	@ConditionalOnProperty(prefix = "cclh.bot", name="type", havingValue = "longpolling")
-	public LongPollingBotServiceImpl longPollingBotService(TelegramBotsApi telegramBotsApiLongPolling, ApplicationService applicationService) {
+	public LongPollingBotServiceImpl longPollingBotService(
+			@Qualifier("telegramBotsApiLongPolling") TelegramBotsApi telegramBotsApi,
+			@Qualifier("cclhBotApplicationService") ApplicationService applicationService) {
 		logger.info("Iniciando bot longpolling...");
 
 		LongPollingBotServiceImpl longPollingBotService = new LongPollingBotServiceImpl(token, name, applicationService);
 
 		try {
-			telegramBotsApiLongPolling.registerBot(longPollingBotService);
+			telegramBotsApi.registerBot(longPollingBotService);
 		} catch (TelegramApiException e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -58,9 +61,11 @@ public class CCLHBotConfig {
 	// Webhook instantiation
 
 	@Bean("cclhGameBot")
-	@DependsOn({"telegramBotsApiWebhook", "applicationServiceImpl"})
+	@DependsOn({"telegramBotsApiWebhook", "cclhBotApplicationService"})
 	@ConditionalOnProperty(prefix = "cclh.bot", name="type", havingValue = "webhook")
-	public WebhookBotServiceImpl webhookBotService(TelegramBotsApi telegramBotsApiWebhook, ApplicationService applicationService) {
+	public WebhookBotServiceImpl webhookBotService(
+			@Qualifier("telegramBotsApiWebhook") TelegramBotsApi telegramBotsApi,
+			@Qualifier("cclhBotApplicationService") ApplicationService applicationService) {
 		logger.info("Iniciando bot webhook en la url {}...", webhookURL);
 
 		WebhookBotServiceImpl webhookBotService = new WebhookBotServiceImpl(token, name, path, applicationService);
@@ -74,7 +79,7 @@ public class CCLHBotConfig {
 		}
 
 		try {
-			telegramBotsApiWebhook.registerBot(webhookBotService, webhookBuilder.build());
+			telegramBotsApi.registerBot(webhookBotService, webhookBuilder.build());
 		} catch (TelegramApiException e) {
 			logger.error(e.getMessage(), e);
 		}

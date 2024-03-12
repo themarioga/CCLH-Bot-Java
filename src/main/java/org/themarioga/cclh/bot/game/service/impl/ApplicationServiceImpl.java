@@ -13,10 +13,9 @@ import org.themarioga.cclh.bot.util.BotUtils;
 import org.themarioga.cclh.bot.util.CallbackQueryHandler;
 import org.themarioga.cclh.bot.util.CommandHandler;
 
-import java.text.MessageFormat;
 import java.util.*;
 
-@Service
+@Service("cclhBotApplicationService")
 public class ApplicationServiceImpl implements ApplicationService {
 
     private static final Logger logger = LoggerFactory.getLogger(ApplicationServiceImpl.class);
