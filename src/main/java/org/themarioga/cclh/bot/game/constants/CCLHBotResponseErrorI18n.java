@@ -1,8 +1,8 @@
 package org.themarioga.cclh.bot.game.constants;
 
-public class ResponseErrorI18n {
+public class CCLHBotResponseErrorI18n {
 
-    private ResponseErrorI18n() {
+    private CCLHBotResponseErrorI18n() {
         throw new UnsupportedOperationException();
     }
 

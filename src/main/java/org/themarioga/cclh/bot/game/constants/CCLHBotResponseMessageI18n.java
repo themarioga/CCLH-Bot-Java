@@ -2,9 +2,9 @@ package org.themarioga.cclh.bot.game.constants;
 
 import org.themarioga.cclh.commons.enums.GameTypeEnum;
 
-public class ResponseMessageI18n {
+public class CCLHBotResponseMessageI18n {
 
-	private ResponseMessageI18n() {
+	private CCLHBotResponseMessageI18n() {
 		throw new UnsupportedOperationException();
 	}
 

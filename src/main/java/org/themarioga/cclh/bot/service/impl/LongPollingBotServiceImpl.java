@@ -16,7 +16,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.meta.updateshandlers.SentCallback;
 import org.themarioga.cclh.bot.service.intf.ApplicationService;
 import org.themarioga.cclh.bot.service.intf.BotService;
-import org.themarioga.cclh.bot.game.constants.ResponseErrorI18n;
+import org.themarioga.cclh.bot.game.constants.CCLHBotResponseErrorI18n;
 import org.themarioga.cclh.bot.util.BotUtils;
 import org.themarioga.cclh.bot.util.CallbackQueryHandler;
 import org.themarioga.cclh.bot.util.CommandHandler;
@@ -54,7 +54,7 @@ public class LongPollingBotServiceImpl extends TelegramLongPollingBot implements
                         update.getMessage().getText(),
                         BotUtils.getUserInfo(update.getMessage().getFrom()));
 
-                sendMessageAsync(update.getMessage().getChatId(), ResponseErrorI18n.COMMAND_DOES_NOT_EXISTS, new Callback() {
+                sendMessageAsync(update.getMessage().getChatId(), CCLHBotResponseErrorI18n.COMMAND_DOES_NOT_EXISTS, new Callback() {
                     @Override
                     public void success(BotApiMethod<Message> method, Message response) {
                         // Nada
@@ -76,7 +76,7 @@ public class LongPollingBotServiceImpl extends TelegramLongPollingBot implements
                         update.getCallbackQuery().getData(),
                         BotUtils.getUserInfo(update.getCallbackQuery().getFrom()));
 
-                answerCallbackQuery(update.getCallbackQuery().getId(), ResponseErrorI18n.COMMAND_DOES_NOT_EXISTS);
+                answerCallbackQuery(update.getCallbackQuery().getId(), CCLHBotResponseErrorI18n.COMMAND_DOES_NOT_EXISTS);
             }
         }
     }
