@@ -48,7 +48,7 @@ public class WebhookBotServiceImpl extends TelegramWebhookBot implements BotServ
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().getText() != null && update.getMessage().getText().startsWith("/")) {
-            String[] command = update.getMessage().getText().replace("@cclhbot", "").split(" ");
+            String[] command = update.getMessage().getText().replace("@" + user, "").split(" ");
             CommandHandler commandHandler = commands.get(command[0]);
             if (commandHandler != null) {
                 commandHandler.callback(update.getMessage(), command.length > 1 ? String.join(" ", Arrays.copyOfRange(command, 1, command.length)) : null);
