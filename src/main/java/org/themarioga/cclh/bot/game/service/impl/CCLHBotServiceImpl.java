@@ -1089,11 +1089,9 @@ public class CCLHBotServiceImpl implements CCLHBotService {
 
                     @Override
                     public void failure(BotApiMethod<Message> method, Exception e) {
-                        logger.error("El usuario {}({}) ha sido bloqueado por el error {}", user.getName(), user.getId(), e.getMessage(), e);
-
                         userService.setActive(user, false);
 
-                        botService.sendMessage(cclhBotService.getBotCreatorId(), "Desactivando al usuario " + user.getName());
+                        logger.error("El usuario {}({}) será desactivado por el error {}", user.getName(), user.getId(), e.getMessage(), e);
                     }
                 });
             }
