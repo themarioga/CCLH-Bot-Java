@@ -4,14 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.themarioga.bot.service.intf.ApplicationService;
+import org.themarioga.bot.service.intf.BotService;
+import org.themarioga.bot.util.BotUtils;
+import org.themarioga.bot.util.CallbackQueryHandler;
+import org.themarioga.bot.util.CommandHandler;
+import org.themarioga.cclh.bot.game.constants.CCLHBotResponseErrorI18n;
 import org.themarioga.cclh.bot.game.constants.CCLHBotResponseMessageI18n;
 import org.themarioga.cclh.bot.game.service.intf.CCLHBotService;
-import org.themarioga.cclh.bot.service.intf.ApplicationService;
-import org.themarioga.cclh.bot.service.intf.BotService;
-import org.themarioga.cclh.bot.game.constants.CCLHBotResponseErrorI18n;
-import org.themarioga.cclh.bot.util.BotUtils;
-import org.themarioga.cclh.bot.util.CallbackQueryHandler;
-import org.themarioga.cclh.bot.util.CommandHandler;
 
 import java.util.*;
 

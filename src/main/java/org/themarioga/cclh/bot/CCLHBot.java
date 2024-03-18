@@ -5,8 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 
-@SpringBootApplication(scanBasePackages = {"org.themarioga.cclh"}, exclude = { SecurityAutoConfiguration.class })
-@EntityScan(basePackages = {"org.themarioga.cclh"})
+@SpringBootApplication(scanBasePackages = {"org.themarioga"}, exclude = { SecurityAutoConfiguration.class })
+@EntityScan(basePackages = {"org.themarioga"})
 public class CCLHBot {
 
     public static void main(String[] args) {

@@ -35,41 +35,11 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- Spring -->
+        <!-- Bots -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <version>3.2.3</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.3.1</version>
-        </dependency>
-
-        <!-- Telegram -->
-        <dependency>
-            <groupId>org.telegram</groupId>
-            <artifactId>telegrambots</artifactId>
-            <version>6.9.7.1</version>
-        </dependency>
-
-        <!-- Let's Encrypt -->
-        <dependency>
-            <groupId>com.github.valb3r.letsencrypt-helper</groupId>
-            <artifactId>letsencrypt-helper-tomcat</artifactId>
-            <version>0.4.0</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>jose4j</artifactId>
-                    <groupId>org.bitbucket.b_c</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.bitbucket.b_c</groupId>
-            <artifactId>jose4j</artifactId>
-            <version>0.9.5</version>
+            <groupId>org.themarioga</groupId>
+            <artifactId>CCLH-TelegramBotUtils</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- BBDD -->

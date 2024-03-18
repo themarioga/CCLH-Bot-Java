@@ -12,10 +12,10 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.themarioga.cclh.bot.service.impl.LongPollingBotServiceImpl;
-import org.themarioga.cclh.bot.service.impl.WebhookBotServiceImpl;
-import org.themarioga.cclh.bot.service.intf.ApplicationService;
-import org.themarioga.cclh.bot.util.BotUtils;
+import org.themarioga.bot.service.impl.LongPollingBotServiceImpl;
+import org.themarioga.bot.service.impl.WebhookBotServiceImpl;
+import org.themarioga.bot.service.intf.ApplicationService;
+import org.themarioga.bot.util.BotUtils;
 
 @Configuration
 public class CCLHBotConfig {
