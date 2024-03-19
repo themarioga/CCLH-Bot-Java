@@ -33,7 +33,17 @@ public class DictionariesBotResponseMessageI18n {
 		
 		{0}""";
 
+	public static final String DICTIONARIES_EDIT_LIST = """
+		Estos son los diccionarios que has creado:
+		
+		{0}
+		
+		Ahora respondeme con el número de diccionario que deseas renombrar.""";
+
 	public static final String DICTIONARY_CREATE = "¡Vamos a ello! Dime el nombre del diccionario que quieres crear.";
 	public static final String DICTIONARY_CREATED = "Tu diccionario se ha creado correctamente, ahora toca añadir cartas.";
+
+	public static final String DICTIONARY_RENAME = "¡Vamos a ello! Dime el nuevo nombre del diccionario que quieres renombrar.";
+	public static final String DICTIONARY_RENAMED = "Tu diccionario se ha renombrado correctamente.";
 
 }

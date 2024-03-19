@@ -79,8 +79,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         commands.put("/deletegamebyusername", (message, data) -> {
             if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)
-                    || !message.getChat().getId().equals(cclhBotService.getBotCreatorId())
-                    || data == null) {
+                    || !message.getChat().getId().equals(cclhBotService.getBotCreatorId())) {
                 logger.error("Comando /deletegamebyusername enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
                 cclhBotMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
@@ -89,7 +88,8 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
 
             try {
-                cclhBotService.deleteGameByCreatorUsername(data);
+                cclhBotService.deleteGameByCreatorUsername(
+                        cclhBotMessageService.sanitizeTextFromCommand("/deletegamebyusername", message.getText()));
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -114,8 +114,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         commands.put("/sendmessagetoeveryone", (message, data) -> {
             if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)
-                    || !message.getChat().getId().equals(cclhBotService.getBotCreatorId())
-                    || data == null) {
+                    || !message.getChat().getId().equals(cclhBotService.getBotCreatorId())) {
                 logger.error("Comando /sendMessage enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
                 cclhBotMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
@@ -124,7 +123,8 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
 
             try {
-                cclhBotService.sendMessageToEveryone(data);
+                cclhBotService.sendMessageToEveryone(
+                        cclhBotMessageService.sanitizeTextFromCommand("/sendmessagetoeveryone", message.getText()));
 
                 cclhBotMessageService.sendMessage(message.getChatId(), CCLHBotResponseMessageI18n.ALL_MESSAGES_SENT);
             } catch (Exception e) {

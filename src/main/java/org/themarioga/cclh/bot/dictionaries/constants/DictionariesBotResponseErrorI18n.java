@@ -7,4 +7,6 @@ public class DictionariesBotResponseErrorI18n {
 	}
 
 	public static final String DICTIONARY_ALREADY_EXISTS = "Ya existe un diccionario con este nombre";
+
+	public static final String DICTIONARY_NOT_YOURS = "Ese diccionario no te pertenece";
 }

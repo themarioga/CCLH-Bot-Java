@@ -20,6 +20,8 @@ public interface CCLHBotMessageService {
 
 	void answerCallbackQuery(String callbackQueryId, String text);
 
+	String sanitizeTextFromCommand(String command, String text);
+
 	interface Callback {
 
 		void success(BotApiMethod<Message> method, Message response);

@@ -62,7 +62,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         commands.put("/create", (message, data) -> {
             if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
-                logger.error("Comando /menu enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
+                logger.error("Comando /create enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
                 dictionariesBotMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
 
@@ -71,6 +71,38 @@ public class ApplicationServiceImpl implements ApplicationService {
 
             try {
                 dictionariesBotService.createDictionary(message.getChatId(), message.getText());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        });
+
+        commands.put("/rename_select", (message, data) -> {
+            if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
+                logger.error("Comando /rename_select enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
+
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
+
+                return;
+            }
+
+            try {
+                dictionariesBotService.selectDictionaryToRename(message.getChatId(), Long.parseLong(message.getText()));
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        });
+
+        commands.put("/rename", (message, data) -> {
+            if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
+                logger.error("Comando /rename enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
+
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
+
+                return;
+            }
+
+            try {
+                dictionariesBotService.renameDictionary(message.getChatId(), Long.parseLong(data), message.getText());
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -98,6 +130,16 @@ public class ApplicationServiceImpl implements ApplicationService {
         callbackQueryHandlerMap.put("dictionary_create", (callbackQuery, data) -> {
             try {
                 dictionariesBotService.createDictionaryMessage(callbackQuery.getFrom().getId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+
+            dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
+        });
+
+        callbackQueryHandlerMap.put("dictionary_rename", (callbackQuery, data) -> {
+            try {
+                dictionariesBotService.renameDictionaryMessage(callbackQuery.getFrom().getId());
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }

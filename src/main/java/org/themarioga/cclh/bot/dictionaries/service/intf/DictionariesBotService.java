@@ -1,9 +1,5 @@
 package org.themarioga.cclh.bot.dictionaries.service.intf;
 
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.themarioga.cclh.commons.exceptions.ApplicationException;
-
 public interface DictionariesBotService {
 
 	void registerUser(long userId, String username);
@@ -14,8 +10,13 @@ public interface DictionariesBotService {
 
 	void createDictionaryMessage(long userId);
 
-	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
 	void createDictionary(long userId, String name);
 
-	void sendHelpMessage(long roomId);
+	void renameDictionaryMessage(long userId);
+
+	void selectDictionaryToRename(long userId, long dictionaryId);
+
+	void renameDictionary(long userId, long dictionaryId, String newName);
+
+	void sendHelpMessage(long chatId);
 }

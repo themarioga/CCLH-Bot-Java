@@ -63,7 +63,7 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
 						.text("Crear diccionario").callbackData("dictionary_create").build()))
 				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
-						.text("Editar diccionario").callbackData("dictionary_edit").build()))
+						.text("Renombrar diccionario").callbackData("dictionary_rename").build()))
 				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
 						.text("Gestionar cartas").callbackData("dictionary_manage_cards").build()))
 				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
@@ -76,7 +76,7 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
 	public void listDictionaries(long userId) {
-		List<Dictionary> dictionaryList = dictionaryService.getUserDictionaries(userService.getById(userId));
+		List<Dictionary> dictionaryList = dictionaryService.getDictionariesByCreatorOrCollaborator(userService.getById(userId));
 
 		dictionariesBotMessageService.sendMessage(userId, getDictionaryListMessage(userId, dictionaryList));
 	}
@@ -112,8 +112,47 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
-	public void sendHelpMessage(long roomId) {
-		dictionariesBotMessageService.sendMessage(roomId, getHelpMessage());
+	public void renameDictionaryMessage(long userId) {
+		List<Dictionary> dictionaryList = dictionaryService.getDictionariesByCreator(userService.getById(userId));
+
+		dictionariesBotMessageService.setPendingReply(userId, "/rename_select");
+		dictionariesBotMessageService.sendMessageWithForceReply(userId, getDictionaryRenameMessage(dictionaryList));
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
+	public void selectDictionaryToRename(long userId, long dictionaryId) {
+		Dictionary dictionary = dictionaryService.findOne(dictionaryId);
+
+		if (dictionary.getCreator().getId() != userId) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_YOURS);
+
+			return;
+		}
+
+		dictionariesBotMessageService.setPendingReply(userId, "/rename__" + dictionaryId);
+		dictionariesBotMessageService.sendMessageWithForceReply(userId, DictionariesBotResponseMessageI18n.DICTIONARY_RENAME);
+	}
+
+	@Override
+	public void renameDictionary(long userId, long dictionaryId, String newName) {
+		Dictionary dictionary = dictionaryService.findOne(dictionaryId);
+
+		if (dictionary.getCreator().getId() != userId) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_YOURS);
+
+			return;
+		}
+
+		dictionaryService.setName(dictionary, newName);
+
+		dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseMessageI18n.DICTIONARY_RENAMED);
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
+	public void sendHelpMessage(long chatId) {
+		dictionariesBotMessageService.sendMessage(chatId, getHelpMessage());
 	}
 
 	private String getDictionaryListMessage(long userId, List<Dictionary> dictionaryList) {
@@ -127,6 +166,15 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 		}
 
 		return MessageFormat.format(DictionariesBotResponseMessageI18n.DICTIONARIES_LIST, stringBuilder.toString());
+	}
+
+	private String getDictionaryRenameMessage(List<Dictionary> dictionaryList) {
+		StringBuilder stringBuilder = new StringBuilder();
+		for (Dictionary dictionary : dictionaryList) {
+			stringBuilder.append(dictionary.getId()).append(" - ").append(dictionary.getName()).append("\n");
+		}
+
+		return MessageFormat.format(DictionariesBotResponseMessageI18n.DICTIONARIES_EDIT_LIST, stringBuilder.toString());
 	}
 
 	private String getHelpMessage() {
