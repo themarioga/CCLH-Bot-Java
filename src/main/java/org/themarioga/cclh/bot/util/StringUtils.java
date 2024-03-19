@@ -12,4 +12,8 @@ public class StringUtils {
 		return MessageFormat.format(text, vars);
 	}
 
+	public static String booleanToSpanish(boolean bool) {
+		return bool ? "Si" : "No";
+	}
+
 }
