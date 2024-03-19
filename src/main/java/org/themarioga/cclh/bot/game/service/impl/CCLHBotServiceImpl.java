@@ -12,8 +12,8 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.themarioga.bot.service.intf.BotService;
-import org.themarioga.bot.util.BotUtils;
-import org.themarioga.bot.util.StringUtils;
+import org.themarioga.bot.util.BotMessageUtils;
+import org.themarioga.cclh.bot.util.StringUtils;
 import org.themarioga.cclh.bot.game.model.TelegramGame;
 import org.themarioga.cclh.bot.game.model.TelegramPlayer;
 import org.themarioga.cclh.bot.game.service.intf.CCLHBotService;
@@ -170,7 +170,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                             @Override
                             public void success(BotApiMethod<Message> method, Message playerResponse) {
                                 try {
-                                    cclhBotService.createGame(roomId, roomTitle, creatorId, BotUtils.getUsername(playerResponse.getChat()),
+                                    cclhBotService.createGame(roomId, roomTitle, creatorId, BotMessageUtils.getUsername(playerResponse.getChat()),
                                             privateResponse.getMessageId(), groupResponse.getMessageId(), playerResponse.getMessageId());
                                 } catch (Exception e) {
                                     logger.error(e.getMessage(), e);
@@ -794,7 +794,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                         cclhBotService.joinGame(
                                 roomId,
                                 userId,
-                                BotUtils.getUsername(response.getChat()),
+                                BotMessageUtils.getUsername(response.getChat()),
                                 response.getMessageId(), callbackQueryId);
                     } catch (Exception e) {
                         logger.error(e.getMessage(), e);

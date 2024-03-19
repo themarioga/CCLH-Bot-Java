@@ -10,7 +10,7 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.themarioga.bot.service.impl.LongPollingBotServiceImpl;
 import org.themarioga.bot.service.impl.WebhookBotServiceImpl;
 import org.themarioga.bot.service.intf.ApplicationService;
-import org.themarioga.bot.util.BotUtils;
+import org.themarioga.bot.util.BotCreationUtils;
 
 @Configuration
 public class CCLHBotConfig {
@@ -41,7 +41,7 @@ public class CCLHBotConfig {
 	public LongPollingBotServiceImpl longPollingBotService(
 			@Qualifier("telegramBotsApiLongPolling") TelegramBotsApi telegramBotsApi,
 			@Qualifier("cclhBotApplicationService") ApplicationService applicationService) {
-		return BotUtils.createLongPollingBot(enabled, token, name, telegramBotsApi, applicationService);
+		return BotCreationUtils.createLongPollingBot(enabled, token, name, telegramBotsApi, applicationService);
 	}
 
 	// Webhook instantiation
@@ -52,7 +52,7 @@ public class CCLHBotConfig {
 	public WebhookBotServiceImpl webhookBotService(
 			@Qualifier("telegramBotsApiWebhook") TelegramBotsApi telegramBotsApi,
 			@Qualifier("cclhBotApplicationService") ApplicationService applicationService) {
-		return BotUtils.createWebhookBot(enabled, token, name, path, webhookURL, webhookCertPath, telegramBotsApi, applicationService);
+		return BotCreationUtils.createWebhookBot(enabled, token, name, path, webhookURL, webhookCertPath, telegramBotsApi, applicationService);
 	}
 
 }

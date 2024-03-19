@@ -4,11 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.themarioga.bot.constants.BotConstants;
 import org.themarioga.bot.service.intf.ApplicationService;
 import org.themarioga.bot.service.intf.BotService;
-import org.themarioga.bot.util.BotUtils;
-import org.themarioga.bot.util.CallbackQueryHandler;
-import org.themarioga.bot.util.CommandHandler;
+import org.themarioga.bot.util.BotMessageUtils;
+import org.themarioga.bot.model.CallbackQueryHandler;
+import org.themarioga.bot.model.CommandHandler;
 import org.themarioga.cclh.bot.game.constants.CCLHBotResponseErrorI18n;
 import org.themarioga.cclh.bot.game.constants.CCLHBotResponseMessageI18n;
 import org.themarioga.cclh.bot.game.service.intf.CCLHBotService;
@@ -28,8 +29,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         Map<String, CommandHandler> commands = new HashMap<>();
 
         commands.put("/start", (message, data) -> {
-            if (!message.getChat().getType().equals("private")) {
-                logger.error("Comando /start enviado en lugar incorrecto por {}", BotUtils.getUserInfo(message.getFrom()));
+            if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
+                logger.error("Comando /start enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
                 botService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
 
@@ -37,15 +38,15 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
 
             try {
-                cclhBotService.registerUser(message.getFrom().getId(), BotUtils.getUsername(message.getFrom()));
+                cclhBotService.registerUser(message.getFrom().getId(), BotMessageUtils.getUsername(message.getFrom()));
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
         });
 
         commands.put("/create", (message, data) -> {
-            if (message.getChat().getType().equals("private")) {
-                logger.error("Comando /create enviado en lugar incorrecto por {}", BotUtils.getUserInfo(message.getFrom()));
+            if (message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
+                logger.error("Comando /create enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
                 botService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_GROUP);
 
@@ -60,8 +61,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         });
 
         commands.put("/deletemygames", (message, data) -> {
-            if (!message.getChat().getType().equals("private")) {
-                logger.error("Comando /deletemygames enviado en lugar incorrecto por {}", BotUtils.getUserInfo(message.getFrom()));
+            if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
+                logger.error("Comando /deletemygames enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
                 botService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
 
@@ -76,10 +77,10 @@ public class ApplicationServiceImpl implements ApplicationService {
         });
 
         commands.put("/deletegamebyusername", (message, data) -> {
-            if (!message.getChat().getType().equals("private")
+            if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)
                     || !message.getChat().getId().equals(cclhBotService.getBotCreatorId())
                     || data == null) {
-                logger.error("Comando /deletegamebyusername enviado en lugar incorrecto por {}", BotUtils.getUserInfo(message.getFrom()));
+                logger.error("Comando /deletegamebyusername enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
                 botService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
 
@@ -94,9 +95,9 @@ public class ApplicationServiceImpl implements ApplicationService {
         });
 
         commands.put("/deleteallgames", (message, data) -> {
-            if (!message.getChat().getType().equals("private")
+            if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)
                     || !message.getChat().getId().equals(cclhBotService.getBotCreatorId())) {
-                logger.error("Comando /deleteallgames enviado en lugar incorrecto por {}", BotUtils.getUserInfo(message.getFrom()));
+                logger.error("Comando /deleteallgames enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
                 botService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
 
@@ -111,10 +112,10 @@ public class ApplicationServiceImpl implements ApplicationService {
         });
 
         commands.put("/sendmessagetoeveryone", (message, data) -> {
-            if (!message.getChat().getType().equals("private")
+            if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)
                     || !message.getChat().getId().equals(cclhBotService.getBotCreatorId())
                     || data == null) {
-                logger.error("Comando /sendMessage enviado en lugar incorrecto por {}", BotUtils.getUserInfo(message.getFrom()));
+                logger.error("Comando /sendMessage enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
                 botService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
 
@@ -131,9 +132,9 @@ public class ApplicationServiceImpl implements ApplicationService {
         });
 
         commands.put("/toggleglobalmessages", (message, data) -> {
-            if (!message.getChat().getType().equals("private")
+            if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)
                     || !message.getChat().getId().equals(cclhBotService.getBotCreatorId())) {
-                logger.error("Comando /sendMessage enviado en lugar incorrecto por {}", BotUtils.getUserInfo(message.getFrom()));
+                logger.error("Comando /sendMessage enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
                 botService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
 
