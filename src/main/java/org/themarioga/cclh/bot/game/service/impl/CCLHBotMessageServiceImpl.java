@@ -122,7 +122,7 @@ public class CCLHBotMessageServiceImpl implements CCLHBotMessageService {
 
 	@Override
 	public String sanitizeTextFromCommand(String command, String text) {
-		return text.replace(command, "").replace("@" + botService.getBotUsername(), "");
+		return text.replace(command, "").replace("@" + botService.getBotUsername(), "").trim();
 	}
 
 	@Autowired
