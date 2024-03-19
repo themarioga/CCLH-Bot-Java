@@ -5,23 +5,24 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.themarioga.bot.constants.BotConstants;
-import org.themarioga.bot.service.intf.ApplicationService;
-import org.themarioga.bot.service.intf.BotService;
-import org.themarioga.bot.util.BotMessageUtils;
 import org.themarioga.bot.model.CallbackQueryHandler;
 import org.themarioga.bot.model.CommandHandler;
+import org.themarioga.bot.service.intf.ApplicationService;
+import org.themarioga.bot.service.intf.BotMessageService;
+import org.themarioga.bot.util.BotMessageUtils;
 import org.themarioga.cclh.bot.game.constants.CCLHBotResponseErrorI18n;
 import org.themarioga.cclh.bot.game.constants.CCLHBotResponseMessageI18n;
 import org.themarioga.cclh.bot.game.service.intf.CCLHBotService;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service("cclhBotApplicationService")
 public class ApplicationServiceImpl implements ApplicationService {
 
     private static final Logger logger = LoggerFactory.getLogger(ApplicationServiceImpl.class);
 
-    private BotService botService;
+    private BotMessageService botMessageService;
     private CCLHBotService cclhBotService;
 
     @Override
@@ -32,7 +33,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
                 logger.error("Comando /start enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                botService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
+                botMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
 
                 return;
             }
@@ -48,7 +49,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
                 logger.error("Comando /create enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                botService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_GROUP);
+                botMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_GROUP);
 
                 return;
             }
@@ -64,7 +65,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
                 logger.error("Comando /deletemygames enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                botService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
+                botMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
 
                 return;
             }
@@ -82,7 +83,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     || data == null) {
                 logger.error("Comando /deletegamebyusername enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                botService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
+                botMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
 
                 return;
             }
@@ -99,7 +100,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     || !message.getChat().getId().equals(cclhBotService.getBotCreatorId())) {
                 logger.error("Comando /deleteallgames enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                botService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
+                botMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
 
                 return;
             }
@@ -117,7 +118,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     || data == null) {
                 logger.error("Comando /sendMessage enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                botService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
+                botMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
 
                 return;
             }
@@ -125,7 +126,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             try {
                 cclhBotService.sendMessageToEveryone(data);
 
-                botService.sendMessage(message.getChatId(), CCLHBotResponseMessageI18n.ALL_MESSAGES_SENT);
+                botMessageService.sendMessage(message.getChatId(), CCLHBotResponseMessageI18n.ALL_MESSAGES_SENT);
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -136,7 +137,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     || !message.getChat().getId().equals(cclhBotService.getBotCreatorId())) {
                 logger.error("Comando /sendMessage enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                botService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
+                botMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
 
                 return;
             }
@@ -165,7 +166,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 logger.error(e.getMessage(), e);
             }
 
-            botService.answerCallbackQuery(callbackQuery.getId());
+            botMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_configure", (callbackQuery, data) -> {
@@ -176,7 +177,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 logger.error(e.getMessage(), e);
             }
 
-            botService.answerCallbackQuery(callbackQuery.getId());
+            botMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_sel_mode", (callbackQuery, data) -> {
@@ -187,7 +188,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 logger.error(e.getMessage(), e);
             }
 
-            botService.answerCallbackQuery(callbackQuery.getId());
+            botMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_sel_point_type", (callbackQuery, data) -> {
@@ -198,7 +199,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 logger.error(e.getMessage(), e);
             }
 
-            botService.answerCallbackQuery(callbackQuery.getId());
+            botMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_sel_dictionary", (callbackQuery, data) -> {
@@ -209,7 +210,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 logger.error(e.getMessage(), e);
             }
 
-            botService.answerCallbackQuery(callbackQuery.getId());
+            botMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_sel_max_players", (callbackQuery, data) -> {
@@ -220,7 +221,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 logger.error(e.getMessage(), e);
             }
 
-            botService.answerCallbackQuery(callbackQuery.getId());
+            botMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_sel_n_rounds", (callbackQuery, data) -> {
@@ -231,7 +232,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 logger.error(e.getMessage(), e);
             }
 
-            botService.answerCallbackQuery(callbackQuery.getId());
+            botMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_sel_n_points", (callbackQuery, data) -> {
@@ -242,7 +243,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 logger.error(e.getMessage(), e);
             }
 
-            botService.answerCallbackQuery(callbackQuery.getId());
+            botMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_change_mode", (callbackQuery, data) -> {
@@ -253,7 +254,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 logger.error(e.getMessage(), e);
             }
 
-            botService.answerCallbackQuery(callbackQuery.getId());
+            botMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_change_dictionary", (callbackQuery, data) -> {
@@ -264,7 +265,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 logger.error(e.getMessage(), e);
             }
 
-            botService.answerCallbackQuery(callbackQuery.getId());
+            botMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_change_max_players", (callbackQuery, data) -> {
@@ -275,7 +276,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 logger.error(e.getMessage(), e);
             }
 
-            botService.answerCallbackQuery(callbackQuery.getId());
+            botMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_change_max_rounds", (callbackQuery, data) -> {
@@ -286,7 +287,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 logger.error(e.getMessage(), e);
             }
 
-            botService.answerCallbackQuery(callbackQuery.getId());
+            botMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_change_max_points", (callbackQuery, data) -> {
@@ -297,7 +298,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 logger.error(e.getMessage(), e);
             }
 
-            botService.answerCallbackQuery(callbackQuery.getId());
+            botMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_join", (callbackQuery, data) -> {
@@ -308,7 +309,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 logger.error(e.getMessage(), e);
             }
 
-            botService.answerCallbackQuery(callbackQuery.getId());
+            botMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_leave", (callbackQuery, data) -> {
@@ -318,7 +319,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 logger.error(e.getMessage(), e);
             }
 
-            botService.answerCallbackQuery(callbackQuery.getId());
+            botMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_start", (callbackQuery, data) -> {
@@ -329,7 +330,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 logger.error(e.getMessage(), e);
             }
 
-            botService.answerCallbackQuery(callbackQuery.getId());
+            botMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("play_card", (callbackQuery, data) -> {
@@ -339,7 +340,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 logger.error(e.getMessage(), e);
             }
 
-            botService.answerCallbackQuery(callbackQuery.getId());
+            botMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("vote_card", (callbackQuery, data) -> {
@@ -349,7 +350,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 logger.error(e.getMessage(), e);
             }
 
-            botService.answerCallbackQuery(callbackQuery.getId());
+            botMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_delete_group", (callbackQuery, data) -> {
@@ -360,7 +361,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 logger.error(e.getMessage(), e);
             }
 
-            botService.answerCallbackQuery(callbackQuery.getId());
+            botMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
         callbackQueryHandlerMap.put("game_delete_private", (callbackQuery, data) -> {
@@ -370,15 +371,15 @@ public class ApplicationServiceImpl implements ApplicationService {
                 logger.error(e.getMessage(), e);
             }
 
-            botService.answerCallbackQuery(callbackQuery.getId());
+            botMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
         return callbackQueryHandlerMap;
     }
 
     @Autowired
-    public void setBotService(BotService botService) {
-        this.botService = botService;
+    public void setBotService(BotMessageService botMessageService) {
+        this.botMessageService = botMessageService;
     }
 
     @Autowired

@@ -11,7 +11,7 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.themarioga.bot.service.intf.BotService;
+import org.themarioga.bot.service.intf.BotMessageService;
 import org.themarioga.bot.util.BotMessageUtils;
 import org.themarioga.cclh.bot.util.StringUtils;
 import org.themarioga.cclh.bot.game.model.TelegramGame;
@@ -49,7 +49,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
 
     private final Logger logger = LoggerFactory.getLogger(CCLHBotServiceImpl.class);
 
-    private BotService botService;
+    private BotMessageService botMessageService;
     private CCLHBotService cclhBotService;
     private UserService userService;
     private RoomService roomService;
@@ -66,15 +66,15 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         try {
             userService.createOrReactivate(userId, username);
 
-            botService.sendMessage(userId, CCLHBotResponseMessageI18n.PLAYER_WELCOME);
+            botMessageService.sendMessage(userId, CCLHBotResponseMessageI18n.PLAYER_WELCOME);
         } catch (UserAlreadyExistsException e) {
             logger.error("El usuario {} ({}) esta intentando registrarse de nuevo.", userId, username);
 
-            botService.sendMessage(userId, CCLHBotResponseErrorI18n.USER_ALREADY_REGISTERED);
+            botMessageService.sendMessage(userId, CCLHBotResponseErrorI18n.USER_ALREADY_REGISTERED);
 
             throw e;
         } catch (ApplicationException e) {
-            botService.sendMessage(userId, e.getMessage());
+            botMessageService.sendMessage(userId, e.getMessage());
 
             throw e;
         }
@@ -88,7 +88,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No existe juego asociado al usuario {}", userId);
 
-            botService.sendMessage(userId, CCLHBotResponseErrorI18n.PLAYER_NO_GAMES);
+            botMessageService.sendMessage(userId, CCLHBotResponseErrorI18n.PLAYER_NO_GAMES);
 
             return;
         }
@@ -100,7 +100,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
 
             sendDeleteMessages(telegramGame, telegramPlayerList);
         } catch (ApplicationException e) {
-            botService.sendMessage(userId, e.getMessage());
+            botMessageService.sendMessage(userId, e.getMessage());
 
             throw e;
         }
@@ -124,9 +124,9 @@ public class CCLHBotServiceImpl implements CCLHBotService {
 
             sendDeleteMessages(telegramGame, telegramPlayerList);
 
-            botService.sendMessage(cclhBotService.getBotCreatorId(), MessageFormat.format(CCLHBotResponseMessageI18n.GAME_DELETION_USER, username));
+            botMessageService.sendMessage(cclhBotService.getBotCreatorId(), MessageFormat.format(CCLHBotResponseMessageI18n.GAME_DELETION_USER, username));
         } catch (ApplicationException e) {
-            botService.sendMessage(telegramGame.getGame().getCreator().getId(), e.getMessage());
+            botMessageService.sendMessage(telegramGame.getGame().getCreator().getId(), e.getMessage());
 
             throw e;
         }
@@ -145,12 +145,12 @@ public class CCLHBotServiceImpl implements CCLHBotService {
 
                 sendDeleteMessages(telegramGame, telegramPlayerList);
 
-                botService.sendMessage(telegramGame.getGame().getCreator().getId(),
+                botMessageService.sendMessage(telegramGame.getGame().getCreator().getId(),
                         CCLHBotResponseMessageI18n.GAME_DELETION_FORCED);
 
-                botService.sendMessage(cclhBotService.getBotCreatorId(), CCLHBotResponseMessageI18n.GAME_DELETION_ALL);
+                botMessageService.sendMessage(cclhBotService.getBotCreatorId(), CCLHBotResponseMessageI18n.GAME_DELETION_ALL);
             } catch (ApplicationException e) {
-                botService.sendMessage(telegramGame.getGame().getCreator().getId(), e.getMessage());
+                botMessageService.sendMessage(telegramGame.getGame().getCreator().getId(), e.getMessage());
 
                 throw e;
             }
@@ -160,13 +160,13 @@ public class CCLHBotServiceImpl implements CCLHBotService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     public void startCreatingGame(long roomId, String roomTitle, long creatorId) {
-        botService.sendMessageAsync(roomId, CCLHBotResponseMessageI18n.GAME_CREATING, new BotService.Callback() {
+        botMessageService.sendMessageAsync(roomId, CCLHBotResponseMessageI18n.GAME_CREATING, new BotMessageService.Callback() {
             @Override
             public void success(BotApiMethod<Message> method, Message groupResponse) {
-                botService.sendMessageAsync(creatorId, CCLHBotResponseMessageI18n.GAME_CREATING, new BotService.Callback() {
+                botMessageService.sendMessageAsync(creatorId, CCLHBotResponseMessageI18n.GAME_CREATING, new BotMessageService.Callback() {
                     @Override
                     public void success(BotApiMethod<Message> method, Message privateResponse) {
-                        botService.sendMessageAsync(creatorId, CCLHBotResponseMessageI18n.PLAYER_JOINING, new BotService.Callback() {
+                        botMessageService.sendMessageAsync(creatorId, CCLHBotResponseMessageI18n.PLAYER_JOINING, new BotMessageService.Callback() {
                             @Override
                             public void success(BotApiMethod<Message> method, Message playerResponse) {
                                 try {
@@ -212,16 +212,16 @@ public class CCLHBotServiceImpl implements CCLHBotService {
 
             sendCreatorPrivateMenu(telegramGame);
 
-            botService.editMessage(creatorId, playerMessageId, CCLHBotResponseMessageI18n.PLAYER_JOINED);
+            botMessageService.editMessage(creatorId, playerMessageId, CCLHBotResponseMessageI18n.PLAYER_JOINED);
         } catch (GameAlreadyExistsException e) {
             logger.error("Ya existe una partida para al sala {} ({}) o creado por {}.",
                     roomId, roomTitle, creatorId);
 
-            botService.editMessage(roomId,
+            botMessageService.editMessage(roomId,
                     groupMessageId,
                     CCLHBotResponseErrorI18n.GAME_ALREADY_CREATED);
 
-            botService.editMessage(creatorId,
+            botMessageService.editMessage(creatorId,
                     privateMessageId,
                     CCLHBotResponseErrorI18n.GAME_ALREADY_CREATED);
 
@@ -230,17 +230,17 @@ public class CCLHBotServiceImpl implements CCLHBotService {
             logger.error("El jugador {} que intenta crear la partida en la sala {}({}) ya está en otra partida.",
                     creatorId, roomId, roomTitle);
 
-            botService.editMessage(roomId,
+            botMessageService.editMessage(roomId,
                     groupMessageId,
                     CCLHBotResponseErrorI18n.PLAYER_ALREADY_PLAYING);
 
-            botService.editMessage(creatorId,
+            botMessageService.editMessage(creatorId,
                     privateMessageId,
                     CCLHBotResponseErrorI18n.PLAYER_ALREADY_PLAYING);
 
             throw e;
         } catch (ApplicationException e) {
-            botService.sendMessage(creatorId, e.getMessage());
+            botMessageService.sendMessage(creatorId, e.getMessage());
 
             throw e;
         }
@@ -254,7 +254,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
 
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
 
             return;
         }
@@ -262,7 +262,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (userId == telegramGame.getGame().getCreator().getId()) {
             sendMainMenu(telegramGame);
         } else {
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
         }
     }
 
@@ -274,7 +274,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
 
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
 
             return;
         }
@@ -282,7 +282,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (userId == telegramGame.getGame().getCreator().getId()) {
             sendConfigMenu(telegramGame);
         } else {
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
         }
     }
 
@@ -294,7 +294,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
 
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
 
             return;
         }
@@ -311,10 +311,10 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                             .callbackData("game_configure").build()))
                     .build();
 
-            botService.editMessage(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
+            botMessageService.editMessage(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
                     getGameCreatedGroupMessage(telegramGame) + "\n Selecciona modo de juego:", groupInlineKeyboard);
         } else {
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
         }
     }
 
@@ -326,7 +326,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
 
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
 
             return;
         }
@@ -341,11 +341,11 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                             .text("⬅ Volver").callbackData("game_configure").build()))
                     .build();
 
-            botService.editMessage(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
+            botMessageService.editMessage(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
                     getGameCreatedGroupMessage(telegramGame) + "\n Selecciona modo de puntuación:",
                     groupInlineKeyboard);
         } else {
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
         }
     }
 
@@ -357,7 +357,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
 
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
 
             return;
         }
@@ -380,11 +380,11 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                             InlineKeyboardButton.builder().text("⬅ Volver").callbackData("game_configure").build()))
                     .build();
 
-            botService.editMessage(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
+            botMessageService.editMessage(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
                     getGameCreatedGroupMessage(telegramGame) + "\n Selecciona rondas de la partida:",
                     groupInlineKeyboard);
         } else {
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
         }
     }
 
@@ -396,7 +396,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
 
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
 
             return;
         }
@@ -419,11 +419,11 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                             InlineKeyboardButton.builder().text("⬅ Volver").callbackData("game_configure").build()))
                     .build();
 
-            botService.editMessage(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
+            botMessageService.editMessage(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
                     getGameCreatedGroupMessage(telegramGame) + "\n Selecciona nº de puntos para ganar:",
                     groupInlineKeyboard);
         } else {
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
         }
     }
 
@@ -435,7 +435,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
 
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
 
             return;
         }
@@ -463,10 +463,10 @@ public class CCLHBotServiceImpl implements CCLHBotService {
             groupInlineKeyboard.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
                     .text("⬅ Volver").callbackData("game_configure").build()));
 
-            botService.editMessage(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
+            botMessageService.editMessage(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
                     getGameCreatedGroupMessage(telegramGame) + "\n Selecciona el mazo:", groupInlineKeyboard.build());
         } else {
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
         }
     }
 
@@ -478,7 +478,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
 
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
 
             return;
         }
@@ -499,11 +499,11 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                             InlineKeyboardButton.builder().text("⬅ Volver").callbackData("game_configure").build()))
                     .build();
 
-            botService.editMessage(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
+            botMessageService.editMessage(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
                     getGameCreatedGroupMessage(telegramGame) + "\n Selecciona nº máximo de jugadores:",
                     groupInlineKeyboard);
         } else {
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
         }
     }
 
@@ -515,7 +515,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
 
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
 
             return;
         }
@@ -528,16 +528,16 @@ public class CCLHBotServiceImpl implements CCLHBotService {
             } catch (GameAlreadyStartedException e) {
                 logger.error("La partida de la sala {} ya estaba iniciada cuando se intentó cambiar el modo", roomId);
 
-                botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ALREADY_STARTED);
+                botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ALREADY_STARTED);
 
                 throw e;
             } catch (ApplicationException e) {
-                botService.answerCallbackQuery(callbackQueryId, e.getMessage());
+                botMessageService.answerCallbackQuery(callbackQueryId, e.getMessage());
 
                 throw e;
             }
         } else {
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
         }
     }
 
@@ -549,7 +549,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
 
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
 
             return;
         }
@@ -562,22 +562,22 @@ public class CCLHBotServiceImpl implements CCLHBotService {
             } catch (GameAlreadyStartedException e) {
                 logger.error("La partida de la sala {} ya estaba iniciada cuando se intentó cambiar el modo", roomId);
 
-                botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ALREADY_STARTED);
+                botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ALREADY_STARTED);
 
                 throw e;
             } catch (DictionaryDoesntExistsException e) {
                 logger.error("El diccionario {} no existe para la sala {}", data, roomId);
 
-                botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.UNKNOWN_ERROR);
+                botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.UNKNOWN_ERROR);
 
                 throw e;
             } catch (ApplicationException e) {
-                botService.answerCallbackQuery(callbackQueryId, e.getMessage());
+                botMessageService.answerCallbackQuery(callbackQueryId, e.getMessage());
 
                 throw e;
             }
         } else {
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
         }
     }
 
@@ -589,7 +589,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
 
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
 
             return;
         }
@@ -602,20 +602,20 @@ public class CCLHBotServiceImpl implements CCLHBotService {
             } catch (GameAlreadyStartedException e) {
                 logger.error("La partida de la sala {} ya estaba iniciada cuando se intentó cambiar el modo", roomId);
 
-                botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ALREADY_STARTED);
+                botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ALREADY_STARTED);
 
                 throw e;
             } catch (GameAlreadyFilledException e) {
-                botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ALREADY_FILLED);
+                botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ALREADY_FILLED);
 
                 throw e;
             } catch (ApplicationException e) {
-                botService.answerCallbackQuery(callbackQueryId, e.getMessage());
+                botMessageService.answerCallbackQuery(callbackQueryId, e.getMessage());
 
                 throw e;
             }
         } else {
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
         }
     }
 
@@ -627,7 +627,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
 
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
 
             return;
         }
@@ -640,16 +640,16 @@ public class CCLHBotServiceImpl implements CCLHBotService {
             } catch (GameAlreadyStartedException e) {
                 logger.error("La partida de la sala {} ya estaba iniciada cuando se intentó cambiar el modo", roomId);
 
-                botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ALREADY_STARTED);
+                botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ALREADY_STARTED);
 
                 throw e;
             } catch (ApplicationException e) {
-                botService.answerCallbackQuery(callbackQueryId, e.getMessage());
+                botMessageService.answerCallbackQuery(callbackQueryId, e.getMessage());
 
                 throw e;
             }
         } else {
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
         }
     }
 
@@ -661,7 +661,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
 
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
 
             return;
         }
@@ -674,16 +674,16 @@ public class CCLHBotServiceImpl implements CCLHBotService {
             } catch (GameAlreadyStartedException e) {
                 logger.error("La partida de la sala {} ya estaba iniciada cuando se intentó cambiar el modo", roomId);
 
-                botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ALREADY_STARTED);
+                botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ALREADY_STARTED);
 
                 throw e;
             } catch (ApplicationException e) {
-                botService.answerCallbackQuery(callbackQueryId, e.getMessage());
+                botMessageService.answerCallbackQuery(callbackQueryId, e.getMessage());
 
                 throw e;
             }
         } else {
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_CONFIGURE);
         }
     }
 
@@ -695,7 +695,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
 
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
 
             return;
         }
@@ -708,7 +708,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
 
                 sendDeleteMessages(telegramGame, telegramPlayerList);
             } catch (ApplicationException e) {
-                botService.answerCallbackQuery(callbackQueryId, e.getMessage());
+                botMessageService.answerCallbackQuery(callbackQueryId, e.getMessage());
 
                 throw e;
             }
@@ -717,7 +717,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                 try {
                     telegramGameService.voteForDeletion(telegramGame, userId);
 
-                    botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseMessageI18n.PLAYER_VOTED_DELETION);
+                    botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseMessageI18n.PLAYER_VOTED_DELETION);
 
                     if (telegramGame.getGame().getStatus().equals(GameStatusEnum.DELETING)) {
                         List<TelegramPlayer> telegramPlayerList = telegramPlayerService.deletePlayers(telegramGame);
@@ -729,20 +729,20 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                         sendMainMenu(telegramGame);
                     }
                 } catch (GameNotStartedException e) {
-                    botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
+                    botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
 
                     throw e;
                 } catch (PlayerAlreadyVotedDeleteException e) {
-                    botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.PLAYER_ALREADY_VOTED_DELETION);
+                    botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.PLAYER_ALREADY_VOTED_DELETION);
 
                     throw e;
                 } catch (ApplicationException e) {
-                    botService.answerCallbackQuery(callbackQueryId, e.getMessage());
+                    botMessageService.answerCallbackQuery(callbackQueryId, e.getMessage());
 
                     throw e;
                 }
             } else {
-                botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_DELETE);
+                botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_DELETE);
             }
         }
     }
@@ -755,7 +755,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No existe juego asociado al usuario {}", userId);
 
-            botService.sendMessage(userId, CCLHBotResponseErrorI18n.PLAYER_NO_GAMES);
+            botMessageService.sendMessage(userId, CCLHBotResponseErrorI18n.PLAYER_NO_GAMES);
 
             return;
         }
@@ -767,7 +767,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
 
             sendDeleteMessages(telegramGame, telegramPlayerList);
         } catch (ApplicationException e) {
-            botService.answerCallbackQuery(callbackQueryId, e.getMessage());
+            botMessageService.answerCallbackQuery(callbackQueryId, e.getMessage());
 
             throw e;
         }
@@ -781,13 +781,13 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
 
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
 
             return;
         }
 
         if (userId != telegramGame.getGame().getCreator().getId()) {
-            botService.sendMessageAsync(userId, CCLHBotResponseMessageI18n.PLAYER_JOINING, new BotService.Callback() {
+            botMessageService.sendMessageAsync(userId, CCLHBotResponseMessageI18n.PLAYER_JOINING, new BotMessageService.Callback() {
                 @Override
                 public void success(BotApiMethod<Message> method, Message response) {
                     try {
@@ -807,7 +807,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                 }
             });
         } else {
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.PLAYER_ALREADY_JOINED);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.PLAYER_ALREADY_JOINED);
         }
     }
 
@@ -826,27 +826,27 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                             .callbackData("game_leave").build()))
                     .build();
 
-            botService.editMessage(userId, playerMessageId, CCLHBotResponseMessageI18n.PLAYER_JOINED, privateInlineKeyboard);
+            botMessageService.editMessage(userId, playerMessageId, CCLHBotResponseMessageI18n.PLAYER_JOINED, privateInlineKeyboard);
 
             sendMainMenu(telegramGame);
         } catch (UserDoesntExistsException e) {
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_USER_DOESNT_EXISTS);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_USER_DOESNT_EXISTS);
 
             throw e;
         } catch (PlayerAlreadyExistsException e) {
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.PLAYER_ALREADY_JOINED);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.PLAYER_ALREADY_JOINED);
 
             throw e;
         } catch (GameAlreadyStartedException e) {
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ALREADY_STARTED);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ALREADY_STARTED);
 
             throw e;
         } catch (GameAlreadyFilledException e) {
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ALREADY_FILLED);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ALREADY_FILLED);
 
             throw e;
         } catch (ApplicationException e) {
-            botService.answerCallbackQuery(callbackQueryId, e.getMessage());
+            botMessageService.answerCallbackQuery(callbackQueryId, e.getMessage());
 
             throw e;
         }
@@ -863,12 +863,12 @@ public class CCLHBotServiceImpl implements CCLHBotService {
             telegramGameService.removePlayer(telegramGame, telegramPlayer);
             telegramPlayerService.deletePlayer(telegramPlayer);
 
-            botService.answerCallbackQuery(callbackQueryId, "Has dejado la partida");
-            botService.deleteMessage(telegramPlayer.getPlayer().getUser().getId(), telegramPlayer.getMessageId());
+            botMessageService.answerCallbackQuery(callbackQueryId, "Has dejado la partida");
+            botMessageService.deleteMessage(telegramPlayer.getPlayer().getUser().getId(), telegramPlayer.getMessageId());
 
             sendMainMenu(telegramGame);
         } catch (ApplicationException e) {
-            botService.answerCallbackQuery(callbackQueryId, e.getMessage());
+            botMessageService.answerCallbackQuery(callbackQueryId, e.getMessage());
 
             throw e;
         }
@@ -882,7 +882,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
 
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_DOESNT_EXISTS);
 
             return;
         }
@@ -896,29 +896,29 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                 } else {
                     logger.error("La partida no se ha iniciado correctamente");
 
-                    botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.UNKNOWN_ERROR);
+                    botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.UNKNOWN_ERROR);
                 }
             } catch (GameAlreadyStartedException e) {
-                botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ALREADY_STARTED);
+                botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ALREADY_STARTED);
 
                 throw e;
             } catch (GameNotFilledException e) {
-                botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_NOT_FILLED);
+                botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_NOT_FILLED);
 
                 throw e;
             } catch (GameNotStartedException e) {
-                botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_NOT_STARTED);
+                botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_NOT_STARTED);
 
                 throw e;
             } catch (ApplicationException e) {
-                botService.answerCallbackQuery(callbackQueryId, e.getMessage());
+                botMessageService.answerCallbackQuery(callbackQueryId, e.getMessage());
 
                 throw e;
             }
         } else {
             logger.error("Intentando iniciar una partida en {} que no le corresponde a {}", roomId, userId);
 
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_START);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.GAME_ONLY_CREATOR_CAN_START);
         }
     }
 
@@ -930,7 +930,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No existe juego asociado al usuario {}", userId);
 
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.PLAYER_NO_GAMES);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.PLAYER_NO_GAMES);
 
             return;
         }
@@ -942,7 +942,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                 if (telegramGameService.checkIfEveryoneHavePlayedACard(telegramGame)) {
                     logger.error("Juego en estado incorrecto: {}", telegramGame.getGame().getId());
 
-                    botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.UNKNOWN_ERROR);
+                    botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.UNKNOWN_ERROR);
 
                     throw new ApplicationException("Error desconocido");
                 }
@@ -952,7 +952,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                 PlayedCard playedCard = getPlayedCardByPlayer(telegramGame, telegramPlayer);
 
                 if (playedCard != null) {
-                    botService.editMessage(telegramPlayer.getPlayer().getUser().getId(),
+                    botMessageService.editMessage(telegramPlayer.getPlayer().getUser().getId(),
                             telegramPlayer.getMessageId(),
                             StringUtils.formatMessage(CCLHBotResponseMessageI18n.PLAYER_SELECTED_CARD,
                                     telegramGame.getGame().getTable().getCurrentRoundNumber(),
@@ -961,11 +961,11 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                 } else {
                     logger.error("No se ha encontrado el jugador o la carta jugada");
 
-                    botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.PLAYER_DOES_NOT_EXISTS);
+                    botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.PLAYER_DOES_NOT_EXISTS);
                 }
             } else if (telegramGame.getGame().getTable().getStatus().equals(TableStatusEnum.VOTING)) {
                 if (telegramGame.getGame().getType().equals(GameTypeEnum.DEMOCRACY)) {
-                    botService.editMessage(
+                    botMessageService.editMessage(
                             telegramGame.getGame().getRoom().getId(),
                             telegramGame.getBlackCardMessageId(),
                             getGameVoteCardMessage(telegramGame));
@@ -983,11 +983,11 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                 logger.error("Juego en estado incorrecto: {}", telegramGame.getGame().getId());
             }
         } catch (PlayerAlreadyPlayedCardException e) {
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.PLAYER_ALREADY_PLAYED_CARD);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.PLAYER_ALREADY_PLAYED_CARD);
 
             throw e;
         } catch (ApplicationException e) {
-            botService.answerCallbackQuery(callbackQueryId, e.getMessage());
+            botMessageService.answerCallbackQuery(callbackQueryId, e.getMessage());
 
             throw e;
         }
@@ -1001,7 +1001,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No existe juego asociado al usuario {}", userId);
 
-            botService.sendMessage(userId, CCLHBotResponseErrorI18n.PLAYER_NO_GAMES);
+            botMessageService.sendMessage(userId, CCLHBotResponseErrorI18n.PLAYER_NO_GAMES);
 
             return;
         }
@@ -1013,7 +1013,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                 if (telegramGameService.checkIfEveryoneHaveVotedACard(telegramGame)) {
                     logger.error("Juego en estado incorrecto: {}", telegramGame.getGame().getId());
 
-                    botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.UNKNOWN_ERROR);
+                    botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.UNKNOWN_ERROR);
 
                     throw new ApplicationException("Error desconocido");
                 }
@@ -1028,7 +1028,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
 
                 telegramPlayerService.incrementPoints(mostVotedCard.getPlayer());
 
-                botService.editMessage(
+                botMessageService.editMessage(
                         telegramGame.getGame().getRoom().getId(),
                         telegramGame.getBlackCardMessageId(),
                         getGameEndRoundMessage(telegramGame, mostVotedCard));
@@ -1041,7 +1041,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                     Player winner = getWinnerPlayer(telegramGame);
 
                     if (winner != null) {
-                        botService.sendMessage(telegramGame.getGame().getRoom().getId(), getGameEndGameMessage(winner));
+                        botMessageService.sendMessage(telegramGame.getGame().getRoom().getId(), getGameEndGameMessage(winner));
 
                         List<TelegramPlayer> telegramPlayerList = telegramPlayerService.deletePlayers(telegramGame);
 
@@ -1051,7 +1051,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                     } else {
                         logger.error("Juego en estado incorrecto: {}", telegramGame.getGame().getId());
 
-                        botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.UNKNOWN_ERROR);
+                        botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.UNKNOWN_ERROR);
 
                         throw new ApplicationException("Error desconocido");
                     }
@@ -1059,16 +1059,16 @@ public class CCLHBotServiceImpl implements CCLHBotService {
             } else {
                 logger.error("Juego en estado incorrecto: {}", telegramGame.getGame().getId());
 
-                botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.UNKNOWN_ERROR);
+                botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.UNKNOWN_ERROR);
 
                 throw new ApplicationException("Error desconocido");
             }
         } catch (PlayerAlreadyVotedCardException e) {
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.PLAYER_ALREADY_VOTED_CARD);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.PLAYER_ALREADY_VOTED_CARD);
 
             throw e;
         } catch (ApplicationException e) {
-            botService.answerCallbackQuery(callbackQueryId, e.getMessage());
+            botMessageService.answerCallbackQuery(callbackQueryId, e.getMessage());
 
             throw e;
         }
@@ -1081,7 +1081,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
 
         for (User user : userList) {
             if (Boolean.TRUE.equals(canSendGlobalMessages)) {
-                botService.sendMessageAsync(user.getId(), msg, new BotService.Callback() {
+                botMessageService.sendMessageAsync(user.getId(), msg, new BotMessageService.Callback() {
                     @Override
                     public void success(BotApiMethod<Message> method, Message response) {
                         userService.setActive(user, true);
@@ -1101,7 +1101,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
 
         for (Room room : roomList) {
             if (Boolean.TRUE.equals(canSendGlobalMessages)) {
-                botService.sendMessageAsync(room.getId(), msg, new BotService.Callback() {
+                botMessageService.sendMessageAsync(room.getId(), msg, new BotMessageService.Callback() {
                     @Override
                     public void success(BotApiMethod<Message> method, Message response) {
                         roomService.setActive(room, true);
@@ -1113,7 +1113,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
 
                         roomService.setActive(room, false);
 
-                        botService.sendMessage(cclhBotService.getBotCreatorId(), "Desactivando la sala " + room.getName());
+                        botMessageService.sendMessage(cclhBotService.getBotCreatorId(), "Desactivando la sala " + room.getName());
                     }
                 });
             }
@@ -1125,15 +1125,15 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         canSendGlobalMessages = !canSendGlobalMessages;
 
         if (Boolean.TRUE.equals(canSendGlobalMessages)) {
-            botService.sendMessage(cclhBotService.getBotCreatorId(), "Activados mensajes globales");
+            botMessageService.sendMessage(cclhBotService.getBotCreatorId(), "Activados mensajes globales");
         } else {
-            botService.sendMessage(cclhBotService.getBotCreatorId(), "Desctivados mensajes globales");
+            botMessageService.sendMessage(cclhBotService.getBotCreatorId(), "Desctivados mensajes globales");
         }
     }
 
     @Override
     public void sendHelpMessage(long roomId) {
-        botService.sendMessage(roomId, getHelpMessage());
+        botMessageService.sendMessage(roomId, getHelpMessage());
     }
 
     private void sendMainMenu(TelegramGame telegramGame) {
@@ -1168,7 +1168,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
             }
         }
 
-        botService.editMessage(telegramGame.getGame().getRoom().getId(),
+        botMessageService.editMessage(telegramGame.getGame().getRoom().getId(),
                 telegramGame.getGroupMessageId(), msg, groupInlineKeyboard.build());
     }
 
@@ -1178,7 +1178,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                         .text("Borrar juego").callbackData("game_delete_private").build()))
                 .build();
 
-        botService.editMessage(telegramGame.getGame().getCreator().getId(),
+        botMessageService.editMessage(telegramGame.getGame().getCreator().getId(),
                 telegramGame.getPrivateMessageId(), CCLHBotResponseMessageI18n.PLAYER_CREATED_GAME, privateInlineKeyboard);
     }
 
@@ -1196,26 +1196,26 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                         .text("⬅ Volver").callbackData("game_created").build()))
                 .build();
 
-        botService.editMessage(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
+        botMessageService.editMessage(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId(),
                 getGameCreatedGroupMessage(telegramGame), groupInlineKeyboard);
     }
 
     private void sendDeleteMessages(TelegramGame telegramGame, List<TelegramPlayer> telegramPlayerList) {
         // Delete game messages
         for (TelegramPlayer telegramPlayer : telegramPlayerList) {
-            botService.deleteMessage(telegramPlayer.getPlayer().getUser().getId(),
+            botMessageService.deleteMessage(telegramPlayer.getPlayer().getUser().getId(),
                     telegramPlayer.getMessageId());
         }
         if (telegramGame.getGame().getStatus().equals(GameStatusEnum.STARTED)) {
-            botService.deleteMessage(telegramGame.getGame().getRoom().getId(),
+            botMessageService.deleteMessage(telegramGame.getGame().getRoom().getId(),
                     telegramGame.getBlackCardMessageId());
         }
 
         // Edit game messages
-        botService.editMessage(telegramGame.getGame().getRoom().getId(),
+        botMessageService.editMessage(telegramGame.getGame().getRoom().getId(),
                 telegramGame.getGroupMessageId(),
                 CCLHBotResponseMessageI18n.GAME_DELETED);
-        botService.editMessage(telegramGame.getGame().getCreator().getId(),
+        botMessageService.editMessage(telegramGame.getGame().getCreator().getId(),
                 telegramGame.getPrivateMessageId(),
                 CCLHBotResponseMessageI18n.GAME_DELETED);
     }
@@ -1223,12 +1223,12 @@ public class CCLHBotServiceImpl implements CCLHBotService {
     private void sendEndMessages(TelegramGame telegramGame, List<TelegramPlayer> telegramPlayerList) {
         // Delete game messages
         for (TelegramPlayer telegramPlayer : telegramPlayerList) {
-            botService.deleteMessage(telegramPlayer.getPlayer().getUser().getId(), telegramPlayer.getMessageId());
+            botMessageService.deleteMessage(telegramPlayer.getPlayer().getUser().getId(), telegramPlayer.getMessageId());
         }
 
         // Edit game messages
-        botService.deleteMessage(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId());
-        botService.deleteMessage(telegramGame.getGame().getCreator().getId(), telegramGame.getPrivateMessageId());
+        botMessageService.deleteMessage(telegramGame.getGame().getRoom().getId(), telegramGame.getGroupMessageId());
+        botMessageService.deleteMessage(telegramGame.getGame().getCreator().getId(), telegramGame.getPrivateMessageId());
     }
 
     private void startRound(TelegramGame telegramGame) {
@@ -1242,7 +1242,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                         telegramGame.getGame().getTable().getCurrentRoundNumber(),
                         telegramGame.getGame().getTable().getCurrentBlackCard().getText());
 
-                botService.sendMessageAsync(telegramGame.getGame().getRoom().getId(), msg, new BotService.Callback() {
+                botMessageService.sendMessageAsync(telegramGame.getGame().getRoom().getId(), msg, new BotMessageService.Callback() {
                     @Override
                     public void success(BotApiMethod<Message> method, Message response) {
                         telegramGameService.setBlackCardMessage(telegramGame, response.getMessageId());
@@ -1268,7 +1268,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                                 .callbackData("play_card__" + card.getCard().getId()).build()));
                     }
 
-                    botService.editMessage(telegramPlayer.getPlayer().getUser().getId(),
+                    botMessageService.editMessage(telegramPlayer.getPlayer().getUser().getId(),
                             telegramPlayer.getMessageId(),
                             StringUtils.formatMessage(CCLHBotResponseMessageI18n.PLAYER_SELECT_CARD,
                                     telegramGame.getGame().getTable().getCurrentRoundNumber(),
@@ -1297,7 +1297,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                 }
             }
 
-            botService.editMessage(tgPlayer.getPlayer().getUser().getId(),
+            botMessageService.editMessage(tgPlayer.getPlayer().getUser().getId(),
                     tgPlayer.getMessageId(), getPlayerVoteCardMessage(telegramGame, playedCard),
                     cardInlineKeyboard.build());
         } else {
@@ -1312,12 +1312,12 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         VotedCard votedCard = getVotedCardByPlayer(telegramGame, telegramPlayer);
 
         if (playedCard != null && votedCard != null) {
-            botService.editMessage(telegramPlayer.getPlayer().getUser().getId(),
+            botMessageService.editMessage(telegramPlayer.getPlayer().getUser().getId(),
                     telegramPlayer.getMessageId(), getPlayerVotedCardMessage(telegramGame, playedCard, votedCard));
         } else {
             logger.error("No se ha encontrado el jugador o la carta jugada");
 
-            botService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.PLAYER_DOES_NOT_EXISTS);
+            botMessageService.answerCallbackQuery(callbackQueryId, CCLHBotResponseErrorI18n.PLAYER_DOES_NOT_EXISTS);
         }
     }
 
@@ -1488,8 +1488,8 @@ public class CCLHBotServiceImpl implements CCLHBotService {
     }
 
     @Autowired
-    public void setBotService(BotService botService) {
-        this.botService = botService;
+    public void setBotMessageService(BotMessageService botMessageService) {
+        this.botMessageService = botMessageService;
     }
 
     @Autowired
