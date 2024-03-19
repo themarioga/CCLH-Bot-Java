@@ -33,17 +33,34 @@ public class DictionariesBotResponseMessageI18n {
 		
 		{0}""";
 
-	public static final String DICTIONARIES_EDIT_LIST = """
+	public static final String DICTIONARIES_RENAME_LIST = """
 		Estos son los diccionarios que has creado:
 		
 		{0}
 		
 		Ahora respondeme con el número de diccionario que deseas renombrar.""";
 
+	public static final String DICTIONARIES_DELETE_LIST = """
+		Estos son los diccionarios que has creado:
+		
+		{0}
+		
+		Ahora respondeme con el número de diccionario que deseas borrar.""";
+
 	public static final String DICTIONARY_CREATE = "¡Vamos a ello! Dime el nombre del diccionario que quieres crear.";
-	public static final String DICTIONARY_CREATED = "Tu diccionario se ha creado correctamente, ahora toca añadir cartas.";
+	public static final String DICTIONARY_CREATED = "Tu diccionario se ha creado correctamente, ahora ve al menú para añadir las cartas.";
 
 	public static final String DICTIONARY_RENAME = "¡Vamos a ello! Dime el nuevo nombre del diccionario que quieres renombrar.";
 	public static final String DICTIONARY_RENAMED = "Tu diccionario se ha renombrado correctamente.";
+
+	public static final String DICTIONARY_DELETE = """
+		<b>¡CUIDADO! Este diccionario está PUBLICADO</b>. Se borrará el diccionario y también las <b>cartas</b> asociadas.
+		
+		¿Estás completamente seguro de que quieres borrarlo?
+		· Responde SI para confirmar.
+		· Responde cualquier otra cosa o ignora el mensaje para cancelar.""";
+
+	public static final String DICTIONARY_DELETED = "Tu diccionario se ha borrado correctamente.";
+	public static final String DICTIONARY_DELETE_CANCELLED = "Se ha cancelado el borrado del diccionario.";
 
 }

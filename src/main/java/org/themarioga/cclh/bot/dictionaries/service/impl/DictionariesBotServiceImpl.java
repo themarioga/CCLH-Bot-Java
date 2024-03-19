@@ -135,6 +135,7 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
 	public void renameDictionary(long userId, long dictionaryId, String newName) {
 		Dictionary dictionary = dictionaryService.findOne(dictionaryId);
 
@@ -147,6 +148,68 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 		dictionaryService.setName(dictionary, newName);
 
 		dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseMessageI18n.DICTIONARY_RENAMED);
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
+	public void deleteDictionaryMessage(long userId) {
+		List<Dictionary> dictionaryList = dictionaryService.getDictionariesByCreator(userService.getById(userId));
+
+		dictionariesBotMessageService.setPendingReply(userId, "/delete_select");
+		dictionariesBotMessageService.sendMessageWithForceReply(userId, getDictionaryDeleteMessage(dictionaryList));
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
+	public void selectDictionaryToDelete(long userId, long dictionaryId) {
+		Dictionary dictionary = dictionaryService.findOne(dictionaryId);
+
+		if (dictionary.getCreator().getId() != userId) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_YOURS);
+
+			return;
+		}
+
+		if (Boolean.TRUE.equals(dictionary.getShared())) {
+			dictionariesBotMessageService.sendMessage(userId, getDeleteSharedErrorMessage());
+
+			return;
+		}
+
+		if (Boolean.TRUE.equals(dictionary.getPublished())) {
+			dictionariesBotMessageService.setPendingReply(userId, "/delete__" + dictionaryId);
+			dictionariesBotMessageService.sendMessageWithForceReply(userId, DictionariesBotResponseMessageI18n.DICTIONARY_DELETE);
+		} else {
+			dictionaryService.delete(dictionary);
+
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseMessageI18n.DICTIONARY_DELETED);
+		}
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
+	public void deleteDictionary(long userId, long dictionaryId, String text) {
+		Dictionary dictionary = dictionaryService.findOne(dictionaryId);
+
+		if (dictionary.getCreator().getId() != userId) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_YOURS);
+
+			return;
+		}
+
+		if (Boolean.TRUE.equals(dictionary.getShared())) {
+			dictionariesBotMessageService.sendMessage(userId, getDeleteSharedErrorMessage());
+
+			return;
+		}
+
+		if (text == null || text.isBlank() || !text.equals("SI")) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseMessageI18n.DICTIONARY_DELETE_CANCELLED);
+		} else {
+			dictionaryService.delete(dictionary);
+
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseMessageI18n.DICTIONARY_DELETED);
+		}
 	}
 
 	@Override
@@ -174,7 +237,23 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			stringBuilder.append(dictionary.getId()).append(" - ").append(dictionary.getName()).append("\n");
 		}
 
-		return MessageFormat.format(DictionariesBotResponseMessageI18n.DICTIONARIES_EDIT_LIST, stringBuilder.toString());
+		return MessageFormat.format(DictionariesBotResponseMessageI18n.DICTIONARIES_RENAME_LIST, stringBuilder.toString());
+	}
+
+	private String getDictionaryDeleteMessage(List<Dictionary> dictionaryList) {
+		StringBuilder stringBuilder = new StringBuilder();
+		for (Dictionary dictionary : dictionaryList) {
+			stringBuilder.append(dictionary.getId()).append(" - ").append(dictionary.getName()).append(" (")
+					.append("publicado: ").append(StringUtils.booleanToSpanish(dictionary.getPublished()))
+					.append(", compartido: ").append(StringUtils.booleanToSpanish(dictionary.getShared()))
+					.append(")\n");
+		}
+
+		return MessageFormat.format(DictionariesBotResponseMessageI18n.DICTIONARIES_DELETE_LIST, stringBuilder.toString());
+	}
+
+	private String getDeleteSharedErrorMessage() {
+		return MessageFormat.format(DictionariesBotResponseErrorI18n.DICTIONARY_SHARED, getBotCreatorName());
 	}
 
 	private String getHelpMessage() {

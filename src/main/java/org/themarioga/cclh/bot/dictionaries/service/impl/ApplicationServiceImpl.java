@@ -108,6 +108,38 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
         });
 
+        commands.put("/delete_select", (message, data) -> {
+            if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
+                logger.error("Comando /rename_select enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
+
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
+
+                return;
+            }
+
+            try {
+                dictionariesBotService.selectDictionaryToDelete(message.getChatId(), Long.parseLong(message.getText()));
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        });
+
+        commands.put("/delete", (message, data) -> {
+            if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
+                logger.error("Comando /rename enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
+
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
+
+                return;
+            }
+
+            try {
+                dictionariesBotService.deleteDictionary(message.getChatId(), Long.parseLong(data), message.getText());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        });
+
         commands.put("/help", (message, data) -> dictionariesBotService.sendHelpMessage(message.getChatId()));
 
         return commands;
@@ -140,6 +172,16 @@ public class ApplicationServiceImpl implements ApplicationService {
         callbackQueryHandlerMap.put("dictionary_rename", (callbackQuery, data) -> {
             try {
                 dictionariesBotService.renameDictionaryMessage(callbackQuery.getFrom().getId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+
+            dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
+        });
+
+        callbackQueryHandlerMap.put("dictionary_delete", (callbackQuery, data) -> {
+            try {
+                dictionariesBotService.deleteDictionaryMessage(callbackQuery.getFrom().getId());
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }

@@ -18,5 +18,12 @@ public interface DictionariesBotService {
 
 	void renameDictionary(long userId, long dictionaryId, String newName);
 
+	void deleteDictionaryMessage(long userId);
+
+	void selectDictionaryToDelete(long userId, long dictionaryId);
+
+	void deleteDictionary(long userId, long dictionaryId, String text);
+
 	void sendHelpMessage(long chatId);
+
 }
