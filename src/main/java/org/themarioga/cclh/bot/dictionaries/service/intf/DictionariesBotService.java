@@ -6,27 +6,33 @@ public interface DictionariesBotService {
 
 	void mainMenu(long userId);
 
-	void listDictionaries(long userId);
+	void mainMenu(long userId, int messageId);
 
-	void createDictionaryMessage(long userId);
+	void listDictionaries(long userId, int messageId);
+
+	void createDictionaryMessage(long userId, int messageId);
 
 	void createDictionary(long userId, String name);
 
-	void renameDictionaryMessage(long userId);
+	void renameDictionaryMessage(long userId, int messageId);
 
-	void selectDictionaryToRename(long userId, long dictionaryId);
+	void selectDictionaryToRename(long userId, int messageId, long dictionaryId);
 
 	void renameDictionary(long userId, long dictionaryId, String newName);
 
-	void deleteDictionaryMessage(long userId);
+	void deleteDictionaryMessage(long userId, int messageId);
 
-	void selectDictionaryToDelete(long userId, long dictionaryId);
+	void selectDictionaryToDelete(long userId, int messageId, long dictionaryId);
 
 	void deleteDictionary(long userId, long dictionaryId, String text);
 
-	void manageCardsMessage(long userId);
+	void manageCardsMessage(long userId, int messageId);
 
 	void selectDictionaryToManageCards(long userId, long dictionaryId);
+
+	void manageCollaboratorsMessage(long userId, int messageId);
+
+	void selectDictionaryToManageCollaborators(long userId, long dictionaryId);
 
 	void sendHelpMessage(long chatId);
 }

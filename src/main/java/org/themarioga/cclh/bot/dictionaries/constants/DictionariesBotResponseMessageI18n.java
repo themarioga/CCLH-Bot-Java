@@ -54,6 +54,13 @@ public class DictionariesBotResponseMessageI18n {
 		
 		Ahora respondeme con el número de diccionario del que deseas editar las cartas.""";
 
+	public static final String DICTIONARIES_MANAGE_COLLABORATORS_LIST = """
+		Estos son los diccionarios que has creado:
+		
+		{0}
+		
+		Ahora respondeme con el número de diccionario del que deseas editar los colaboradores.""";
+
 	public static final String DICTIONARY_CREATE = "¡Vamos a ello! Dime el nombre del diccionario que quieres crear.";
 	public static final String DICTIONARY_CREATED = "Tu diccionario se ha creado correctamente, ahora ve al menú para añadir las cartas.";
 

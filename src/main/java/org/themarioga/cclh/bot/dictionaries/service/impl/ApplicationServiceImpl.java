@@ -86,7 +86,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
 
             try {
-                dictionariesBotService.selectDictionaryToRename(message.getChatId(), Long.parseLong(message.getText()));
+                dictionariesBotService.selectDictionaryToRename(message.getChatId(), message.getMessageId(), Long.parseLong(message.getText()));
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -118,7 +118,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
 
             try {
-                dictionariesBotService.selectDictionaryToDelete(message.getChatId(), Long.parseLong(message.getText()));
+                dictionariesBotService.selectDictionaryToDelete(message.getChatId(), message.getMessageId(), Long.parseLong(message.getText()));
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -156,6 +156,22 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
         });
 
+        commands.put("/manage_collabs_select", (message, data) -> {
+            if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
+                logger.error("Comando /manage_cards_select enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
+
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
+
+                return;
+            }
+
+            try {
+                dictionariesBotService.selectDictionaryToManageCollaborators(message.getChatId(), Long.parseLong(message.getText()));
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        });
+
         commands.put("/help", (message, data) -> dictionariesBotService.sendHelpMessage(message.getChatId()));
 
         return commands;
@@ -165,9 +181,19 @@ public class ApplicationServiceImpl implements ApplicationService {
     public Map<String, CallbackQueryHandler> getCallbackQueries() {
         Map<String, CallbackQueryHandler> callbackQueryHandlerMap = new HashMap<>();
 
+        callbackQueryHandlerMap.put("menu", (callbackQuery, data) -> {
+            try {
+                dictionariesBotService.mainMenu(callbackQuery.getFrom().getId(), callbackQuery.getMessage().getMessageId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+
+            dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
+        });
+
         callbackQueryHandlerMap.put("dictionary_list", (callbackQuery, data) -> {
             try {
-                dictionariesBotService.listDictionaries(callbackQuery.getFrom().getId());
+                dictionariesBotService.listDictionaries(callbackQuery.getFrom().getId(), callbackQuery.getMessage().getMessageId());
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -177,7 +203,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         callbackQueryHandlerMap.put("dictionary_create", (callbackQuery, data) -> {
             try {
-                dictionariesBotService.createDictionaryMessage(callbackQuery.getFrom().getId());
+                dictionariesBotService.createDictionaryMessage(callbackQuery.getFrom().getId(), callbackQuery.getMessage().getMessageId());
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -187,7 +213,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         callbackQueryHandlerMap.put("dictionary_rename", (callbackQuery, data) -> {
             try {
-                dictionariesBotService.renameDictionaryMessage(callbackQuery.getFrom().getId());
+                dictionariesBotService.renameDictionaryMessage(callbackQuery.getFrom().getId(), callbackQuery.getMessage().getMessageId());
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -197,7 +223,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         callbackQueryHandlerMap.put("dictionary_delete", (callbackQuery, data) -> {
             try {
-                dictionariesBotService.deleteDictionaryMessage(callbackQuery.getFrom().getId());
+                dictionariesBotService.deleteDictionaryMessage(callbackQuery.getFrom().getId(), callbackQuery.getMessage().getMessageId());
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -207,7 +233,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         callbackQueryHandlerMap.put("dictionary_manage_cards", (callbackQuery, data) -> {
             try {
-                dictionariesBotService.manageCardsMessage(callbackQuery.getFrom().getId());
+                dictionariesBotService.manageCardsMessage(callbackQuery.getFrom().getId(), callbackQuery.getMessage().getMessageId());
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -266,6 +292,36 @@ public class ApplicationServiceImpl implements ApplicationService {
         });
 
         callbackQueryHandlerMap.put("delete_black_card", (callbackQuery, data) -> {
+            try {
+                logger.debug(data);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+
+            dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
+        });
+
+        callbackQueryHandlerMap.put("dictionary_manage_collabs", (callbackQuery, data) -> {
+            try {
+                dictionariesBotService.manageCollaboratorsMessage(callbackQuery.getFrom().getId(), callbackQuery.getMessage().getMessageId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+
+            dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
+        });
+
+        callbackQueryHandlerMap.put("add_collab", (callbackQuery, data) -> {
+            try {
+                logger.debug(data);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+
+            dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
+        });
+
+        callbackQueryHandlerMap.put("delete_collab", (callbackQuery, data) -> {
             try {
                 logger.debug(data);
             } catch (Exception e) {

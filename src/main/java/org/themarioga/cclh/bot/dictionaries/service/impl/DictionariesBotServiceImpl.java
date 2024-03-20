@@ -57,35 +57,36 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
 	public void mainMenu(long userId) {
-		InlineKeyboardMarkup groupInlineKeyboard = InlineKeyboardMarkup.builder()
-				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
-						.text("Listar mis diccionarios").callbackData("dictionary_list").build()))
-				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
-						.text("Crear diccionario").callbackData("dictionary_create").build()))
-				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
-						.text("Renombrar diccionario").callbackData("dictionary_rename").build()))
-				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
-						.text("Borrar diccionario").callbackData("dictionary_delete").build()))
-				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
-						.text("Gestionar cartas").callbackData("dictionary_manage_cards").build()))
-				.build();
+		InlineKeyboardMarkup groupInlineKeyboard = getMainMenuKeyboard();
 
 		dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseMessageI18n.MAIN_MENU, groupInlineKeyboard);
 	}
 
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
-	public void listDictionaries(long userId) {
-		List<Dictionary> dictionaryList = dictionaryService.getDictionariesByCreatorOrCollaborator(userService.getById(userId));
+	public void mainMenu(long userId, int messageId) {
+		InlineKeyboardMarkup groupInlineKeyboard = getMainMenuKeyboard();
 
-		dictionariesBotMessageService.sendMessage(userId, getDictionaryListMessage(userId, dictionaryList));
+		dictionariesBotMessageService.editMessage(userId, messageId, DictionariesBotResponseMessageI18n.MAIN_MENU, groupInlineKeyboard);
 	}
 
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
-	public void createDictionaryMessage(long userId) {
-		dictionariesBotMessageService.setPendingReply(userId, "/create");
+	public void listDictionaries(long userId, int messageId) {
+		List<Dictionary> dictionaryList = dictionaryService.getDictionariesByCreatorOrCollaborator(userService.getById(userId));
 
+		InlineKeyboardMarkup groupInlineKeyboard = InlineKeyboardMarkup.builder()
+				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
+						.text("<- Volver").callbackData("menu").build()))
+				.build();
+		dictionariesBotMessageService.editMessage(userId, messageId, getDictionaryListMessage(userId, dictionaryList), groupInlineKeyboard);
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
+	public void createDictionaryMessage(long userId, int messageId) {
+		dictionariesBotMessageService.deleteMessage(userId, messageId);
+		dictionariesBotMessageService.setPendingReply(userId, "/create");
 		dictionariesBotMessageService.sendMessageWithForceReply(userId,
 				DictionariesBotResponseMessageI18n.DICTIONARY_CREATE);
 	}
@@ -97,6 +98,7 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionaryService.create(name, userService.getById(userId));
 
 			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseMessageI18n.DICTIONARY_CREATED);
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseMessageI18n.MAIN_MENU, getMainMenuKeyboard());
 		} catch (DictionaryAlreadyExistsException e) {
 			logger.error("Ya existe un diccionario con el nombre {}", name);
 
@@ -112,16 +114,17 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
-	public void renameDictionaryMessage(long userId) {
+	public void renameDictionaryMessage(long userId, int messageId) {
 		List<Dictionary> dictionaryList = dictionaryService.getDictionariesByCreator(userService.getById(userId));
 
+		dictionariesBotMessageService.deleteMessage(userId, messageId);
 		dictionariesBotMessageService.setPendingReply(userId, "/rename_select");
 		dictionariesBotMessageService.sendMessageWithForceReply(userId, getDictionaryRenameMessage(dictionaryList));
 	}
 
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
-	public void selectDictionaryToRename(long userId, long dictionaryId) {
+	public void selectDictionaryToRename(long userId, int messageId, long dictionaryId) {
 		Dictionary dictionary = dictionaryService.findOne(dictionaryId);
 
 		if (dictionary == null) {
@@ -136,6 +139,7 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			return;
 		}
 
+		dictionariesBotMessageService.deleteMessage(userId, messageId);
 		dictionariesBotMessageService.setPendingReply(userId, "/rename__" + dictionaryId);
 		dictionariesBotMessageService.sendMessageWithForceReply(userId, DictionariesBotResponseMessageI18n.DICTIONARY_RENAME);
 	}
@@ -160,20 +164,22 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 		dictionaryService.setName(dictionary, newName);
 
 		dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseMessageI18n.DICTIONARY_RENAMED);
+		dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseMessageI18n.MAIN_MENU, getMainMenuKeyboard());
 	}
 
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
-	public void deleteDictionaryMessage(long userId) {
+	public void deleteDictionaryMessage(long userId, int messageId) {
 		List<Dictionary> dictionaryList = dictionaryService.getDictionariesByCreator(userService.getById(userId));
 
+		dictionariesBotMessageService.deleteMessage(userId, messageId);
 		dictionariesBotMessageService.setPendingReply(userId, "/delete_select");
 		dictionariesBotMessageService.sendMessageWithForceReply(userId, getDictionaryDeleteMessage(dictionaryList));
 	}
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
-	public void selectDictionaryToDelete(long userId, long dictionaryId) {
+	public void selectDictionaryToDelete(long userId, int messageId, long dictionaryId) {
 		Dictionary dictionary = dictionaryService.findOne(dictionaryId);
 
 		if (dictionary == null) {
@@ -195,12 +201,14 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 		}
 
 		if (Boolean.TRUE.equals(dictionary.getPublished())) {
+			dictionariesBotMessageService.deleteMessage(userId, messageId);
 			dictionariesBotMessageService.setPendingReply(userId, "/delete__" + dictionaryId);
 			dictionariesBotMessageService.sendMessageWithForceReply(userId, DictionariesBotResponseMessageI18n.DICTIONARY_DELETE);
 		} else {
 			dictionaryService.delete(dictionary);
 
 			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseMessageI18n.DICTIONARY_DELETED);
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseMessageI18n.MAIN_MENU, getMainMenuKeyboard());
 		}
 	}
 
@@ -233,13 +241,15 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionaryService.delete(dictionary);
 
 			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseMessageI18n.DICTIONARY_DELETED);
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseMessageI18n.MAIN_MENU, getMainMenuKeyboard());
 		}
 	}
 
 	@Override
-	public void manageCardsMessage(long userId) {
+	public void manageCardsMessage(long userId, int messageId) {
 		List<Dictionary> dictionaryList = dictionaryService.getDictionariesByCreatorOrCollaborator(userService.getById(userId));
 
+		dictionariesBotMessageService.deleteMessage(userId, messageId);
 		dictionariesBotMessageService.setPendingReply(userId, "/manage_cards_select");
 		dictionariesBotMessageService.sendMessageWithForceReply(userId, getManageCardsMessage(userId, dictionaryList));
 	}
@@ -273,6 +283,45 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 						.text("Editar carta negra").callbackData("edit_black_card__" + dictionaryId).build()))
 				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
 						.text("Borrar carta negra").callbackData("delete_black_card__" + dictionaryId).build()))
+				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
+						.text("<- Volver").callbackData("menu").build()))
+				.build();
+
+		dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseMessageI18n.MAIN_MENU, groupInlineKeyboard);
+	}
+
+	@Override
+	public void manageCollaboratorsMessage(long userId, int messageId) {
+		List<Dictionary> dictionaryList = dictionaryService.getDictionariesByCreator(userService.getById(userId));
+
+		dictionariesBotMessageService.deleteMessage(userId, messageId);
+		dictionariesBotMessageService.setPendingReply(userId, "/manage_collabs_select");
+		dictionariesBotMessageService.sendMessageWithForceReply(userId, getManageCollaboratorsMessage(dictionaryList));
+	}
+
+	@Override
+	public void selectDictionaryToManageCollaborators(long userId, long dictionaryId) {
+		Dictionary dictionary = dictionaryService.findOne(dictionaryId);
+
+		if (dictionary == null) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_FOUND);
+
+			return;
+		}
+
+		if (dictionary.getCreator().getId() != userId) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_YOURS);
+
+			return;
+		}
+
+		InlineKeyboardMarkup groupInlineKeyboard = InlineKeyboardMarkup.builder()
+				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
+						.text("Añadir colaborador").callbackData("add_collab__" + dictionaryId).build()))
+				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
+						.text("Quitar colaborador").callbackData("delete_collab__" + dictionaryId).build()))
+				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
+						.text("<- Volver").callbackData("menu").build()))
 				.build();
 
 		dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseMessageI18n.MAIN_MENU, groupInlineKeyboard);
@@ -331,12 +380,41 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 		return MessageFormat.format(DictionariesBotResponseMessageI18n.DICTIONARIES_MANAGE_CARDS_LIST, stringBuilder.toString());
 	}
 
+	private String getManageCollaboratorsMessage(List<Dictionary> dictionaryList) {
+		StringBuilder stringBuilder = new StringBuilder();
+		for (Dictionary dictionary : dictionaryList) {
+			stringBuilder.append(dictionary.getId()).append(" - ").append(dictionary.getName()).append(" (")
+					.append("publicado: ").append(StringUtils.booleanToSpanish(dictionary.getPublished()))
+					.append(", compartido: ").append(StringUtils.booleanToSpanish(dictionary.getShared()))
+					.append(")\n");
+		}
+
+		return MessageFormat.format(DictionariesBotResponseMessageI18n.DICTIONARIES_MANAGE_COLLABORATORS_LIST, stringBuilder.toString());
+	}
+
 	private String getDeleteSharedErrorMessage() {
 		return MessageFormat.format(DictionariesBotResponseErrorI18n.DICTIONARY_SHARED, getBotCreatorName());
 	}
 
 	private String getHelpMessage() {
 		return MessageFormat.format(DictionariesBotResponseMessageI18n.HELP, getBotName(), getBotVersion(), getBotHelpURL(), getBotCreatorName());
+	}
+
+	private static InlineKeyboardMarkup getMainMenuKeyboard() {
+		return InlineKeyboardMarkup.builder()
+				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
+						.text("Listar mis diccionarios").callbackData("dictionary_list").build()))
+				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
+						.text("Crear diccionario").callbackData("dictionary_create").build()))
+				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
+						.text("Renombrar diccionario").callbackData("dictionary_rename").build()))
+				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
+						.text("Borrar diccionario").callbackData("dictionary_delete").build()))
+				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
+						.text("Gestionar cartas").callbackData("dictionary_manage_cards").build()))
+				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
+						.text("Gestionar colaboradores").callbackData("dictionary_manage_collabs").build()))
+				.build();
 	}
 
 	private String getBotName() {
