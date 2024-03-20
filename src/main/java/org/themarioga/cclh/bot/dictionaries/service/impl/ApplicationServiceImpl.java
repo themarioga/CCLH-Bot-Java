@@ -243,7 +243,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         callbackQueryHandlerMap.put("add_white_cards", (callbackQuery, data) -> {
             try {
-                logger.debug(data);
+                dictionariesBotService.addWhiteCardsMessage(callbackQuery.getFrom().getId(), Long.parseLong(data));
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -251,9 +251,9 @@ public class ApplicationServiceImpl implements ApplicationService {
             dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
-        callbackQueryHandlerMap.put("edit_white_card", (callbackQuery, data) -> {
+        callbackQueryHandlerMap.put("edit_white_cards", (callbackQuery, data) -> {
             try {
-                logger.debug(data);
+                dictionariesBotService.editWhiteCardsMessage(callbackQuery.getFrom().getId(), Long.parseLong(data));
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -261,9 +261,9 @@ public class ApplicationServiceImpl implements ApplicationService {
             dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
-        callbackQueryHandlerMap.put("delete_white_card", (callbackQuery, data) -> {
+        callbackQueryHandlerMap.put("delete_white_cards", (callbackQuery, data) -> {
             try {
-                logger.debug(data);
+                dictionariesBotService.deleteWhiteCardsMessage(callbackQuery.getFrom().getId(), Long.parseLong(data));
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -273,7 +273,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         callbackQueryHandlerMap.put("add_black_cards", (callbackQuery, data) -> {
             try {
-                logger.debug(data);
+                dictionariesBotService.addBlackCardsMessage(callbackQuery.getFrom().getId(), Long.parseLong(data));
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -281,9 +281,9 @@ public class ApplicationServiceImpl implements ApplicationService {
             dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
-        callbackQueryHandlerMap.put("edit_black_card", (callbackQuery, data) -> {
+        callbackQueryHandlerMap.put("edit_black_cards", (callbackQuery, data) -> {
             try {
-                logger.debug(data);
+                dictionariesBotService.editBlackCardsMessage(callbackQuery.getFrom().getId(), Long.parseLong(data));
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -291,9 +291,9 @@ public class ApplicationServiceImpl implements ApplicationService {
             dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
-        callbackQueryHandlerMap.put("delete_black_card", (callbackQuery, data) -> {
+        callbackQueryHandlerMap.put("delete_black_cards", (callbackQuery, data) -> {
             try {
-                logger.debug(data);
+                dictionariesBotService.deleteBlackCardsMessage(callbackQuery.getFrom().getId(), Long.parseLong(data));
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -311,9 +311,9 @@ public class ApplicationServiceImpl implements ApplicationService {
             dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
-        callbackQueryHandlerMap.put("add_collab", (callbackQuery, data) -> {
+        callbackQueryHandlerMap.put("add_collabs", (callbackQuery, data) -> {
             try {
-                logger.debug(data);
+                dictionariesBotService.addCollaboratorsMessage(callbackQuery.getFrom().getId(), Long.parseLong(data));
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -321,9 +321,19 @@ public class ApplicationServiceImpl implements ApplicationService {
             dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
-        callbackQueryHandlerMap.put("delete_collab", (callbackQuery, data) -> {
+        callbackQueryHandlerMap.put("delete_collabs", (callbackQuery, data) -> {
             try {
-                logger.debug(data);
+                dictionariesBotService.removeCollaboratorsMessage(callbackQuery.getFrom().getId(), Long.parseLong(data));
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+
+            dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
+        });
+
+        callbackQueryHandlerMap.put("toggle_collabs", (callbackQuery, data) -> {
+            try {
+                dictionariesBotService.toggleCollaboratorsMessage(callbackQuery.getFrom().getId(), Long.parseLong(data));
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }

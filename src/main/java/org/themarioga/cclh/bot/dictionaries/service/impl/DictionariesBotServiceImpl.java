@@ -246,6 +246,7 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
 	public void manageCardsMessage(long userId, int messageId) {
 		List<Dictionary> dictionaryList = dictionaryService.getDictionariesByCreatorOrCollaborator(userService.getById(userId));
 
@@ -255,11 +256,18 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
 	public void selectDictionaryToManageCards(long userId, long dictionaryId) {
 		Dictionary dictionary = dictionaryService.findOne(dictionaryId);
 
 		if (dictionary == null) {
 			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_FOUND);
+
+			return;
+		}
+
+		if (!dictionaryService.isDictionaryCollaborator(dictionary, userService.getById(userId))) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_YOURS);
 
 			return;
 		}
@@ -274,15 +282,15 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
 						.text("Añadir cartas blancas").callbackData("add_white_cards__" + dictionaryId).build()))
 				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
-						.text("Editar carta blanca").callbackData("edit_white_card__" + dictionaryId).build()))
+						.text("Editar carta blanca").callbackData("edit_white_cards__" + dictionaryId).build()))
 				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
-						.text("Borrar carta blanca").callbackData("delete_white_card__" + dictionaryId).build()))
+						.text("Borrar carta blanca").callbackData("delete_white_cards__" + dictionaryId).build()))
 				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
 						.text("Añadir cartas negras").callbackData("add_black_cards__" + dictionaryId).build()))
 				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
-						.text("Editar carta negra").callbackData("edit_black_card__" + dictionaryId).build()))
+						.text("Editar carta negra").callbackData("edit_black_cards__" + dictionaryId).build()))
 				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
-						.text("Borrar carta negra").callbackData("delete_black_card__" + dictionaryId).build()))
+						.text("Borrar carta negra").callbackData("delete_black_cards__" + dictionaryId).build()))
 				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
 						.text("<- Volver").callbackData("menu").build()))
 				.build();
@@ -291,6 +299,163 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
+	public void addWhiteCardsMessage(long userId, long dictionaryId) {
+		Dictionary dictionary = dictionaryService.findOne(dictionaryId);
+
+		if (dictionary == null) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_FOUND);
+
+			return;
+		}
+
+		if (!dictionaryService.isDictionaryCollaborator(dictionary, userService.getById(userId))) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_YOURS);
+
+			return;
+		}
+
+		if (dictionary.getPublished() || dictionary.getShared()) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_ALREADY_PUBLISHED);
+
+			return;
+		}
+
+		// ToDo
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
+	public void editWhiteCardsMessage(long userId, long dictionaryId) {
+		Dictionary dictionary = dictionaryService.findOne(dictionaryId);
+
+		if (dictionary == null) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_FOUND);
+
+			return;
+		}
+
+		if (!dictionaryService.isDictionaryCollaborator(dictionary, userService.getById(userId))) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_YOURS);
+
+			return;
+		}
+
+		if (dictionary.getPublished() || dictionary.getShared()) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_ALREADY_PUBLISHED);
+
+			return;
+		}
+
+		// ToDo
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
+	public void deleteWhiteCardsMessage(long userId, long dictionaryId) {
+		Dictionary dictionary = dictionaryService.findOne(dictionaryId);
+
+		if (dictionary == null) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_FOUND);
+
+			return;
+		}
+
+		if (!dictionaryService.isDictionaryCollaborator(dictionary, userService.getById(userId))) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_YOURS);
+
+			return;
+		}
+
+		if (dictionary.getPublished() || dictionary.getShared()) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_ALREADY_PUBLISHED);
+
+			return;
+		}
+
+		// ToDo
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
+	public void addBlackCardsMessage(long userId, long dictionaryId) {
+		Dictionary dictionary = dictionaryService.findOne(dictionaryId);
+
+		if (dictionary == null) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_FOUND);
+
+			return;
+		}
+
+		if (!dictionaryService.isDictionaryCollaborator(dictionary, userService.getById(userId))) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_YOURS);
+
+			return;
+		}
+
+		if (dictionary.getPublished() || dictionary.getShared()) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_ALREADY_PUBLISHED);
+
+			return;
+		}
+
+		// ToDo
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
+	public void editBlackCardsMessage(long userId, long dictionaryId) {
+		Dictionary dictionary = dictionaryService.findOne(dictionaryId);
+
+		if (dictionary == null) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_FOUND);
+
+			return;
+		}
+
+		if (!dictionaryService.isDictionaryCollaborator(dictionary, userService.getById(userId))) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_YOURS);
+
+			return;
+		}
+
+		if (dictionary.getPublished() || dictionary.getShared()) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_ALREADY_PUBLISHED);
+
+			return;
+		}
+
+		// ToDo
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
+	public void deleteBlackCardsMessage(long userId, long dictionaryId) {
+		Dictionary dictionary = dictionaryService.findOne(dictionaryId);
+
+		if (dictionary == null) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_FOUND);
+
+			return;
+		}
+
+		if (!dictionaryService.isDictionaryCollaborator(dictionary, userService.getById(userId))) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_YOURS);
+
+			return;
+		}
+
+		if (dictionary.getPublished() || dictionary.getShared()) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_ALREADY_PUBLISHED);
+
+			return;
+		}
+
+		// ToDo
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
 	public void manageCollaboratorsMessage(long userId, int messageId) {
 		List<Dictionary> dictionaryList = dictionaryService.getDictionariesByCreator(userService.getById(userId));
 
@@ -300,6 +465,7 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
 	public void selectDictionaryToManageCollaborators(long userId, long dictionaryId) {
 		Dictionary dictionary = dictionaryService.findOne(dictionaryId);
 
@@ -317,14 +483,75 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 
 		InlineKeyboardMarkup groupInlineKeyboard = InlineKeyboardMarkup.builder()
 				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
-						.text("Añadir colaborador").callbackData("add_collab__" + dictionaryId).build()))
+						.text("Añadir colaborador").callbackData("add_collabs__" + dictionaryId).build()))
 				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
-						.text("Quitar colaborador").callbackData("delete_collab__" + dictionaryId).build()))
+						.text("Quitar colaborador").callbackData("delete_collabs__" + dictionaryId).build()))
+				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
+						.text("Activar/Desactivar colaborador").callbackData("toggle_collabs__" + dictionaryId).build()))
 				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
 						.text("<- Volver").callbackData("menu").build()))
 				.build();
 
 		dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseMessageI18n.MAIN_MENU, groupInlineKeyboard);
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
+	public void addCollaboratorsMessage(long userId, long dictionaryId) {
+		Dictionary dictionary = dictionaryService.findOne(dictionaryId);
+
+		if (dictionary == null) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_FOUND);
+
+			return;
+		}
+
+		if (dictionary.getCreator().getId() != userId) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_YOURS);
+
+			return;
+		}
+
+		// ToDo
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
+	public void removeCollaboratorsMessage(long userId, long dictionaryId) {
+		Dictionary dictionary = dictionaryService.findOne(dictionaryId);
+
+		if (dictionary == null) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_FOUND);
+
+			return;
+		}
+
+		if (dictionary.getCreator().getId() != userId) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_YOURS);
+
+			return;
+		}
+
+		// ToDo
+	}
+
+	@Override
+	public void toggleCollaboratorsMessage(long userId, long dictionaryId) {
+		Dictionary dictionary = dictionaryService.findOne(dictionaryId);
+
+		if (dictionary == null) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_FOUND);
+
+			return;
+		}
+
+		if (dictionary.getCreator().getId() != userId) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_YOURS);
+
+			return;
+		}
+
+		// ToDo
 	}
 
 	@Override

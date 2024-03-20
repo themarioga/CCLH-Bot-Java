@@ -30,9 +30,27 @@ public interface DictionariesBotService {
 
 	void selectDictionaryToManageCards(long userId, long dictionaryId);
 
+	void addWhiteCardsMessage(long userId, long dictionaryId);
+
+	void editWhiteCardsMessage(long userId, long dictionaryId);
+
+	void deleteWhiteCardsMessage(long userId, long dictionaryId);
+
+	void addBlackCardsMessage(long userId, long dictionaryId);
+
+	void editBlackCardsMessage(long userId, long dictionaryId);
+
+	void deleteBlackCardsMessage(long userId, long dictionaryId);
+
 	void manageCollaboratorsMessage(long userId, int messageId);
 
 	void selectDictionaryToManageCollaborators(long userId, long dictionaryId);
+
+	void addCollaboratorsMessage(long userId, long dictionaryId);
+
+	void removeCollaboratorsMessage(long userId, long dictionaryId);
+
+	void toggleCollaboratorsMessage(long userId, long dictionaryId);
 
 	void sendHelpMessage(long chatId);
 }
