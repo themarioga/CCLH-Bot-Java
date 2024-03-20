@@ -24,6 +24,9 @@ public interface DictionariesBotService {
 
 	void deleteDictionary(long userId, long dictionaryId, String text);
 
-	void sendHelpMessage(long chatId);
+	void manageCardsMessage(long userId);
 
+	void selectDictionaryToManageCards(long userId, long dictionaryId);
+
+	void sendHelpMessage(long chatId);
 }

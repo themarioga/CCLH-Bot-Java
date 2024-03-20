@@ -140,6 +140,22 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
         });
 
+        commands.put("/manage_cards_select", (message, data) -> {
+            if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
+                logger.error("Comando /manage_cards_select enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
+
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
+
+                return;
+            }
+
+            try {
+                dictionariesBotService.selectDictionaryToManageCards(message.getChatId(), Long.parseLong(message.getText()));
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        });
+
         commands.put("/help", (message, data) -> dictionariesBotService.sendHelpMessage(message.getChatId()));
 
         return commands;
@@ -182,6 +198,76 @@ public class ApplicationServiceImpl implements ApplicationService {
         callbackQueryHandlerMap.put("dictionary_delete", (callbackQuery, data) -> {
             try {
                 dictionariesBotService.deleteDictionaryMessage(callbackQuery.getFrom().getId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+
+            dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
+        });
+
+        callbackQueryHandlerMap.put("dictionary_manage_cards", (callbackQuery, data) -> {
+            try {
+                dictionariesBotService.manageCardsMessage(callbackQuery.getFrom().getId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+
+            dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
+        });
+
+        callbackQueryHandlerMap.put("add_white_cards", (callbackQuery, data) -> {
+            try {
+                logger.debug(data);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+
+            dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
+        });
+
+        callbackQueryHandlerMap.put("edit_white_card", (callbackQuery, data) -> {
+            try {
+                logger.debug(data);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+
+            dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
+        });
+
+        callbackQueryHandlerMap.put("delete_white_card", (callbackQuery, data) -> {
+            try {
+                logger.debug(data);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+
+            dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
+        });
+
+        callbackQueryHandlerMap.put("add_black_cards", (callbackQuery, data) -> {
+            try {
+                logger.debug(data);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+
+            dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
+        });
+
+        callbackQueryHandlerMap.put("edit_black_card", (callbackQuery, data) -> {
+            try {
+                logger.debug(data);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+
+            dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
+        });
+
+        callbackQueryHandlerMap.put("delete_black_card", (callbackQuery, data) -> {
+            try {
+                logger.debug(data);
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
