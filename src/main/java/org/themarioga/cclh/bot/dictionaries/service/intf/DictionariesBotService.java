@@ -28,29 +28,35 @@ public interface DictionariesBotService {
 
 	void manageCardsMessage(long userId, int messageId);
 
-	void selectDictionaryToManageCards(long userId, long dictionaryId);
+	void selectDictionaryToManageCards(long userId, Integer messageId, long dictionaryId);
 
-	void addWhiteCardsMessage(long userId, long dictionaryId);
+	void listWhiteCardsMessage(long userId, int messageId, long dictionaryId);
 
-	void editWhiteCardsMessage(long userId, long dictionaryId);
+	void addWhiteCardsMessage(long userId, int messageId, long dictionaryId);
 
-	void deleteWhiteCardsMessage(long userId, long dictionaryId);
+	void editWhiteCardsMessage(long userId, int messageId, long dictionaryId);
 
-	void addBlackCardsMessage(long userId, long dictionaryId);
+	void deleteWhiteCardsMessage(long userId, int messageId, long dictionaryId);
 
-	void editBlackCardsMessage(long userId, long dictionaryId);
+	void listBlackCardsMessage(long userId, int messageId, long dictionaryId);
 
-	void deleteBlackCardsMessage(long userId, long dictionaryId);
+	void addBlackCardsMessage(long userId, int messageId, long dictionaryId);
+
+	void editBlackCardsMessage(long userId, int messageId, long dictionaryId);
+
+	void deleteBlackCardsMessage(long userId, int messageId, long dictionaryId);
 
 	void manageCollaboratorsMessage(long userId, int messageId);
 
-	void selectDictionaryToManageCollaborators(long userId, long dictionaryId);
+	void selectDictionaryToManageCollaborators(long userId, Integer messageId, long dictionaryId);
 
-	void addCollaboratorsMessage(long userId, long dictionaryId);
+	void listCollaboratorsMessage(long userId, int messageId, long dictionaryId);
 
-	void removeCollaboratorsMessage(long userId, long dictionaryId);
+	void addCollaboratorsMessage(long userId, int messageId, long dictionaryId);
 
-	void toggleCollaboratorsMessage(long userId, long dictionaryId);
+	void removeCollaboratorsMessage(long userId, int messageId, long dictionaryId);
+
+	void toggleCollaboratorsMessage(long userId, int messageId, long dictionaryId);
 
 	void sendHelpMessage(long chatId);
 }

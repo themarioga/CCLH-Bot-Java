@@ -8,6 +8,8 @@ public class StringUtils {
 		throw new UnsupportedOperationException();
 	}
 
+
+
 	public static String formatMessage(String text, Object... vars) {
 		return MessageFormat.format(text, vars);
 	}
