@@ -77,20 +77,25 @@ public class DictionariesBotResponseMessageI18n {
 	public static final String DICTIONARY_DELETED = "Tu diccionario se ha borrado correctamente.";
 	public static final String DICTIONARY_DELETE_CANCELLED = "Se ha cancelado el borrado del diccionario.";
 
-	public static final String DICTIONARY_ADD_COLLABORATOR = "¡Vamos a ello! Dime el nombre (p.ej. @cclhbot) o el id (puedes obtenerlo con el comando /getmyid) del usuario que deseas añadir como colaborador.";
-	public static final String DICTIONARY_ADDED_COLLABORATOR = "Se ha añadido el colaborador correctamente.";
-
 	public static final String CARDS_MENU = "Estas gestionando las cartas del diccionario: {0}";
 
 	public static final String CARDS_WHITE_LIST = "¡Marchando! Aqui tienes las cartas blancas. (Es posible que se envien en varios mensajes)";
 	public static final String CARDS_WHITE_LIST_END = "Esas son todas las cartas blancas.";
 	public static final String CARDS_WHITE_CARD_ADD = "Respondeme con el texto de la carta blanca que deseas añadir.";
 	public static final String CARDS_WHITE_CARD_ADDED = "Carta blanca añadida correctamente. Llevas {0} de {1}.";
+	public static final String CARDS_WHITE_CARD_EDIT = "Respondeme con el número de la carta blanca que deseas editar.";
+	public static final String CARDS_WHITE_CARD_EDITED = "Carta blanca editada correctamente.";
+	public static final String CARDS_WHITE_CARD_DELETE = "Respondeme con el número de la carta blanca que deseas borrar.";
+	public static final String CARDS_WHITE_CARD_DELETED = "Carta blanca borrada correctamente.";
 
 	public static final String CARDS_BLACK_LIST = "¡Marchando! Aqui tienes las cartas negras. (Es posible que se envien en varios mensajes)";
 	public static final String CARDS_BLACK_LIST_END = "Esas son todas las cartas negras.";
 	public static final String CARDS_BLACK_CARD_ADD = "Respondeme con el texto de la carta negra que deseas añadir.";
 	public static final String CARDS_BLACK_CARD_ADDED = "Carta negra añadida correctamente. Llevas {0} de {1}.";
+	public static final String CARDS_BLACK_CARD_EDIT = "Respondeme con el número de la carta blanca que deseas editar.";
+	public static final String CARDS_BLACK_CARD_EDITED = "Carta blanca editada correctamente.";
+	public static final String CARDS_BLACK_CARD_DELETE = "Respondeme con el número de la carta blanca que deseas borrar.";
+	public static final String CARDS_BLACK_CARD_DELETED = "Carta blanca borrada correctamente.";
 
 	public static final String COLLABORATORS_MENU = "Estas gestionando los colaboradores del diccionario: {0}";
 
@@ -98,5 +103,15 @@ public class DictionariesBotResponseMessageI18n {
 		Estos son los colaboradores de este diccionario:
 		
 		{0}""";
+
+	public static final String COLLABORATORS_ADD = "¡Vamos a ello! Dime el nombre (p.ej. @cclhbot) o el id (puedes obtenerlo con el comando /getmyid) del usuario que deseas añadir como colaborador.";
+	public static final String COLLABORATORS_ADDED = "Se ha añadido el colaborador correctamente.";
+
+	public static final String COLLABORATORS_DELETE = "¡Vamos a ello! Dime el nombre (p.ej. @cclhbot) o el id (puedes obtenerlo con el comando /getmyid) del usuario que deseas eliminar como colaborador.";
+	public static final String COLLABORATORS_DELETED = "Se ha eliminado el colaborador correctamente.";
+
+	public static final String COLLABORATORS_TOGGLE = "¡Vamos a ello! Dime el nombre (p.ej. @cclhbot) o el id (puedes obtenerlo con el comando /getmyid) del usuario que deseas activar/desactivar como colaborador.";
+	public static final String COLLABORATORS_TOGGLED_ON = "Se ha activado al colaborador correctamente.";
+	public static final String COLLABORATORS_TOGGLED_OFF = "Se ha desactivado al colaborador correctamente.";
 
 }

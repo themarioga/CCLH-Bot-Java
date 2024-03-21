@@ -38,7 +38,11 @@ public interface DictionariesBotService {
 
 	void editWhiteCardsMessage(long userId, int messageId, long dictionaryId);
 
+	void editWhiteCard(long userId, long dictionaryId, long cardId);
+
 	void deleteWhiteCardsMessage(long userId, int messageId, long dictionaryId);
+
+	void deleteWhiteCard(long userId, long dictionaryId, long cardId);
 
 	void listBlackCardsMessage(long userId, int messageId, long dictionaryId);
 
@@ -48,7 +52,11 @@ public interface DictionariesBotService {
 
 	void editBlackCardsMessage(long userId, int messageId, long dictionaryId);
 
+	void editBlackCard(long userId, long dictionaryId, long cardId);
+
 	void deleteBlackCardsMessage(long userId, int messageId, long dictionaryId);
+
+	void deleteBlackCard(long userId, long dictionaryId, long cardId);
 
 	void manageCollaboratorsMessage(long userId, int messageId);
 
@@ -58,9 +66,15 @@ public interface DictionariesBotService {
 
 	void addCollaboratorsMessage(long userId, int messageId, long dictionaryId);
 
+	void addCollaborator(long userId, long dictionaryId, String nameOrId);
+
 	void removeCollaboratorsMessage(long userId, int messageId, long dictionaryId);
 
+	void deleteCollaborator(long userId, long dictionaryId, String nameOrId);
+
 	void toggleCollaboratorsMessage(long userId, int messageId, long dictionaryId);
+
+	void toggleCollaborator(long userId, long dictionaryId, String nameOrId);
 
 	void sendHelpMessage(long chatId);
 }
