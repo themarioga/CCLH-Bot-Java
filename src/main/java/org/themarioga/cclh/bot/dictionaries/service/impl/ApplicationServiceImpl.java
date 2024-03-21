@@ -70,7 +70,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
 
             try {
-                dictionariesBotService.createDictionary(message.getChatId(), message.getText());
+                dictionariesBotService.createDictionary(message.getChatId(), message.getText().trim());
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -86,7 +86,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
 
             try {
-                dictionariesBotService.selectDictionaryToRename(message.getChatId(), message.getMessageId(), Long.parseLong(message.getText()));
+                dictionariesBotService.selectDictionaryToRename(message.getChatId(), message.getMessageId(), Long.parseLong(message.getText().trim()));
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -102,7 +102,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
 
             try {
-                dictionariesBotService.renameDictionary(message.getChatId(), Long.parseLong(data), message.getText());
+                dictionariesBotService.renameDictionary(message.getChatId(), Long.parseLong(data), message.getText().trim());
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -110,7 +110,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         commands.put("/delete_select", (message, data) -> {
             if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
-                logger.error("Comando /rename_select enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
+                logger.error("Comando /delete_select enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
                 dictionariesBotMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
 
@@ -118,7 +118,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
 
             try {
-                dictionariesBotService.selectDictionaryToDelete(message.getChatId(), message.getMessageId(), Long.parseLong(message.getText()));
+                dictionariesBotService.selectDictionaryToDelete(message.getChatId(), message.getMessageId(), Long.parseLong(message.getText().trim()));
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -126,7 +126,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         commands.put("/delete", (message, data) -> {
             if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
-                logger.error("Comando /rename enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
+                logger.error("Comando /delete enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
                 dictionariesBotMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
 
@@ -134,7 +134,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
 
             try {
-                dictionariesBotService.deleteDictionary(message.getChatId(), Long.parseLong(data), message.getText());
+                dictionariesBotService.deleteDictionary(message.getChatId(), Long.parseLong(data), message.getText().trim());
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -150,15 +150,15 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
 
             try {
-                dictionariesBotService.selectDictionaryToManageCards(message.getChatId(), null, Long.parseLong(message.getText()));
+                dictionariesBotService.selectDictionaryToManageCards(message.getChatId(), null, Long.parseLong(message.getText().trim()));
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
         });
 
-        commands.put("/manage_collabs_select", (message, data) -> {
+        commands.put("/add_white_card", (message, data) -> {
             if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
-                logger.error("Comando /manage_cards_select enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
+                logger.error("Comando /add_white_card enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
                 dictionariesBotMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
 
@@ -166,7 +166,39 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
 
             try {
-                dictionariesBotService.selectDictionaryToManageCollaborators(message.getChatId(), null, Long.parseLong(message.getText()));
+                dictionariesBotService.addWhiteCard(message.getChatId(), Long.parseLong(data), message.getText().trim());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        });
+
+        commands.put("/add_black_card", (message, data) -> {
+            if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
+                logger.error("Comando /add_black_card enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
+
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
+
+                return;
+            }
+
+            try {
+                dictionariesBotService.addBlackCard(message.getChatId(), Long.parseLong(data), message.getText().trim());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        });
+
+        commands.put("/manage_collabs_select", (message, data) -> {
+            if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
+                logger.error("Comando /manage_collabs_select enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
+
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
+
+                return;
+            }
+
+            try {
+                dictionariesBotService.selectDictionaryToManageCollaborators(message.getChatId(), null, Long.parseLong(message.getText().trim()));
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }

@@ -34,6 +34,8 @@ public interface DictionariesBotService {
 
 	void addWhiteCardsMessage(long userId, int messageId, long dictionaryId);
 
+	void addWhiteCard(long userId, long dictionaryId, String text);
+
 	void editWhiteCardsMessage(long userId, int messageId, long dictionaryId);
 
 	void deleteWhiteCardsMessage(long userId, int messageId, long dictionaryId);
@@ -41,6 +43,8 @@ public interface DictionariesBotService {
 	void listBlackCardsMessage(long userId, int messageId, long dictionaryId);
 
 	void addBlackCardsMessage(long userId, int messageId, long dictionaryId);
+
+	void addBlackCard(long userId, long dictionaryId, String text);
 
 	void editBlackCardsMessage(long userId, int messageId, long dictionaryId);
 

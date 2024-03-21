@@ -378,6 +378,31 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 	}
 
 	@Override
+	public void addWhiteCard(long userId, long dictionaryId, String text) {
+		Dictionary dictionary = dictionaryService.findOne(dictionaryId);
+
+		if (dictionary == null) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_FOUND);
+
+			return;
+		}
+
+		if (!dictionaryService.isDictionaryCollaborator(dictionary, userService.getById(userId))) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_YOURS);
+
+			return;
+		}
+
+		if (dictionary.getPublished() || dictionary.getShared()) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_ALREADY_PUBLISHED);
+
+			return;
+		}
+
+		// ToDo
+	}
+
+	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
 	public void editWhiteCardsMessage(long userId, int messageId, long dictionaryId) {
 		Dictionary dictionary = dictionaryService.findOne(dictionaryId);
@@ -489,6 +514,31 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 		dictionariesBotMessageService.deleteMessage(userId, messageId);
 		dictionariesBotMessageService.setPendingReply(userId, "/add_black_card__" + dictionaryId);
 		dictionariesBotMessageService.sendMessageWithForceReply(userId, DictionariesBotResponseMessageI18n.CARDS_BLACK_CARD_ADD);
+	}
+
+	@Override
+	public void addBlackCard(long userId, long dictionaryId, String text) {
+		Dictionary dictionary = dictionaryService.findOne(dictionaryId);
+
+		if (dictionary == null) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_FOUND);
+
+			return;
+		}
+
+		if (!dictionaryService.isDictionaryCollaborator(dictionary, userService.getById(userId))) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_YOURS);
+
+			return;
+		}
+
+		if (dictionary.getPublished() || dictionary.getShared()) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_ALREADY_PUBLISHED);
+
+			return;
+		}
+
+		// ToDo
 	}
 
 	@Override
