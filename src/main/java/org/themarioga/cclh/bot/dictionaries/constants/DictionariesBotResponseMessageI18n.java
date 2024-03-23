@@ -104,14 +104,28 @@ public class DictionariesBotResponseMessageI18n {
 		
 		{0}""";
 
-	public static final String COLLABORATORS_ADD = "¡Vamos a ello! Dime el nombre (p.ej. @cclhbot) o el id (puedes obtenerlo con el comando /getmyid) del usuario que deseas añadir como colaborador.";
-	public static final String COLLABORATORS_ADDED = "Se ha añadido el colaborador correctamente.";
+	public static final String COLLABORATORS_ADD = """
+        ¡Vamos a ello! Dime el nombre (p.ej. @cclhbot) o el id (puedes obtenerlo con el comando /getmyid) del usuario que deseas añadir como colaborador.
+        
+        <b>OJO: El colaborador que desees añadir debe haber iniciado este bot de diccionarios primero (escribiendole /start por privado)</b>
+        """;
+	public static final String COLLABORATORS_ADDED = "Se ha enviado una invitación de colaborador a {0} correctamente. Ahora deberá aceptar la invitación.";
 
 	public static final String COLLABORATORS_DELETE = "¡Vamos a ello! Dime el nombre (p.ej. @cclhbot) o el id (puedes obtenerlo con el comando /getmyid) del usuario que deseas eliminar como colaborador.";
 	public static final String COLLABORATORS_DELETED = "Se ha eliminado el colaborador correctamente.";
 
 	public static final String COLLABORATORS_TOGGLE = "¡Vamos a ello! Dime el nombre (p.ej. @cclhbot) o el id (puedes obtenerlo con el comando /getmyid) del usuario que deseas activar/desactivar como colaborador.";
-	public static final String COLLABORATORS_TOGGLED_ON = "Se ha activado al colaborador correctamente.";
-	public static final String COLLABORATORS_TOGGLED_OFF = "Se ha desactivado al colaborador correctamente.";
+	public static final String COLLABORATORS_TOGGLED_ON = "Se ha activado al colaborador {0} correctamente.";
+	public static final String COLLABORATORS_TOGGLED_OFF = "Se ha desactivado al colaborador {0} correctamente.";
+
+	public static final String COLLABORATORS_ACCEPT_MESSAGE = "{0} te ha invitado a colaborar en su diccionario {1}.";
+	public static final String COLLABORATORS_ACCEPTED_MESSAGE = "¡Perfecto! Ya eres colaborador, ahora pide al creador del bot que te active.";
+	public static final String COLLABORATORS_REJECTED_MESSAGE = "Has rechazado ser colaborador.";
+	public static final String COLLABORATORS_ACCEPTED_CREATOR_MESSAGE = "{0} ha aceptado ser colaborador.";
+	public static final String COLLABORATORS_REJECTED_CREATOR_MESSAGE = "{0} ha rechazado ser colaborador.";
+	public static final String COLLABORATORS_DELETED_MESSAGE = "Te han eliminado del diccionario {0}";
+
+
+	public static final String VOLVER = "<- Volver";
 
 }

@@ -68,6 +68,10 @@ public interface DictionariesBotService {
 
 	void addCollaborator(long userId, long dictionaryId, String nameOrId);
 
+	void acceptCollaborator(long userId, int messageId, long dictionaryId);
+
+	void rejectCollaborator(long userId, int messageId, long dictionaryId);
+
 	void removeCollaboratorsMessage(long userId, int messageId, long dictionaryId);
 
 	void deleteCollaborator(long userId, long dictionaryId, String nameOrId);

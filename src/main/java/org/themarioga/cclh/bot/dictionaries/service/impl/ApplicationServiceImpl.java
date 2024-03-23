@@ -535,6 +535,26 @@ public class ApplicationServiceImpl implements ApplicationService {
             dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
         });
 
+        callbackQueryHandlerMap.put("collaborator_accept", (callbackQuery, data) -> {
+            try {
+                dictionariesBotService.acceptCollaborator(callbackQuery.getFrom().getId(), callbackQuery.getMessage().getMessageId(), Long.parseLong(data));
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+
+            dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
+        });
+
+        callbackQueryHandlerMap.put("collaborator_decline", (callbackQuery, data) -> {
+            try {
+                dictionariesBotService.rejectCollaborator(callbackQuery.getFrom().getId(), callbackQuery.getMessage().getMessageId(), Long.parseLong(data));
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+
+            dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
+        });
+
         return callbackQueryHandlerMap;
     }
 

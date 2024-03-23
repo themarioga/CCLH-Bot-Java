@@ -8,7 +8,17 @@ public class StringUtils {
 		throw new UnsupportedOperationException();
 	}
 
-
+	public static boolean isNumeric(String strNum) {
+		if (strNum == null) {
+			return false;
+		}
+		try {
+			Long.parseLong(strNum);
+		} catch (NumberFormatException nfe) {
+			return false;
+		}
+		return true;
+	}
 
 	public static String formatMessage(String text, Object... vars) {
 		return MessageFormat.format(text, vars);
