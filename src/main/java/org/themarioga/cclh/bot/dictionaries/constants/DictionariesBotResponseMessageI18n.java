@@ -67,6 +67,9 @@ public class DictionariesBotResponseMessageI18n {
 	public static final String DICTIONARY_RENAME = "¡Vamos a ello! Dime el nuevo nombre del diccionario que quieres renombrar.";
 	public static final String DICTIONARY_RENAMED = "Tu diccionario se ha renombrado correctamente.";
 
+	public static final String DICTIONARY_TOGGLED_ON = "Se ha publicado el diccionario {0} correctamente.";
+	public static final String DICTIONARY_TOGGLED_OFF = "Se ha despublicado el diccionario {0} correctamente.";
+
 	public static final String DICTIONARY_DELETE = """
 		<b>¡CUIDADO! Este diccionario está PUBLICADO</b>. Se borrará el diccionario y también las <b>cartas</b> asociadas.
 		
@@ -82,6 +85,7 @@ public class DictionariesBotResponseMessageI18n {
 	public static final String CARDS_WHITE_LIST = "¡Marchando! Aqui tienes las cartas blancas. (Es posible que se envien en varios mensajes)";
 	public static final String CARDS_WHITE_LIST_END = "Esas son todas las cartas blancas.";
 	public static final String CARDS_WHITE_CARD_ADD = "Respondeme con el texto de la carta blanca que deseas añadir.";
+	public static final String CARDS_WHITE_CARD_ADD_ANOTHER = "Respondeme con el texto de la carta blanca que deseas añadir o escribe :cancel: para volver al menú.";
 	public static final String CARDS_WHITE_CARD_ADDED = "Carta blanca añadida correctamente. Llevas {0} de {1}.";
 	public static final String CARDS_WHITE_CARD_EDIT = "Respondeme con el número de la carta blanca que deseas editar.";
 	public static final String CARDS_WHITE_CARD_EDITED = "Carta blanca editada correctamente.";
@@ -91,6 +95,7 @@ public class DictionariesBotResponseMessageI18n {
 	public static final String CARDS_BLACK_LIST = "¡Marchando! Aqui tienes las cartas negras. (Es posible que se envien en varios mensajes)";
 	public static final String CARDS_BLACK_LIST_END = "Esas son todas las cartas negras.";
 	public static final String CARDS_BLACK_CARD_ADD = "Respondeme con el texto de la carta negra que deseas añadir.";
+	public static final String CARDS_BLACK_CARD_ADD_ANOTHER = "Respondeme con el texto de la carta negra que deseas añadir o escribe :cancel: para volver al menú.";
 	public static final String CARDS_BLACK_CARD_ADDED = "Carta negra añadida correctamente. Llevas {0} de {1}.";
 	public static final String CARDS_BLACK_CARD_EDIT = "Respondeme con el número de la carta blanca que deseas editar.";
 	public static final String CARDS_BLACK_CARD_EDITED = "Carta blanca editada correctamente.";

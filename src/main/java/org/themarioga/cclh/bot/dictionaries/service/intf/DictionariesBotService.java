@@ -26,6 +26,10 @@ public interface DictionariesBotService {
 
 	void deleteDictionary(long userId, long dictionaryId, String text);
 
+	void toggleDictionaryMessage(long userId, int messageId);
+
+	void toggleDictionary(long userId, int messageId, long dictionaryId);
+
 	void manageCardsMessage(long userId, int messageId);
 
 	void selectDictionaryToManageCards(long userId, Integer messageId, long dictionaryId);
@@ -81,4 +85,5 @@ public interface DictionariesBotService {
 	void toggleCollaborator(long userId, long dictionaryId, String nameOrId);
 
 	void sendHelpMessage(long chatId);
+
 }

@@ -140,6 +140,22 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
         });
 
+        commands.put("/toggle_select", (message, data) -> {
+            if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
+                logger.error("Comando /delete_select enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
+
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
+
+                return;
+            }
+
+            try {
+                dictionariesBotService.toggleDictionary(message.getChatId(), message.getMessageId(), Long.parseLong(message.getText().trim()));
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        });
+
         commands.put("/manage_cards_select", (message, data) -> {
             if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
                 logger.error("Comando /manage_cards_select enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
@@ -270,7 +286,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         commands.put("/add_collab", (message, data) -> {
             if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
-                logger.error("Comando /add_white_card enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
+                logger.error("Comando /add_collab enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
                 dictionariesBotMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
 
@@ -286,7 +302,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         commands.put("/delete_collab", (message, data) -> {
             if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
-                logger.error("Comando /add_white_card enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
+                logger.error("Comando /delete_collab enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
                 dictionariesBotMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
 
@@ -302,7 +318,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         commands.put("/toggle_collab", (message, data) -> {
             if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
-                logger.error("Comando /add_white_card enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
+                logger.error("Comando /toggle_collab enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
                 dictionariesBotMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
 
@@ -368,6 +384,16 @@ public class ApplicationServiceImpl implements ApplicationService {
         callbackQueryHandlerMap.put("dictionary_delete", (callbackQuery, data) -> {
             try {
                 dictionariesBotService.deleteDictionaryMessage(callbackQuery.getFrom().getId(), callbackQuery.getMessage().getMessageId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+
+            dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
+        });
+
+        callbackQueryHandlerMap.put("dictionary_toggle", (callbackQuery, data) -> {
+            try {
+                dictionariesBotService.toggleDictionaryMessage(callbackQuery.getFrom().getId(), callbackQuery.getMessage().getMessageId());
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
