@@ -88,6 +88,7 @@ public class DictionariesBotResponseMessageI18n {
 	public static final String CARDS_WHITE_CARD_ADD_ANOTHER = "Respondeme con el texto de la carta blanca que deseas añadir o escribe :cancel: para volver al menú.";
 	public static final String CARDS_WHITE_CARD_ADDED = "Carta blanca añadida correctamente. Llevas {0} de {1}.";
 	public static final String CARDS_WHITE_CARD_EDIT = "Respondeme con el número de la carta blanca que deseas editar.";
+	public static final String CARDS_WHITE_CARD_EDIT_NEW_TEXT = "Respondeme con el nuevo texto que quieres para esa carta.";
 	public static final String CARDS_WHITE_CARD_EDITED = "Carta blanca editada correctamente.";
 	public static final String CARDS_WHITE_CARD_DELETE = "Respondeme con el número de la carta blanca que deseas borrar.";
 	public static final String CARDS_WHITE_CARD_DELETED = "Carta blanca borrada correctamente.";
@@ -98,6 +99,7 @@ public class DictionariesBotResponseMessageI18n {
 	public static final String CARDS_BLACK_CARD_ADD_ANOTHER = "Respondeme con el texto de la carta negra que deseas añadir o escribe :cancel: para volver al menú.";
 	public static final String CARDS_BLACK_CARD_ADDED = "Carta negra añadida correctamente. Llevas {0} de {1}.";
 	public static final String CARDS_BLACK_CARD_EDIT = "Respondeme con el número de la carta blanca que deseas editar.";
+	public static final String CARDS_BLACK_CARD_EDIT_NEW_TEXT = "Respondeme con el nuevo texto que quieres para esa carta.";
 	public static final String CARDS_BLACK_CARD_EDITED = "Carta blanca editada correctamente.";
 	public static final String CARDS_BLACK_CARD_DELETE = "Respondeme con el número de la carta blanca que deseas borrar.";
 	public static final String CARDS_BLACK_CARD_DELETED = "Carta blanca borrada correctamente.";

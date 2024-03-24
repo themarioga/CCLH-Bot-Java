@@ -30,10 +30,12 @@ public class DictionariesBotResponseErrorI18n {
 
 	public static final String COLLABORATOR_ADD_MAX_REACHED = "Has alcanzado el número máximo de colaboradores y no puedes añadir más.";
 
-	public static final String CARD_ADD_ALREADY_EXISTS = "La carta que intentas añadir ya existe en este diccionario.";
+	public static final String CARD_ALREADY_EXISTS = "Ya existe otra carta con el mismo texto en este diccionario.";
 
-	public static final String CARD_ADD_EXCEEDED_LENGTH = "La carta supera el máximo de {0} caracteres.";
+	public static final String CARD_EXCEEDED_LENGTH = "La carta supera el máximo de {0} caracteres.";
 
 	public static final String CARD_NOT_YOURS = "Esa carta no te pertenece.";
+
+	public static final String CARD_DOESNT_EXISTS = "La carta que intentas editar no existe.";
 
 }
