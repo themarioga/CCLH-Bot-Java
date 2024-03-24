@@ -1080,6 +1080,8 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         List<User> userList = userService.getAllUsers();
 
         for (User user : userList) {
+            logger.info("Enviando mensaje a {}", user.getName());
+
             if (Boolean.TRUE.equals(canSendGlobalMessages)) {
                 cclhBotMessageService.sendMessageAsync(user.getId(), msg, new CCLHBotMessageService.Callback() {
                     @Override
@@ -1100,6 +1102,8 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         List<Room> roomList = roomService.getAllRooms();
 
         for (Room room : roomList) {
+            logger.info("Enviando mensaje a {}", room.getName());
+
             if (Boolean.TRUE.equals(canSendGlobalMessages)) {
                 cclhBotMessageService.sendMessageAsync(room.getId(), msg, new CCLHBotMessageService.Callback() {
                     @Override
