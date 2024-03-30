@@ -47,6 +47,20 @@ public class DictionariesBotResponseMessageI18n {
 		
 		Ahora respondeme con el número de diccionario que deseas borrar.""";
 
+	public static final String DICTIONARIES_TOGGLE_LIST = """
+		Estos son los diccionarios que has creado:
+		
+		{0}
+		
+		Ahora respondeme con el número de diccionario que deseas publicar/despublicar.""";
+
+	public static final String DICTIONARIES_SHARE_LIST = """
+		Estos son los diccionarios que has creado:
+		
+		{0}
+		
+		Ahora respondeme con el número de diccionario que deseas compartir/descompartir.""";
+
 	public static final String DICTIONARIES_MANAGE_CARDS_LIST = """
 		Estos son los diccionarios que has creado:
 		
@@ -69,6 +83,12 @@ public class DictionariesBotResponseMessageI18n {
 
 	public static final String DICTIONARY_TOGGLED_ON = "Se ha publicado el diccionario {0} correctamente.";
 	public static final String DICTIONARY_TOGGLED_OFF = "Se ha despublicado el diccionario {0} correctamente.";
+
+	public static final String DICTIONARY_SHARED_ON_REQUEST = "Se ha solicitado compartir el diccionario {0}.";
+	public static final String DICTIONARY_SHARED_OFF_REQUEST = "Se ha solicitado descompartir el diccionario {0}.";
+	public static final String DICTIONARY_SHARED_ON = "Se ha compartido el diccionario {0} correctamente.";
+	public static final String DICTIONARY_SHARED_OFF = "Se ha descompartido el diccionario {0} correctamente.";
+	public static final String DICTIONARY_SHARED_REJECTED = "Se ha rechazado compartir el diccionario {0}.";
 
 	public static final String DICTIONARY_DELETE = """
 		<b>¡CUIDADO! Este diccionario está PUBLICADO</b>. Se borrará el diccionario y también las <b>cartas</b> asociadas.
@@ -118,20 +138,21 @@ public class DictionariesBotResponseMessageI18n {
         """;
 	public static final String COLLABORATORS_ADDED = "Se ha enviado una invitación de colaborador a {0} correctamente. Ahora deberá aceptar la invitación.";
 
+	public static final String COLLABORATORS_ACCEPT_MESSAGE = "{0} te ha invitado a colaborar en su diccionario {1}.";
+	public static final String COLLABORATORS_ACCEPTED_CREATOR = "{0} ha aceptado ser colaborador.";
+	public static final String COLLABORATORS_REJECTED_CREATOR = "{0} ha rechazado ser colaborador.";
+	public static final String COLLABORATORS_ACCEPTED_MESSAGE = "¡Perfecto! Ya eres colaborador, ahora pide al creador del bot que te active.";
+	public static final String COLLABORATORS_REJECTED_MESSAGE = "Has rechazado ser colaborador.";
+
 	public static final String COLLABORATORS_DELETE = "¡Vamos a ello! Dime el nombre (p.ej. @cclhbot) o el id (puedes obtenerlo con el comando /getmyid) del usuario que deseas eliminar como colaborador.";
 	public static final String COLLABORATORS_DELETED = "Se ha eliminado el colaborador correctamente.";
+	public static final String COLLABORATORS_DELETED_MESSAGE = "Te han eliminado del diccionario {0}";
 
 	public static final String COLLABORATORS_TOGGLE = "¡Vamos a ello! Dime el nombre (p.ej. @cclhbot) o el id (puedes obtenerlo con el comando /getmyid) del usuario que deseas activar/desactivar como colaborador.";
 	public static final String COLLABORATORS_TOGGLED_ON = "Se ha activado al colaborador {0} correctamente.";
 	public static final String COLLABORATORS_TOGGLED_OFF = "Se ha desactivado al colaborador {0} correctamente.";
-
-	public static final String COLLABORATORS_ACCEPT_MESSAGE = "{0} te ha invitado a colaborar en su diccionario {1}.";
-	public static final String COLLABORATORS_ACCEPTED_MESSAGE = "¡Perfecto! Ya eres colaborador, ahora pide al creador del bot que te active.";
-	public static final String COLLABORATORS_REJECTED_MESSAGE = "Has rechazado ser colaborador.";
-	public static final String COLLABORATORS_ACCEPTED_CREATOR_MESSAGE = "{0} ha aceptado ser colaborador.";
-	public static final String COLLABORATORS_REJECTED_CREATOR_MESSAGE = "{0} ha rechazado ser colaborador.";
-	public static final String COLLABORATORS_DELETED_MESSAGE = "Te han eliminado del diccionario {0}";
-
+	public static final String COLLABORATORS_TOGGLED_ON_MESSAGE = "Has recibido permisos de edición en el diccionario {0}.";
+	public static final String COLLABORATORS_TOGGLED_OFF_MESSAGE = "Has perdido permisos de edición en el diccionario {0}.";
 
 	public static final String VOLVER = "<- Volver";
 

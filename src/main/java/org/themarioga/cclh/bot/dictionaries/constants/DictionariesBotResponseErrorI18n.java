@@ -14,6 +14,8 @@ public class DictionariesBotResponseErrorI18n {
 
 	public static final String DICTIONARY_NOT_FILLED = "No puedes publicar el diccionario porque faltan cartas de algun tipo.";
 
+	public static final String DICTIONARY_NOT_PUBLISHED = "No puedes compartir un diccionario que no está publicado. Publícalo para poder compartirlo.";
+
 	public static final String DICTIONARY_ALREADY_FILLED = "No puedes añadir mas cartas de este tipo a este diccionario.";
 
 	public static final String DICTIONARY_ALREADY_PUBLISHED = "No puedes editar un diccionario que ya está publicado. Despublicalo para poder editarlo.";
@@ -21,6 +23,8 @@ public class DictionariesBotResponseErrorI18n {
 	public static final String DICTIONARY_ALREADY_SHARED = "No puedes modificar un diccionario que está compartido. Contacta con {0} para despublicarlo.";
 
 	public static final String DICTIONARY_SHARED = "El diccionario está compartido, contacta a {0} para borrarlo.";
+
+	public static final String COLLABORATOR_DOESNT_EXISTS = "El usuario es incorrecto o no está registrado en el bot.";
 
 	public static final String COLLABORATOR_ADD_USER_DOESNT_EXISTS = "El usuario que intentas añadir como colaborador es incorrecto o no está registrado en el bot.";
 

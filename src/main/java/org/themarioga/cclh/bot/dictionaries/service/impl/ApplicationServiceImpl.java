@@ -156,6 +156,22 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
         });
 
+        commands.put("/share_select", (message, data) -> {
+            if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
+                logger.error("Comando /delete_select enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
+
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), CCLHBotResponseErrorI18n.COMMAND_SHOULD_BE_ON_PRIVATE);
+
+                return;
+            }
+
+            try {
+                dictionariesBotService.requestShareDictionary(message.getChatId(), message.getMessageId(), Long.parseLong(message.getText().trim()));
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        });
+
         commands.put("/manage_cards_select", (message, data) -> {
             if (!message.getChat().getType().equals(BotConstants.TELEGRAM_MESSAGE_TYPE_PRIVATE)) {
                 logger.error("Comando /manage_cards_select enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
@@ -364,6 +380,8 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
         });
 
+        commands.put("/getmyid", (message, data) -> dictionariesBotMessageService.sendMessage(message.getChatId(), "ID: " + message.getFrom().getId()));
+
         commands.put("/help", (message, data) -> dictionariesBotService.sendHelpMessage(message.getChatId()));
 
         return commands;
@@ -426,6 +444,36 @@ public class ApplicationServiceImpl implements ApplicationService {
         callbackQueryHandlerMap.put("dictionary_toggle", (callbackQuery, data) -> {
             try {
                 dictionariesBotService.toggleDictionaryMessage(callbackQuery.getFrom().getId(), callbackQuery.getMessage().getMessageId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+
+            dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
+        });
+
+        callbackQueryHandlerMap.put("dictionary_share", (callbackQuery, data) -> {
+            try {
+                dictionariesBotService.shareDictionaryMessage(callbackQuery.getFrom().getId(), callbackQuery.getMessage().getMessageId());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+
+            dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
+        });
+
+        callbackQueryHandlerMap.put("share_accept", (callbackQuery, data) -> {
+            try {
+                dictionariesBotService.acceptShareDictionary(callbackQuery.getFrom().getId(), callbackQuery.getMessage().getMessageId(), Long.parseLong(data));
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+
+            dictionariesBotMessageService.answerCallbackQuery(callbackQuery.getId());
+        });
+
+        callbackQueryHandlerMap.put("share_decline", (callbackQuery, data) -> {
+            try {
+                dictionariesBotService.rejectShareDictionary(callbackQuery.getFrom().getId(), callbackQuery.getMessage().getMessageId(), Long.parseLong(data));
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }

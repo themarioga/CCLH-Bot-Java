@@ -1357,7 +1357,13 @@ public class CCLHBotServiceImpl implements CCLHBotService {
     }
 
     private String getGameCreatedCurrentPlayerNumberMessage(TelegramGame telegramGame) {
-        return MessageFormat.format(CCLHBotResponseMessageI18n.GAME_CREATED_CURRENT_PLAYER_NUMBER,
+        StringBuilder players = new StringBuilder();
+        players.append(CCLHBotResponseMessageI18n.GAME_CREATED_CURRENT_PLAYER_NUMBER).append("\n");
+        for (Player player : telegramGame.getGame().getPlayers()) {
+            players.append(player.getUser().getName()).append("\n");
+        }
+
+        return MessageFormat.format(players.toString(),
                 telegramGame.getGame().getPlayers().size());
     }
 

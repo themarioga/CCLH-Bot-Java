@@ -18,7 +18,7 @@ public class CCLHBotResponseMessageI18n {
 	public static final String GAME_SELECTED_ROUNDS_TO_END = "El número de rondas es <b>{0}</b>.";
 	public static final String GAME_SELECTED_MAX_PLAYER_NUMBER = "El número máximo de jugadores es <b>{0}</b>.";
 
-	public static final String GAME_CREATED_CURRENT_PLAYER_NUMBER = "El número actual de jugadores que se han unido es <b>{0}</b>.";
+	public static final String GAME_CREATED_CURRENT_PLAYER_NUMBER = "Se han unido estos <b>{0}</b> jugadores:";
 	public static final String GAME_CREATED_CURRENT_VOTE_DELETION_NUMBER = "<b>{0}</b> jugador/es han votado borrar la partida.";
 	public static final String GAME_SELECT_CARD = """
 			<b>Ronda {0}</b>

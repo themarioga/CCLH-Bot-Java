@@ -30,6 +30,14 @@ public interface DictionariesBotService {
 
 	void toggleDictionary(long userId, int messageId, long dictionaryId);
 
+	void shareDictionaryMessage(long userId, int messageId);
+
+	void requestShareDictionary(long userId, int messageId, long dictionaryId);
+
+	void acceptShareDictionary(long userId, int messageId, long dictionaryId);
+
+	void rejectShareDictionary(long userId, int messageId, long dictionaryId);
+
 	void manageCardsMessage(long userId, int messageId);
 
 	void selectDictionaryToManageCards(long userId, Integer messageId, long dictionaryId);

@@ -251,7 +251,7 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 
 		dictionariesBotMessageService.deleteMessage(userId, messageId);
 		dictionariesBotMessageService.setPendingReply(userId, "/toggle_select");
-		dictionariesBotMessageService.sendMessageWithForceReply(userId, getDictionaryRenameMessage(dictionaryList));
+		dictionariesBotMessageService.sendMessageWithForceReply(userId, getDictionaryToggleMessage(dictionaryList));
 	}
 
 	@Override
@@ -279,6 +279,89 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessage(userId, getDictionaryAlreadySharedError());
 		} catch (DictionaryNotCompletedException e) {
 			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_FILLED);
+		}
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
+	public void shareDictionaryMessage(long userId, int messageId) {
+		List<Dictionary> dictionaryList = dictionaryService.getDictionariesByCreator(userService.getById(userId));
+
+		dictionariesBotMessageService.deleteMessage(userId, messageId);
+		dictionariesBotMessageService.setPendingReply(userId, "/share_select");
+		dictionariesBotMessageService.sendMessageWithForceReply(userId, getDictionaryRequestShareMessage(dictionaryList));
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
+	public void requestShareDictionary(long userId, int messageId, long dictionaryId) {
+		try {
+			Dictionary dictionary = getDictionaryAndCheckCreator(userId, dictionaryId);
+
+			if (Boolean.FALSE.equals(dictionary.getPublished())) {
+				dictionariesBotMessageService.sendMessage(userId,
+						DictionariesBotResponseErrorI18n.DICTIONARY_NOT_PUBLISHED);
+
+				return;
+			}
+
+			sendCardList(userId, dictionary, CardTypeEnum.BLACK);
+			sendCardList(userId, dictionary, CardTypeEnum.WHITE);
+
+			InlineKeyboardMarkup shareInlineKeyboard = InlineKeyboardMarkup.builder()
+					.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder().text("Aceptar")
+							.callbackData("share_accept__" + dictionaryId).build()))
+					.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder().text("Cancelar")
+							.callbackData("share_decline__" + dictionaryId).build()))
+					.build();
+			dictionariesBotMessageService.sendMessage(getBotCreatorId(), getDictionaryRequestShareMessage(dictionary),
+					shareInlineKeyboard);
+
+			dictionariesBotMessageService.sendMessage(userId, getDictionaryRequestShareMessage(dictionary));
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseMessageI18n.MAIN_MENU,
+					getMainMenuKeyboard());
+		} catch (DictionaryDoesntExistsException e) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_FOUND);
+		} catch (DictionaryNotYoursException e) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_YOURS);
+		} catch (DictionaryAlreadySharedException e) {
+			dictionariesBotMessageService.sendMessage(userId, getDictionaryAlreadySharedError());
+		} catch (DictionaryNotCompletedException e) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_FILLED);
+		}
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
+	public void acceptShareDictionary(long userId, int messageId, long dictionaryId) {
+		try {
+			Dictionary dictionary = getDictionaryAndCheckBotCreator(userId, dictionaryId);
+
+			dictionaryService.toggleShared(dictionary);
+
+			dictionariesBotMessageService.editMessage(userId, messageId, getDictionaryShareMessage(dictionary));
+
+			dictionariesBotMessageService.sendMessage(dictionary.getCreator().getId(), getDictionaryShareMessage(dictionary));
+		} catch (DictionaryDoesntExistsException e) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_FOUND);
+		} catch (DictionaryNotYoursException e) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_YOURS);
+		}
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
+	public void rejectShareDictionary(long userId, int messageId, long dictionaryId) {
+		try {
+			Dictionary dictionary = getDictionaryAndCheckBotCreator(userId, dictionaryId);
+
+			dictionariesBotMessageService.editMessage(userId, messageId, getShareDictionaryRejectedMessage(dictionary));
+
+			dictionariesBotMessageService.sendMessage(dictionary.getCreator().getId(), getShareDictionaryRejectedMessage(dictionary));
+		} catch (DictionaryDoesntExistsException e) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_FOUND);
+		} catch (DictionaryNotYoursException e) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_YOURS);
 		}
 	}
 
@@ -976,12 +1059,21 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 
 			DictionaryCollaborator dictionaryCollaborator = dictionaryService.toggleCollaborator(dictionary, user);
 
+			dictionariesBotMessageService.sendMessage(dictionaryCollaborator.getUser().getId(),
+					getToggledCollaboratorPrivateMessage(dictionaryCollaborator));
 			dictionariesBotMessageService.sendMessage(userId,
 					getToggledCollaboratorMessage(dictionaryCollaborator));
+
+			InlineKeyboardMarkup privateInlineKeyboard = getDictionaryCollaboratorMenu(dictionaryId);
+
+			dictionariesBotMessageService.sendMessage(userId,
+					getCollaboratorMenuMessage(dictionary), privateInlineKeyboard);
 		} catch (DictionaryDoesntExistsException e) {
 			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_FOUND);
 		} catch (DictionaryNotYoursException e) {
 			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.DICTIONARY_NOT_YOURS);
+		} catch (DictionaryCollaboratorDoesntExists e) {
+			dictionariesBotMessageService.sendMessage(userId, DictionariesBotResponseErrorI18n.COLLABORATOR_DOESNT_EXISTS);
 		}
 	}
 
@@ -994,20 +1086,24 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 	private static InlineKeyboardMarkup getMainMenuKeyboard() {
 		return InlineKeyboardMarkup.builder()
 				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
-						.text("Listar mis diccionarios").callbackData("dictionary_list").build()))
+					.text("Listar mis diccionarios").callbackData("dictionary_list").build()))
 				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
-						.text("Crear diccionario").callbackData("dictionary_create").build()))
+					.text("Crear diccionario").callbackData("dictionary_create").build()))
 				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
-						.text("Renombrar diccionario").callbackData("dictionary_rename").build()))
+					.text("Renombrar diccionario").callbackData("dictionary_rename").build()))
 				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
-						.text("Borrar diccionario").callbackData("dictionary_delete").build()))
-				.keyboardRow(Collections.singletonList(InlineKeyboardButton.builder()
-						.text("Publicar/despublicar diccionario").callbackData("dictionary_toggle").build()))
+					.text("Borrar diccionario").callbackData("dictionary_delete").build()))
 				.keyboardRow(Arrays.asList(
-						InlineKeyboardButton.builder()
-							.text("Gestionar cartas").callbackData("dictionary_manage_cards").build(),
-						InlineKeyboardButton.builder()
-							.text("Gestionar colaboradores").callbackData("dictionary_manage_collabs").build()))
+					InlineKeyboardButton.builder()
+						.text("Publicar/despublicar diccionario").callbackData("dictionary_toggle").build(),
+					InlineKeyboardButton.builder()
+						.text("Compartir/descompartir diccionario").callbackData("dictionary_share").build()
+					))
+				.keyboardRow(Arrays.asList(
+					InlineKeyboardButton.builder()
+						.text("Gestionar cartas").callbackData("dictionary_manage_cards").build(),
+					InlineKeyboardButton.builder()
+						.text("Gestionar colaboradores").callbackData("dictionary_manage_collabs").build()))
 				.build();
 	}
 
@@ -1073,6 +1169,24 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 		}
 
 		return MessageFormat.format(DictionariesBotResponseMessageI18n.DICTIONARIES_RENAME_LIST, stringBuilder.toString());
+	}
+
+	private String getDictionaryToggleMessage(List<Dictionary> dictionaryList) {
+		StringBuilder stringBuilder = new StringBuilder();
+		for (Dictionary dictionary : dictionaryList) {
+			stringBuilder.append(dictionary.getId()).append(" - ").append(dictionary.getName()).append("\n");
+		}
+
+		return MessageFormat.format(DictionariesBotResponseMessageI18n.DICTIONARIES_TOGGLE_LIST, stringBuilder.toString());
+	}
+
+	private String getDictionaryRequestShareMessage(List<Dictionary> dictionaryList) {
+		StringBuilder stringBuilder = new StringBuilder();
+		for (Dictionary dictionary : dictionaryList) {
+			stringBuilder.append(dictionary.getId()).append(" - ").append(dictionary.getName()).append("\n");
+		}
+
+		return MessageFormat.format(DictionariesBotResponseMessageI18n.DICTIONARIES_SHARE_LIST, stringBuilder.toString());
 	}
 
 	private String getDictionaryDeleteMessage(List<Dictionary> dictionaryList) {
@@ -1187,11 +1301,15 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 	}
 
 	private String getCollaboratorAcceptedMessage(String name) {
-		return MessageFormat.format(DictionariesBotResponseMessageI18n.COLLABORATORS_ACCEPTED_CREATOR_MESSAGE, name);
+		return MessageFormat.format(DictionariesBotResponseMessageI18n.COLLABORATORS_ACCEPTED_CREATOR, name);
 	}
 
 	private String getCollaboratorRejectedMessage(String name) {
-		return MessageFormat.format(DictionariesBotResponseMessageI18n.COLLABORATORS_REJECTED_CREATOR_MESSAGE, name);
+		return MessageFormat.format(DictionariesBotResponseMessageI18n.COLLABORATORS_REJECTED_CREATOR, name);
+	}
+
+	private String getShareDictionaryRejectedMessage(Dictionary dictionary) {
+		return MessageFormat.format(DictionariesBotResponseMessageI18n.DICTIONARY_SHARED_REJECTED, dictionary.getName());
 	}
 
 	private String getToggledCollaboratorMessage(DictionaryCollaborator collaborator) {
@@ -1199,6 +1317,13 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			return MessageFormat.format(DictionariesBotResponseMessageI18n.COLLABORATORS_TOGGLED_ON, collaborator.getUser().getName());
 		else
 			return MessageFormat.format(DictionariesBotResponseMessageI18n.COLLABORATORS_TOGGLED_OFF, collaborator.getUser().getName());
+	}
+
+	private String getToggledCollaboratorPrivateMessage(DictionaryCollaborator collaborator) {
+		if (Boolean.TRUE.equals(collaborator.getCanEdit()))
+			return MessageFormat.format(DictionariesBotResponseMessageI18n.COLLABORATORS_TOGGLED_ON_MESSAGE, collaborator.getDictionary().getName());
+		else
+			return MessageFormat.format(DictionariesBotResponseMessageI18n.COLLABORATORS_TOGGLED_OFF_MESSAGE, collaborator.getDictionary().getName());
 	}
 
 	private String getDeleteSharedErrorMessage() {
@@ -1213,12 +1338,32 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 		return MessageFormat.format(DictionariesBotResponseErrorI18n.CARD_EXCEEDED_LENGTH, cardService.getDictionaryBlackCardMaxLength());
 	}
 
-	private static String getDictionaryPublishedMessage(Dictionary dictionary) {
+	private String getDictionaryPublishedMessage(Dictionary dictionary) {
 		String msg;
 		if (Boolean.TRUE.equals(dictionary.getPublished())) {
 			msg = MessageFormat.format(DictionariesBotResponseMessageI18n.DICTIONARY_TOGGLED_ON, dictionary.getName());
 		} else {
 			msg = MessageFormat.format(DictionariesBotResponseMessageI18n.DICTIONARY_TOGGLED_OFF, dictionary.getName());
+		}
+		return msg;
+	}
+
+	private String getDictionaryRequestShareMessage(Dictionary dictionary) {
+		String msg;
+		if (Boolean.FALSE.equals(dictionary.getShared())) {
+			msg = MessageFormat.format(DictionariesBotResponseMessageI18n.DICTIONARY_SHARED_ON_REQUEST, dictionary.getName());
+		} else {
+			msg = MessageFormat.format(DictionariesBotResponseMessageI18n.DICTIONARY_SHARED_OFF_REQUEST, dictionary.getName());
+		}
+		return msg;
+	}
+
+	private String getDictionaryShareMessage(Dictionary dictionary) {
+		String msg;
+		if (Boolean.TRUE.equals(dictionary.getShared())) {
+			msg = MessageFormat.format(DictionariesBotResponseMessageI18n.DICTIONARY_SHARED_ON, dictionary.getName());
+		} else {
+			msg = MessageFormat.format(DictionariesBotResponseMessageI18n.DICTIONARY_SHARED_OFF, dictionary.getName());
 		}
 		return msg;
 	}
@@ -1230,6 +1375,20 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 	private String getHelpMessage() {
 		return MessageFormat.format(DictionariesBotResponseMessageI18n.HELP, getBotName(), getBotVersion(),
 				getBotHelpURL(), getBotCreatorName());
+	}
+
+	private Dictionary getDictionaryAndCheckBotCreator(long userId, long dictionaryId) {
+		Dictionary dictionary = dictionaryService.getDictionaryById(dictionaryId);
+
+		if (dictionary == null) {
+			throw new DictionaryDoesntExistsException();
+		}
+
+		if (getBotCreatorId() != userId) {
+			throw new DictionaryNotYoursException();
+		}
+
+		return dictionary;
 	}
 
 	private Dictionary getDictionaryAndCheckCreator(long userId, long dictionaryId) {
