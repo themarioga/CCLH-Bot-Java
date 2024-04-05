@@ -178,7 +178,7 @@ public class TelegramGameServiceImpl implements TelegramGameService {
 
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = ApplicationException.class)
-	public TelegramGame getByPlayerUser(long userId) {
+	public TelegramGame getByPlayerId(long userId) {
 		return telegramGameDao.getByPlayerUser(userService.getById(userId));
 	}
 

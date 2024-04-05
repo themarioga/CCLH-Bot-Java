@@ -37,6 +37,18 @@ public class CCLHBotMessageServiceImpl implements CCLHBotMessageService {
 	}
 
 	@Override
+	public void sendMessage(long chatId, String text, InlineKeyboardMarkup inlineKeyboardMarkup) {
+		try {
+			SendMessage sendMessage = new SendMessage(String.valueOf(chatId), text);
+			sendMessage.enableHtml(true);
+			sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+			botService.execute(sendMessage);
+		} catch (TelegramApiException e) {
+			logger.error(e.getMessage(), e);
+		}
+	}
+
+	@Override
 	public void sendMessageAsync(long chatId, String text, Callback callback) {
 		try {
 			SendMessage sendMessage = new SendMessage(String.valueOf(chatId), text);

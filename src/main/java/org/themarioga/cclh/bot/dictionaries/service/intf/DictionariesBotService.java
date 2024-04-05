@@ -2,99 +2,111 @@ package org.themarioga.cclh.bot.dictionaries.service.intf;
 
 public interface DictionariesBotService {
 
-	void registerUser(long userId, String username);
+	void registerUser(long userId, String username, String lang);
 
-	void mainMenu(long userId);
+	void loginUser(long userId);
 
-	void mainMenu(long userId, int messageId);
+	void changeUserLanguageMessage();
 
-	void listDictionaries(long userId, int messageId);
+	void changeUserLanguage(int messageId, String lang);
 
-	void createDictionaryMessage(long userId, int messageId);
+	void mainMenu();
 
-	void createDictionary(long userId, String name);
+	void mainMenu(int messageId);
 
-	void renameDictionaryMessage(long userId, int messageId);
+	void listDictionaries(int messageId);
 
-	void selectDictionaryToRename(long userId, int messageId, long dictionaryId);
+	void createDictionaryMessage(int messageId);
 
-	void renameDictionary(long userId, long dictionaryId, String newName);
+	void createDictionary(String name);
 
-	void deleteDictionaryMessage(long userId, int messageId);
+	void renameDictionaryMessage(int messageId);
 
-	void selectDictionaryToDelete(long userId, int messageId, long dictionaryId);
+	void selectDictionaryToRename(int messageId, long dictionaryId);
 
-	void deleteDictionary(long userId, long dictionaryId, String text);
+	void renameDictionary(long dictionaryId, String newName);
 
-	void toggleDictionaryMessage(long userId, int messageId);
+	void changeDictionaryLangMessage(int messageId);
 
-	void toggleDictionary(long userId, int messageId, long dictionaryId);
+	void selectDictionaryToChangeLang(int messageId, long dictionaryId);
 
-	void shareDictionaryMessage(long userId, int messageId);
+	void changeDictionaryLang(long dictionaryId, String language);
 
-	void requestShareDictionary(long userId, int messageId, long dictionaryId);
+	void deleteDictionaryMessage(int messageId);
 
-	void acceptShareDictionary(long userId, int messageId, long dictionaryId);
+	void selectDictionaryToDelete(int messageId, long dictionaryId);
 
-	void rejectShareDictionary(long userId, int messageId, long dictionaryId);
+	void deleteDictionary(long dictionaryId, String text);
 
-	void manageCardsMessage(long userId, int messageId);
+	void toggleDictionaryMessage(int messageId);
 
-	void selectDictionaryToManageCards(long userId, Integer messageId, long dictionaryId);
+	void toggleDictionary(int messageId, long dictionaryId);
 
-	void listWhiteCardsMessage(long userId, int messageId, long dictionaryId);
+	void shareDictionaryMessage(int messageId);
 
-	void addWhiteCardsMessage(long userId, int messageId, long dictionaryId);
+	void requestShareDictionary(int messageId, long dictionaryId);
 
-	void addWhiteCard(long userId, long dictionaryId, String text);
+	void acceptShareDictionary(int messageId, long dictionaryId);
 
-	void editWhiteCardsMessage(long userId, int messageId, long dictionaryId);
+	void rejectShareDictionary(int messageId, long dictionaryId);
 
-	void editWhiteCardSelect(long userId, long dictionaryId, long cardId);
+	void manageCardsMessage(int messageId);
 
-	void editWhiteCard(long userId, long cardId, String newText);
+	void selectDictionaryToManageCards(Integer messageId, long dictionaryId);
 
-	void deleteWhiteCardsMessage(long userId, int messageId, long dictionaryId);
+	void listWhiteCardsMessage(int messageId, long dictionaryId);
 
-	void deleteWhiteCard(long userId, long dictionaryId, long cardId);
+	void addWhiteCardsMessage(int messageId, long dictionaryId);
 
-	void listBlackCardsMessage(long userId, int messageId, long dictionaryId);
+	void addWhiteCard(long dictionaryId, String text);
 
-	void addBlackCardsMessage(long userId, int messageId, long dictionaryId);
+	void editWhiteCardsMessage(int messageId, long dictionaryId);
 
-	void addBlackCard(long userId, long dictionaryId, String text);
+	void editWhiteCardSelect(long dictionaryId, long cardId);
 
-	void editBlackCardsMessage(long userId, int messageId, long dictionaryId);
+	void editWhiteCard(long cardId, String newText);
 
-	void editBlackCardSelect(long userId, long dictionaryId, long cardId);
+	void deleteWhiteCardsMessage(int messageId, long dictionaryId);
 
-	void editBlackCard(long userId, long cardId, String newText);
+	void deleteWhiteCard(long dictionaryId, long cardId);
 
-	void deleteBlackCardsMessage(long userId, int messageId, long dictionaryId);
+	void listBlackCardsMessage(int messageId, long dictionaryId);
 
-	void deleteBlackCard(long userId, long dictionaryId, long cardId);
+	void addBlackCardsMessage(int messageId, long dictionaryId);
 
-	void manageCollaboratorsMessage(long userId, int messageId);
+	void addBlackCard(long dictionaryId, String text);
 
-	void selectDictionaryToManageCollaborators(long userId, Integer messageId, long dictionaryId);
+	void editBlackCardsMessage(int messageId, long dictionaryId);
 
-	void listCollaboratorsMessage(long userId, int messageId, long dictionaryId);
+	void editBlackCardSelect(long dictionaryId, long cardId);
 
-	void addCollaboratorsMessage(long userId, int messageId, long dictionaryId);
+	void editBlackCard(long cardId, String newText);
 
-	void addCollaborator(long userId, long dictionaryId, String nameOrId);
+	void deleteBlackCardsMessage(int messageId, long dictionaryId);
 
-	void acceptCollaborator(long userId, int messageId, long dictionaryId);
+	void deleteBlackCard(long dictionaryId, long cardId);
 
-	void rejectCollaborator(long userId, int messageId, long dictionaryId);
+	void manageCollaboratorsMessage(int messageId);
 
-	void removeCollaboratorsMessage(long userId, int messageId, long dictionaryId);
+	void selectDictionaryToManageCollaborators(Integer messageId, long dictionaryId);
 
-	void deleteCollaborator(long userId, long dictionaryId, String nameOrId);
+	void listCollaboratorsMessage(int messageId, long dictionaryId);
 
-	void toggleCollaboratorsMessage(long userId, int messageId, long dictionaryId);
+	void addCollaboratorsMessage(int messageId, long dictionaryId);
 
-	void toggleCollaborator(long userId, long dictionaryId, String nameOrId);
+	void addCollaborator(long dictionaryId, String nameOrId);
+
+	void acceptCollaborator(int messageId, long dictionaryId);
+
+	void rejectCollaborator(int messageId, long dictionaryId);
+
+	void removeCollaboratorsMessage(int messageId, long dictionaryId);
+
+	void deleteCollaborator(long dictionaryId, String nameOrId);
+
+	void toggleCollaboratorsMessage(int messageId, long dictionaryId);
+
+	void toggleCollaborator(long dictionaryId, String nameOrId);
 
 	void sendHelpMessage(long chatId);
 }

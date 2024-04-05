@@ -47,7 +47,7 @@ public interface TelegramGameService {
 
 	TelegramGame getGameByCreatorUsername(String creatorUsername);
 
-	TelegramGame getByPlayerUser(long userId);
+	TelegramGame getByPlayerId(long userId);
 
 	List<TelegramGame> getGameList();
 
