@@ -32,7 +32,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /start enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -53,7 +53,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                         BotMessageUtils.getUserInfo(message.getFrom()));
 
                 dictionariesBotMessageService.sendMessage(message.getChat().getId(),
-                        i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                        i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -71,7 +71,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /menu enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -89,7 +89,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /create enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -107,7 +107,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /rename_select enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -125,7 +125,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /rename enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -143,7 +143,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /change_lang_select enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -161,7 +161,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /change_lang enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -179,7 +179,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /delete_select enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -197,7 +197,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /delete enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -215,7 +215,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /delete_select enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -233,7 +233,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /delete_select enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -251,7 +251,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /manage_cards_select enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -269,7 +269,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /add_white_card enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -287,7 +287,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /edit_white_card_sel enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -305,7 +305,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /edit_white_card enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -323,7 +323,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /delete_white_card enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -341,7 +341,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /add_black_card enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -359,7 +359,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /edit_black_card_sel enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -377,7 +377,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /edit_black_card enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -395,7 +395,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /delete_black_card enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -413,7 +413,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /manage_collabs_select enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -431,7 +431,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /add_collab enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -449,7 +449,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /delete_collab enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -467,7 +467,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!BotMessageUtils.isMessagePrivate(message)) {
                 logger.error("Comando /toggle_collab enviado en lugar incorrecto por {}", BotMessageUtils.getUserInfo(message.getFrom()));
 
-                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                dictionariesBotMessageService.sendMessage(message.getChat().getId(), i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }

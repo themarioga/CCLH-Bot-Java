@@ -163,7 +163,7 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 		} catch (DictionaryAlreadyExistsException e) {
 			logger.error("Ya existe un diccionario con el nombre {}", name);
 
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_ALREADY_EXISTS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_ALREADY_EXISTS"));
 
 			throw e;
 		} catch (ApplicationException e) {
@@ -201,9 +201,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessageWithForceReply(CCLHSecurityUtils.getId(),
 					i18NService.get("DICTIONARY_RENAME"));
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		} catch (DictionaryAlreadySharedException e) {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getDictionaryAlreadySharedError());
 		}
@@ -223,9 +223,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARIES_MAIN_MENU"),
 					getMainMenuKeyboard());
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		}
 	}
 
@@ -257,9 +257,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 
 			dictionariesBotMessageService.sendMessageWithForceReply(CCLHSecurityUtils.getId(), changeDictionariesLanguageListMessage());
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		} catch (DictionaryAlreadySharedException e) {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getDictionaryAlreadySharedError());
 		}
@@ -278,9 +278,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARIES_MAIN_MENU"),
 					getMainMenuKeyboard());
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		}
 	}
 
@@ -323,9 +323,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 						getMainMenuKeyboard());
 			}
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		}
 	}
 
@@ -354,9 +354,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 						getMainMenuKeyboard());
 			}
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		}
 	}
 
@@ -392,13 +392,13 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARIES_MAIN_MENU"),
 					getMainMenuKeyboard());
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		} catch (DictionaryAlreadySharedException e) {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getDictionaryAlreadySharedError());
 		} catch (DictionaryNotCompletedException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FILLED"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FILLED"));
 		}
 	}
 
@@ -445,13 +445,13 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARIES_MAIN_MENU"),
 					getMainMenuKeyboard());
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		} catch (DictionaryAlreadySharedException e) {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getDictionaryAlreadySharedError());
 		} catch (DictionaryNotCompletedException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FILLED"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FILLED"));
 		}
 	}
 
@@ -469,9 +469,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 
 			dictionariesBotMessageService.sendMessage(dictionary.getCreator().getId(), getDictionaryShareMessage(dictionary));
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		}
 	}
 
@@ -487,9 +487,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 
 			dictionariesBotMessageService.sendMessage(dictionary.getCreator().getId(), getShareDictionaryRejectedMessage(dictionary));
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		}
 	}
 
@@ -524,9 +524,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 						getCardKeyboardMenu(dictionaryId));
 			}
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		} catch (DictionaryAlreadyPublishedException e) {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getDeleteSharedErrorMessage());
 		}
@@ -556,9 +556,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("CARDS_WHITE_LIST_END"),
 					privateInlineKeyboard);
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		} catch (DictionaryAlreadyPublishedException e) {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getDeleteSharedErrorMessage());
 		}
@@ -579,9 +579,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessageWithForceReply(CCLHSecurityUtils.getId(),
 					i18NService.get("CARDS_WHITE_CARD_ADD"));
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		} catch (DictionaryAlreadyPublishedException e) {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getDeleteSharedErrorMessage());
 		}
@@ -610,17 +610,17 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 						getCardKeyboardMenu(dictionaryId));
 			}
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		} catch (DictionaryAlreadyPublishedException e) {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getDeleteSharedErrorMessage());
 		} catch (CardAlreadyExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("CARD_ALREADY_EXISTS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_CARD_ALREADY_EXISTS"));
 		} catch (CardTextExcededLength e) {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getAddWhiteCardLengthExceededErrorMessage());
 		} catch (DictionaryAlreadyFilledException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_ALREADY_FILLED"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_ALREADY_FILLED"));
 		}
 	}
 
@@ -643,9 +643,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessageWithForceReply(CCLHSecurityUtils.getId(),
 					i18NService.get("CARDS_WHITE_CARD_EDIT"));
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		} catch (DictionaryAlreadyPublishedException e) {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getDeleteSharedErrorMessage());
 		}
@@ -665,9 +665,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessageWithForceReply(CCLHSecurityUtils.getId(),
 					i18NService.get("CARDS_WHITE_CARD_EDIT_NEW_TEXT"));
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		} catch (DictionaryAlreadyPublishedException e) {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getDeleteSharedErrorMessage());
 		}
@@ -695,15 +695,15 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("CARDS_WHITE_CARD_EDITED"));
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getCardMenuMessage(card.getDictionary()), getCardKeyboardMenu(card.getDictionary().getId()));
 		} catch (CardDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("CARD_DOESNT_EXISTS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_CARD_DOESNT_EXISTS"));
 		} catch (CardAlreadyExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("CARD_ALREADY_EXISTS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_CARD_ALREADY_EXISTS"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("CARD_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_CARD_NOT_YOURS"));
 		} catch (DictionaryAlreadySharedException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_SHARED"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_SHARED"));
 		} catch (CardTextExcededLength e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("CARD_EXCEEDED_LENGTH"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_CARD_EXCEEDED_LENGTH"));
 		}
 	}
 
@@ -726,9 +726,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessageWithForceReply(CCLHSecurityUtils.getId(),
 					i18NService.get("CARDS_WHITE_CARD_DELETE"));
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		} catch (DictionaryAlreadyPublishedException e) {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getDeleteSharedErrorMessage());
 		}
@@ -756,13 +756,13 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getCardMenuMessage(dictionary),
 					getCardKeyboardMenu(dictionaryId));
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		} catch (DictionaryAlreadyPublishedException e) {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getDeleteSharedErrorMessage());
 		} catch (CardDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("CARD_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_CARD_NOT_YOURS"));
 		}
 	}
 
@@ -790,9 +790,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("CARDS_BLACK_LIST_END"),
 					privateInlineKeyboard);
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		} catch (DictionaryAlreadyPublishedException e) {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getDeleteSharedErrorMessage());
 		}
@@ -813,9 +813,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessageWithForceReply(CCLHSecurityUtils.getId(),
 					i18NService.get("CARDS_BLACK_CARD_ADD"));
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		} catch (DictionaryAlreadyPublishedException e) {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getDeleteSharedErrorMessage());
 		}
@@ -844,13 +844,13 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 						getCardKeyboardMenu(dictionaryId));
 			}
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		} catch (DictionaryAlreadyPublishedException e) {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getDeleteSharedErrorMessage());
 		} catch (CardAlreadyExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("CARD_ALREADY_EXISTS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_CARD_ALREADY_EXISTS"));
 		} catch (CardTextExcededLength e) {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getAddBlackCardLengthExceededErrorMessage());
 		}
@@ -875,9 +875,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessageWithForceReply(CCLHSecurityUtils.getId(),
 					i18NService.get("CARDS_BLACK_CARD_EDIT"));
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		} catch (DictionaryAlreadyPublishedException e) {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getDeleteSharedErrorMessage());
 		}
@@ -899,11 +899,11 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessageWithForceReply(CCLHSecurityUtils.getId(),
 					i18NService.get("CARDS_BLACK_CARD_EDIT_NEW_TEXT"));
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		} catch (DictionaryAlreadyPublishedException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_ALREADY_PUBLISHED"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_ALREADY_PUBLISHED"));
 		}
 	}
 
@@ -929,15 +929,15 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("CARDS_BLACK_CARD_EDITED"));
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getCardMenuMessage(card.getDictionary()), getCardKeyboardMenu(card.getDictionary().getId()));
 		} catch (CardDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("CARD_DOESNT_EXISTS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_CARD_DOESNT_EXISTS"));
 		} catch (CardAlreadyExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("CARD_ALREADY_EXISTS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_CARD_ALREADY_EXISTS"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("CARD_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_CARD_NOT_YOURS"));
 		} catch (DictionaryAlreadySharedException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_SHARED"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_SHARED"));
 		} catch (CardTextExcededLength e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("CARD_EXCEEDED_LENGTH"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_CARD_EXCEEDED_LENGTH"));
 		}
 	}
 
@@ -960,9 +960,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessageWithForceReply(CCLHSecurityUtils.getId(),
 					i18NService.get("CARDS_BLACK_CARD_DELETE"));
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		} catch (DictionaryAlreadyPublishedException e) {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getDeleteSharedErrorMessage());
 		}
@@ -990,13 +990,13 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getCardMenuMessage(dictionary),
 					getCardKeyboardMenu(dictionaryId));
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		} catch (DictionaryAlreadyPublishedException e) {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), getDeleteSharedErrorMessage());
 		} catch (CardDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("CARD_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_CARD_NOT_YOURS"));
 		}
 	}
 
@@ -1030,9 +1030,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 						getCollaboratorMenuMessage(dictionary), privateInlineKeyboard);
 			}
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		}
 	}
 
@@ -1052,9 +1052,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.editMessage(CCLHSecurityUtils.getId(), messageId,
 					getCollaboratorListMessage(dictionary.getCollaborators()), privateInlineKeyboard);
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		}
 	}
 
@@ -1071,9 +1071,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessageWithForceReply(CCLHSecurityUtils.getId(),
 					i18NService.get("COLLABORATORS_ADD"));
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		}
 	}
 
@@ -1106,9 +1106,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(),
 					getCollaboratorMenuMessage(dictionary), privateInlineKeyboard);
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		} catch (UserDoesntExistsException e) {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(),
 					i18NService.get("COLLABORATOR_ADD_USER_DOESNT_EXISTS"));
@@ -1137,9 +1137,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 
 			dictionariesBotMessageService.sendMessage(dictionary.getCreator().getId(), getCollaboratorAcceptedMessage(user.getName()));
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		}
 	}
 
@@ -1159,9 +1159,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 
 			dictionariesBotMessageService.sendMessage(dictionary.getCreator().getId(), getCollaboratorRejectedMessage(user.getName()));
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		}
 	}
 
@@ -1177,9 +1177,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.setPendingReply(CCLHSecurityUtils.getId(), "/delete_collab__" + dictionary.getId());
 			dictionariesBotMessageService.sendMessageWithForceReply(CCLHSecurityUtils.getId(), i18NService.get("COLLABORATORS_DELETE"));
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		}
 	}
 
@@ -1204,11 +1204,11 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(),
 					getCollaboratorMenuMessage(dictionary), privateInlineKeyboard);
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		} catch (DictionaryCollaboratorDoesntExists e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("COLLABORATOR_REMOVE_USER_DOESNT_EXISTS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_COLLABORATOR_REMOVE_USER_DOESNT_EXISTS"));
 		}
 	}
 
@@ -1223,9 +1223,9 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.setPendingReply(CCLHSecurityUtils.getId(), "/toggle_collab__" + dictionary.getId());
 			dictionariesBotMessageService.sendMessageWithForceReply(CCLHSecurityUtils.getId(), i18NService.get("COLLABORATORS_TOGGLE"));
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		}
 	}
 
@@ -1251,11 +1251,11 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(),
 					getCollaboratorMenuMessage(dictionary), privateInlineKeyboard);
 		} catch (DictionaryDoesntExistsException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_FOUND"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_FOUND"));
 		} catch (DictionaryNotYoursException e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("DICTIONARY_NOT_YOURS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_DICTIONARY_NOT_YOURS"));
 		} catch (DictionaryCollaboratorDoesntExists e) {
-			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("COLLABORATOR_DOESNT_EXISTS"));
+			dictionariesBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_COLLABORATOR_DOESNT_EXISTS"));
 		}
 	}
 
@@ -1495,18 +1495,6 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 			return MessageFormat.format(i18NService.get("COLLABORATORS_TOGGLED_OFF_MESSAGE"), collaborator.getDictionary().getName());
 	}
 
-	private String getDeleteSharedErrorMessage() {
-		return MessageFormat.format(i18NService.get("DICTIONARY_SHARED"), getBotCreatorName());
-	}
-
-	private String getAddWhiteCardLengthExceededErrorMessage() {
-		return MessageFormat.format(i18NService.get("CARD_EXCEEDED_LENGTH"), cardService.getDictionaryWhiteCardMaxLength());
-	}
-
-	private String getAddBlackCardLengthExceededErrorMessage() {
-		return MessageFormat.format(i18NService.get("CARD_EXCEEDED_LENGTH"), cardService.getDictionaryBlackCardMaxLength());
-	}
-
 	private String getDictionaryPublishedMessage(Dictionary dictionary) {
 		String msg;
 		if (Boolean.TRUE.equals(dictionary.getPublished())) {
@@ -1537,8 +1525,20 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 		return msg;
 	}
 
+	private String getDeleteSharedErrorMessage() {
+		return MessageFormat.format(i18NService.get("ERROR_DICTIONARY_SHARED"), getBotCreatorName());
+	}
+
+	private String getAddWhiteCardLengthExceededErrorMessage() {
+		return MessageFormat.format(i18NService.get("ERROR_CARD_EXCEEDED_LENGTH"), cardService.getDictionaryWhiteCardMaxLength());
+	}
+
+	private String getAddBlackCardLengthExceededErrorMessage() {
+		return MessageFormat.format(i18NService.get("ERROR_CARD_EXCEEDED_LENGTH"), cardService.getDictionaryBlackCardMaxLength());
+	}
+
 	private String getDictionaryAlreadySharedError() {
-		return MessageFormat.format(i18NService.get("DICTIONARY_ALREADY_SHARED"), getBotCreatorName());
+		return MessageFormat.format(i18NService.get("ERROR_DICTIONARY_ALREADY_SHARED"), getBotCreatorName());
 	}
 
 	private String getHelpMessage() {

@@ -34,7 +34,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                         BotMessageUtils.getUserInfo(message.getFrom()));
 
                 cclhBotMessageService.sendMessage(message.getChat().getId(),
-                        i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                        i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -53,7 +53,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                         BotMessageUtils.getUserInfo(message.getFrom()));
 
                 cclhBotMessageService.sendMessage(message.getChat().getId(),
-                        i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                        i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -73,7 +73,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                         BotMessageUtils.getUserInfo(message.getFrom()));
 
                 cclhBotMessageService.sendMessage(message.getChat().getId(),
-                        i18NService.get("COMMAND_SHOULD_BE_ON_GROUP", message.getFrom().getLanguageCode()));
+                        i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_GROUP", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -93,7 +93,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                         BotMessageUtils.getUserInfo(message.getFrom()));
 
                 cclhBotMessageService.sendMessage(message.getChat().getId(),
-                        i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                        i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -113,7 +113,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                         BotMessageUtils.getUserInfo(message.getFrom()));
 
                 cclhBotMessageService.sendMessage(message.getChat().getId(),
-                        i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                        i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -134,7 +134,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                         BotMessageUtils.getUserInfo(message.getFrom()));
 
                 cclhBotMessageService.sendMessage(message.getChat().getId(),
-                        i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                        i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -154,7 +154,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                         BotMessageUtils.getUserInfo(message.getFrom()));
 
                 cclhBotMessageService.sendMessage(message.getChat().getId(),
-                        i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                        i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }
@@ -177,7 +177,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                         BotMessageUtils.getUserInfo(message.getFrom()));
 
                 cclhBotMessageService.sendMessage(message.getChat().getId(),
-                        i18NService.get("COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
+                        i18NService.get("ERROR_COMMAND_SHOULD_BE_ON_PRIVATE", message.getFrom().getLanguageCode()));
 
                 return;
             }

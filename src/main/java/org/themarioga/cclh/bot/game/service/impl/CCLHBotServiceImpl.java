@@ -70,7 +70,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         } catch (UserAlreadyExistsException e) {
             logger.error("El usuario {} ({}) esta intentando registrarse de nuevo.", userId, username);
 
-            cclhBotMessageService.sendMessage(userId, i18NService.get("USER_ALREADY_REGISTERED"));
+            cclhBotMessageService.sendMessage(userId, i18NService.get("ERROR_USER_ALREADY_REGISTERED"));
 
             throw e;
         } catch (ApplicationException e) {
@@ -195,11 +195,11 @@ public class CCLHBotServiceImpl implements CCLHBotService {
 
             cclhBotMessageService.editMessage(roomId,
                     groupMessageId,
-                    i18NService.get("GAME_ALREADY_CREATED"));
+                    i18NService.get("ERROR_GAME_ALREADY_CREATED"));
 
             cclhBotMessageService.editMessage(creatorId,
                     privateMessageId,
-                    i18NService.get("GAME_ALREADY_CREATED"));
+                    i18NService.get("ERROR_GAME_ALREADY_CREATED"));
 
             throw e;
         } catch (PlayerAlreadyExistsException e) {
@@ -208,11 +208,11 @@ public class CCLHBotServiceImpl implements CCLHBotService {
 
             cclhBotMessageService.editMessage(roomId,
                     groupMessageId,
-                    i18NService.get("PLAYER_ALREADY_PLAYING"));
+                    i18NService.get("ERROR_PLAYER_ALREADY_PLAYING"));
 
             cclhBotMessageService.editMessage(creatorId,
                     privateMessageId,
-                    i18NService.get("PLAYER_ALREADY_PLAYING"));
+                    i18NService.get("ERROR_PLAYER_ALREADY_PLAYING"));
 
             throw e;
         } catch (ApplicationException e) {
@@ -417,7 +417,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         } catch (GameAlreadyStartedException e) {
             logger.error("La partida de la sala {} ya estaba iniciada cuando se intentó cambiar el modo", roomId);
 
-            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("GAME_ALREADY_STARTED"));
+            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_GAME_ALREADY_STARTED"));
 
             throw e;
         } catch (ApplicationException e) {
@@ -441,13 +441,13 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         } catch (GameAlreadyStartedException e) {
             logger.error("La partida de la sala {} ya estaba iniciada cuando se intentó cambiar el modo", roomId);
 
-            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("GAME_ALREADY_STARTED"));
+            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_GAME_ALREADY_STARTED"));
 
             throw e;
         } catch (DictionaryDoesntExistsException e) {
             logger.error("El diccionario {} no existe para la sala {}", data, roomId);
 
-            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("UNKNOWN_ERROR"));
+            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_UNKNOWN"));
 
             throw e;
         } catch (ApplicationException e) {
@@ -471,11 +471,11 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         } catch (GameAlreadyStartedException e) {
             logger.error("La partida de la sala {} ya estaba iniciada cuando se intentó cambiar el modo", roomId);
 
-            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("GAME_ALREADY_STARTED"));
+            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_GAME_ALREADY_STARTED"));
 
             throw e;
         } catch (GameAlreadyFilledException e) {
-            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("GAME_ALREADY_FILLED"));
+            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_GAME_ALREADY_FILLED"));
 
             throw e;
         } catch (ApplicationException e) {
@@ -499,7 +499,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         } catch (GameAlreadyStartedException e) {
             logger.error("La partida de la sala {} ya estaba iniciada cuando se intentó cambiar el modo", roomId);
 
-            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("GAME_ALREADY_STARTED"));
+            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_GAME_ALREADY_STARTED"));
 
             throw e;
         } catch (ApplicationException e) {
@@ -523,7 +523,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         } catch (GameAlreadyStartedException e) {
             logger.error("La partida de la sala {} ya estaba iniciada cuando se intentó cambiar el modo", roomId);
 
-            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("GAME_ALREADY_STARTED"));
+            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_GAME_ALREADY_STARTED"));
 
             throw e;
         } catch (ApplicationException e) {
@@ -567,11 +567,11 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                 cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("GAME_ONLY_CREATOR_CAN_DELETE"));
             }
         } catch (GameNotStartedException e) {
-            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("GAME_DOESNT_EXISTS"));
+            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_GAME_DOESNT_EXISTS"));
 
             throw e;
         } catch (PlayerAlreadyVotedDeleteException e) {
-            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("PLAYER_ALREADY_VOTED_DELETION"));
+            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_PLAYER_ALREADY_VOTED_DELETION"));
 
             throw e;
         } catch (ApplicationException e) {
@@ -631,7 +631,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                 }
             });
         } else {
-            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("PLAYER_ALREADY_JOINED"));
+            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_PLAYER_ALREADY_JOINED"));
         }
     }
 
@@ -656,19 +656,19 @@ public class CCLHBotServiceImpl implements CCLHBotService {
 
             sendMainMenu(telegramGame);
         } catch (UserDoesntExistsException e) {
-            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("GAME_USER_DOESNT_EXISTS"));
+            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_GAME_USER_DOESNT_EXISTS"));
 
             throw e;
         } catch (PlayerAlreadyExistsException e) {
-            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("PLAYER_ALREADY_JOINED"));
+            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_PLAYER_ALREADY_JOINED"));
 
             throw e;
         } catch (GameAlreadyStartedException e) {
-            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("GAME_ALREADY_STARTED"));
+            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_GAME_ALREADY_STARTED"));
 
             throw e;
         } catch (GameAlreadyFilledException e) {
-            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("GAME_ALREADY_FILLED"));
+            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_GAME_ALREADY_FILLED"));
 
             throw e;
         } catch (ApplicationException e) {
@@ -720,15 +720,15 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                 cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("UNKNOWN_ERROR"));
             }
         } catch (GameAlreadyStartedException e) {
-            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("GAME_ALREADY_STARTED"));
+            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_GAME_ALREADY_STARTED"));
 
             throw e;
         } catch (GameNotFilledException e) {
-            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("GAME_NOT_FILLED"));
+            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_GAME_NOT_FILLED"));
 
             throw e;
         } catch (GameNotStartedException e) {
-            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("GAME_NOT_STARTED"));
+            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_GAME_NOT_STARTED"));
 
             throw e;
         } catch (ApplicationException e) {
@@ -752,9 +752,9 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                 if (telegramGameService.checkIfEveryoneHavePlayedACard(telegramGame)) {
                     logger.error("Juego en estado incorrecto: {}", telegramGame.getGame().getId());
 
-                    cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("UNKNOWN_ERROR"));
+                    cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_UNKNOWN"));
 
-                    throw new ApplicationException(i18NService.get("UNKNOWN_ERROR"));
+                    throw new ApplicationException(i18NService.get("ERROR_UNKNOWN"));
                 }
 
                 TelegramPlayer telegramPlayer = telegramPlayerService.getByUser(CCLHSecurityUtils.getId());
@@ -771,7 +771,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                 } else {
                     logger.error("No se ha encontrado el jugador o la carta jugada");
 
-                    cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("PLAYER_DOES_NOT_EXISTS"));
+                    cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_PLAYER_DOES_NOT_EXISTS"));
                 }
             } else if (telegramGame.getGame().getTable().getStatus().equals(TableStatusEnum.VOTING)) {
                 if (telegramGame.getGame().getType().equals(GameTypeEnum.DEMOCRACY)) {
@@ -793,7 +793,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                 logger.error("Juego en estado incorrecto: {}", telegramGame.getGame().getId());
             }
         } catch (PlayerAlreadyPlayedCardException e) {
-            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("PLAYER_ALREADY_PLAYED_CARD"));
+            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_PLAYER_ALREADY_PLAYED_CARD"));
 
             throw e;
         } catch (ApplicationException e) {
@@ -817,9 +817,9 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                 if (telegramGameService.checkIfEveryoneHaveVotedACard(telegramGame)) {
                     logger.error("Juego en estado incorrecto: {}", telegramGame.getGame().getId());
 
-                    cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("UNKNOWN_ERROR"));
+                    cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_UNKNOWN"));
 
-                    throw new ApplicationException(i18NService.get("UNKNOWN_ERROR"));
+                    throw new ApplicationException(i18NService.get("ERROR_UNKNOWN"));
                 }
 
                 sendMessageToVoter(telegramGame, callbackQueryId);
@@ -855,20 +855,20 @@ public class CCLHBotServiceImpl implements CCLHBotService {
                     } else {
                         logger.error("Juego en estado incorrecto: {}", telegramGame.getGame().getId());
 
-                        cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("UNKNOWN_ERROR"));
+                        cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_UNKNOWN"));
 
-                        throw new ApplicationException(i18NService.get("UNKNOWN_ERROR"));
+                        throw new ApplicationException(i18NService.get("ERROR_UNKNOWN"));
                     }
                 }
             } else {
                 logger.error("Juego en estado incorrecto: {}", telegramGame.getGame().getId());
 
-                cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("UNKNOWN_ERROR"));
+                cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_UNKNOWN"));
 
-                throw new ApplicationException(i18NService.get("UNKNOWN_ERROR"));
+                throw new ApplicationException(i18NService.get("ERROR_UNKNOWN"));
             }
         } catch (PlayerAlreadyVotedCardException e) {
-            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("PLAYER_ALREADY_VOTED_CARD"));
+            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_PLAYER_ALREADY_VOTED_CARD"));
 
             throw e;
         } catch (ApplicationException e) {
@@ -1033,7 +1033,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No hay partida activa en la sala {}", roomId);
 
-            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("GAME_DOESNT_EXISTS"));
+            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_GAME_DOESNT_EXISTS"));
 
             throw new GameDoesntExistsException();
         }
@@ -1045,7 +1045,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         TelegramGame telegramGame = getGameByRoomId(roomId, callbackQueryId);
 
         if (!Objects.equals(CCLHSecurityUtils.getId(), telegramGame.getGame().getCreator().getId())) {
-            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("GAME_ONLY_CREATOR_CAN_CONFIGURE"));
+            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_GAME_ONLY_CREATOR_CAN_CONFIGURE"));
 
             throw new GameNotYourException();
         }
@@ -1059,7 +1059,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No hay partida activa del creador {}", CCLHSecurityUtils.getId());
 
-            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("GAME_DOESNT_EXISTS"));
+            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_GAME_DOESNT_EXISTS"));
 
             throw new GameDoesntExistsException();
         }
@@ -1073,7 +1073,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No existe juego asociado al usuario {}", CCLHSecurityUtils.getId());
 
-            cclhBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("PLAYER_NO_GAMES"));
+            cclhBotMessageService.sendMessage(CCLHSecurityUtils.getId(), i18NService.get("ERROR_PLAYER_NO_GAMES"));
 
             throw new GameDoesntExistsException();
         }
@@ -1087,7 +1087,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
         if (telegramGame == null) {
             logger.error("No hay partida activa del jugador {}", CCLHSecurityUtils.getId());
 
-            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("GAME_DOESNT_EXISTS"));
+            cclhBotMessageService.answerCallbackQuery(callbackQueryId, i18NService.get("ERROR_GAME_DOESNT_EXISTS"));
 
             throw new GameDoesntExistsException();
         }
