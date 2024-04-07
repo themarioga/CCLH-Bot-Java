@@ -1542,7 +1542,7 @@ public class DictionariesBotServiceImpl implements DictionariesBotService {
 	}
 
 	private String getHelpMessage() {
-		return MessageFormat.format(i18NService.get("HELP"), getBotName(), getBotVersion(),
+		return MessageFormat.format(i18NService.get("DICTIONARIES_HELP"), getBotName(), getBotVersion(),
 				getBotHelpURL(), getBotCreatorName());
 	}
 

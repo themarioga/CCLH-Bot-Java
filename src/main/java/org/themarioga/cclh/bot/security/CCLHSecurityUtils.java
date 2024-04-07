@@ -56,7 +56,9 @@ public class CCLHSecurityUtils {
 	}
 
 	public static CCLHUserDetails getUserDetails() {
-		if (SecurityContextHolder.getContext().getAuthentication() == null) return null;
+		if (SecurityContextHolder.getContext().getAuthentication() == null
+			|| !(SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof CCLHUserDetails))
+			return null;
 		return (CCLHUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 

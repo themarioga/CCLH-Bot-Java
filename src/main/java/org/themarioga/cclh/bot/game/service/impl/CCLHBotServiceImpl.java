@@ -1411,7 +1411,7 @@ public class CCLHBotServiceImpl implements CCLHBotService {
     }
 
     private String getHelpMessage() {
-        return MessageFormat.format(i18NService.get("HELP"), getBotName(), getBotVersion(), getBotHelpURL(), getBotCreatorName());
+        return MessageFormat.format(i18NService.get("GAME_HELP"), getBotName(), getBotVersion(), getBotHelpURL(), getBotCreatorName());
     }
 
     private Player getWinnerPlayer(TelegramGame telegramGame) {
