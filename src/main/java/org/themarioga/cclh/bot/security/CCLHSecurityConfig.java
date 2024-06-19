@@ -21,6 +21,7 @@ public class CCLHSecurityConfig {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers(HttpMethod.POST, "/callback/**").permitAll()
+						.requestMatchers("/.well-known/acme-challenge/**").permitAll()
 						.anyRequest().authenticated())
 				.build();
 	}
